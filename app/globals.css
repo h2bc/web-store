@@ -7,21 +7,11 @@
 
 @layer utilities {
   .pink-img-shadow {
-    --pink-glow-blur: 22px;
-    --pink-glow-alpha: 0.19;
+    --pink-glow-radius: 30px;
+    --pink-glow-opacity: 0.3;
     filter: drop-shadow(
-      0 0 var(--pink-glow-blur) rgba(236, 72, 153, var(--pink-glow-alpha))
+      0 0 var(--pink-glow-radius) rgba(236, 72, 153, var(--pink-glow-opacity))
     );
-  }
-
-  .pink-img-shadow-sm {
-    --pink-glow-blur: 22px;
-    --pink-glow-alpha: 0.19;
-  }
-
-  .pink-img-shadow-lg {
-    --pink-glow-blur: 32px;
-    --pink-glow-alpha: 0.28;
   }
 }
 

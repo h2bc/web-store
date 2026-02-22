@@ -33,7 +33,7 @@ export default function ProductImageCarousel({
           src={images[activeImage].url}
           alt={name}
           fill
-          className="pink-img-shadow pink-img-shadow-lg object-contain"
+          className="pink-img-shadow object-contain"
           priority
           sizes={`(max-width: ${screens.md}) 100vw, 50vw`}
         />
