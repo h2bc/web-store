@@ -7,13 +7,14 @@
 
 @layer utilities {
   .pink-img-shadow {
-    --pink-glow-radius: 30px;
+    --pink-glow-radius: 10cqi;
     --pink-glow-opacity: 0.3;
     transition-property: opacity, filter;
     transition-duration: 300ms;
     transition-timing-function: ease-in-out;
     filter: drop-shadow(
-      0 0 var(--pink-glow-radius) rgba(236, 72, 153, var(--pink-glow-opacity))
+      0 0 var(--pink-glow-radius)
+        rgba(236, 72, 153, var(--pink-glow-opacity))
     );
   }
 }

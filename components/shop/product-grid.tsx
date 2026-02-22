@@ -23,7 +23,7 @@ export default function ProductGrid({
     <ProductCard
       key={p.slug}
       {...p}
-      priority={idx < priorityCount}
+      preload={idx < priorityCount}
       enableHoverImage={enableHoverImages}
     />
   ))

@@ -45,7 +45,7 @@ export default async function SiteHeader({
                 width={200}
                 height={80}
                 className="h-12 md:h-18 w-auto"
-                priority
+                preload
               />
             </Link>
           </div>
@@ -60,7 +60,7 @@ export default async function SiteHeader({
                 width={200}
                 height={80}
                 className="h-12 w-auto"
-                priority
+                preload
               />
             </Link>
 

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import ProductCardImage from '@/components/shop/product-card-image'
 import { Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -20,9 +20,9 @@ interface CartLineItemProps {
   imageSize?: 'sm' | 'md'
 }
 
-const imageSizeClasses = {
-  sm: 'w-20 h-20',
-  md: 'w-24 h-24',
+const imageSizeConfig = {
+  sm: { containerClass: 'w-20 h-20', sizes: '80px' },
+  md: { containerClass: 'w-24 h-24', sizes: '96px' },
 } as const
 
 export default function CartLineItem({
@@ -43,6 +43,7 @@ export default function CartLineItem({
   const subtitle = item.product_subtitle
   const size = item.variant_title
   const slug = item.product_handle
+  const imageConfig = imageSizeConfig[imageSize]
 
   const maxQuantity = item.variant?.manage_inventory
     ? Math.max(item.variant.inventory_quantity ?? 1, 1)
@@ -91,7 +92,7 @@ export default function CartLineItem({
         <div className="flex items-center gap-4 min-w-0 flex-1">
           {thumbnail && (
             <div
-              className={`relative shrink-0 ${imageSizeClasses[imageSize]} overflow-visible`}
+              className={`relative shrink-0 ${imageConfig.containerClass} overflow-visible`}
             >
               {slug ? (
                 <Link
@@ -99,21 +100,17 @@ export default function CartLineItem({
                   className="relative block w-full h-full"
                   onClick={() => onNavigate?.()}
                 >
-                  <Image
+                  <ProductCardImage
                     src={thumbnail}
                     alt={title || 'Product'}
-                    fill
-                    className="pink-img-shadow object-contain"
-                    sizes={imageSize === 'sm' ? '80px' : '96px'}
+                    sizes={imageConfig.sizes}
                   />
                 </Link>
               ) : (
-                <Image
+                <ProductCardImage
                   src={thumbnail}
                   alt={title || 'Product'}
-                  fill
-                  className="pink-img-shadow object-contain"
-                  sizes={imageSize === 'sm' ? '80px' : '96px'}
+                  sizes={imageConfig.sizes}
                 />
               )}
             </div>
