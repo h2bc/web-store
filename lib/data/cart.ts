@@ -10,6 +10,27 @@ type CartResult = {
   error: string | null
 }
 
+function sortCartItems(cart: HttpTypes.StoreCart | null): HttpTypes.StoreCart | null {
+  if (!cart?.items?.length) return cart
+
+  return {
+    ...cart,
+    items: [...cart.items].sort((a, b) => {
+      const productA = a.product_title ?? ''
+      const productB = b.product_title ?? ''
+      if (productA < productB) return -1
+      if (productA > productB) return 1
+
+      const variantA = a.variant_title ?? ''
+      const variantB = b.variant_title ?? ''
+      if (variantA < variantB) return -1
+      if (variantA > variantB) return 1
+
+      return 0
+    }),
+  }
+}
+
 export async function getCart(): Promise<CartResult> {
   const cartId = await getCartId()
 
@@ -23,7 +44,7 @@ export async function getCart(): Promise<CartResult> {
   try {
     const { cart } = await sdk.store.cart.retrieve(cartId)
     return {
-      cart,
+      cart: sortCartItems(cart),
       error: null,
     }
   } catch (error) {
@@ -53,7 +74,7 @@ export async function initCart(): Promise<CartResult> {
     await setCartId(cart.id)
 
     return {
-      cart,
+      cart: sortCartItems(cart),
       error: null,
     }
   } catch (error) {
@@ -90,7 +111,7 @@ export async function addItemToCart(
     })
 
     return {
-      cart,
+      cart: sortCartItems(cart),
       error: null,
     }
   } catch (error) {
@@ -120,7 +141,7 @@ export async function removeItemFromCart(itemId: string): Promise<CartResult> {
     const { parent: cart } = await sdk.store.cart.deleteLineItem(cartId, itemId)
 
     return {
-      cart: cart || null,
+      cart: sortCartItems(cart || null),
       error: null,
     }
   } catch (error) {
@@ -151,7 +172,7 @@ export async function updateItemQuantity(
     })
 
     return {
-      cart,
+      cart: sortCartItems(cart),
       error: null,
     }
   } catch (error) {
