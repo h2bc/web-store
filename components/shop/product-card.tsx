@@ -36,9 +36,8 @@ export default function ProductCard({
               fill
               sizes={`(min-width:${screens.lg}) 25vw, (min-width:${screens.sm}) 50vw, 100vw`}
               className={cn(
-                'pink-img-shadow object-contain transition-opacity duration-200 ease-out',
-                showHoverImage &&
-                  'group-hover:opacity-0 group-focus-visible:opacity-0'
+                'pink-img-shadow object-contain',
+                showHoverImage && 'group-hover:opacity-0 group-focus-visible:opacity-0'
               )}
               draggable={false}
               priority={!!priority}
@@ -49,7 +48,7 @@ export default function ProductCard({
                 alt={name}
                 fill
                 sizes={`(min-width:${screens.lg}) 25vw, (min-width:${screens.sm}) 50vw, 100vw`}
-                className={`pink-img-shadow object-contain transition-opacity duration-200 ease-out opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100`}
+                className={`pink-img-shadow object-contain opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100`}
                 draggable={false}
                 loading="lazy"
               />
