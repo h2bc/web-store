@@ -12,14 +12,16 @@ export default function CategoryFilter({
     <>
       {/* Mobile horizontal filter bar */}
       <div className="lg:hidden overflow-x-auto">
-        <div
+        <nav
           className="flex w-max mx-auto whitespace-nowrap pb-3"
-          role="tablist"
           aria-label="Product categories"
         >
           {categories.map((cat) => {
             const selected = active === cat
-            const href = cat === 'ALL' ? '/shop' : `/shop?category=${cat}`
+            const href =
+              cat === 'ALL'
+                ? '/shop'
+                : `/shop?category=${encodeURIComponent(cat)}`
             return (
               <Link
                 key={cat}
@@ -34,7 +36,7 @@ export default function CategoryFilter({
               </Link>
             )
           })}
-        </div>
+        </nav>
       </div>
 
       {/* Desktop left filter column */}
@@ -43,7 +45,10 @@ export default function CategoryFilter({
           <nav aria-label="Product categories" className="flex flex-col">
             {categories.map((cat) => {
               const selected = active === cat
-              const href = cat === 'ALL' ? '/shop' : `/shop?category=${cat}`
+              const href =
+                cat === 'ALL'
+                  ? '/shop'
+                  : `/shop?category=${encodeURIComponent(cat)}`
               return (
                 <Link
                   key={cat}

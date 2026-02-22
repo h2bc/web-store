@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Info } from 'lucide-react'
 import { addItemToCart } from '@/lib/data/cart'
 import { toast } from 'sonner'
+import Stepper from '@/components/ui/stepper'
 
 interface ProductDetailsProps {
   sizes: SizeOption[]
@@ -49,6 +50,7 @@ export default function ProductDetails({
   }, [size, sizeOption, variants])
 
   const [isAdding, setIsAdding] = useState(false)
+  const [quantity, setQuantity] = useState(1)
 
   const canAdd = useMemo(() => {
     return (
@@ -58,6 +60,19 @@ export default function ProductDetails({
     )
   }, [selectedVariant])
 
+  const maxQuantity = useMemo(() => {
+    if (!selectedVariant?.manage_inventory) {
+      return undefined
+    }
+
+    return Math.max(selectedVariant.inventory_quantity, 0)
+  }, [selectedVariant])
+
+  const handleSizeChange = (nextSize: SizeOption | null) => {
+    setSize(nextSize)
+    setQuantity(1)
+  }
+
   const handleAddToCart = async () => {
     if (!selectedVariant?.id) {
       toast.error('No variant selected')
@@ -65,7 +80,7 @@ export default function ProductDetails({
     }
 
     setIsAdding(true)
-    const { error } = await addItemToCart(selectedVariant.id)
+    const { error } = await addItemToCart(selectedVariant.id, quantity)
     setIsAdding(false)
 
     if (error) {
@@ -88,14 +103,29 @@ export default function ProductDetails({
         </Alert>
       )}
 
-      <SizeSelector sizes={sizes} selectedSize={size} onSizeChange={setSize} />
+      <SizeSelector
+        sizes={sizes}
+        selectedSize={size}
+        onSizeChange={handleSizeChange}
+      />
 
       {descriptionSlot}
+
+      <div className="mt-6">
+        <div className="mb-2 text-sm text-neutral-600">Quantity</div>
+        <Stepper
+          value={quantity}
+          onChange={setQuantity}
+          min={1}
+          max={maxQuantity}
+          disabled={!canAdd || isAdding}
+        />
+      </div>
 
       <Button
         variant="default"
         size="lg"
-        className="w-full mt-8"
+        className="w-full mt-6"
         disabled={!canAdd || isAdding}
         onClick={handleAddToCart}
       >

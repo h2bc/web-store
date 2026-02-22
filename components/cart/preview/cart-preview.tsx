@@ -15,6 +15,8 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet'
 import CartPreviewItem from './cart-preview-item'
+import CartEmptyState from '@/components/cart/cart-empty-state'
+import ShippingInfoAlert from '@/components/cart/shipping-info-alert'
 import type { HttpTypes } from '@medusajs/types'
 
 interface CartPreviewProps {
@@ -25,9 +27,10 @@ export default function CartPreview({ cart }: CartPreviewProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [open, setOpen] = useState(false)
+  const items = cart?.items ?? []
 
   const itemCount =
-    cart?.items?.reduce((total, item) => total + item.quantity, 0) ?? 0
+    items.reduce((total, item) => total + item.quantity, 0) ?? 0
 
   const handleCartClick = () => {
     // If on cart or checkout page, redirect to cart
@@ -41,7 +44,7 @@ export default function CartPreview({ cart }: CartPreviewProps) {
 
   const handleRemoveSuccess = () => {
     // If cart becomes empty, close the drawer
-    if (cart?.items?.length === 1) {
+    if (items.length === 1) {
       setOpen(false)
     }
   }
@@ -73,15 +76,15 @@ export default function CartPreview({ cart }: CartPreviewProps) {
             </SheetDescription>
           </SheetHeader>
 
-          {cart?.items && cart.items.length > 0 ? (
+          {items.length > 0 ? (
             <>
               {/* Cart Items - scrollable area */}
-              <div className="flex-1 overflow-y-auto -mx-6 px-8 -mt-10 pt-12 pb-2 divide-y">
-                {cart.items.map((item) => (
+              <div className="flex-1 overflow-y-auto divide-y px-3 sm:px-4">
+                {items.map((item) => (
                   <CartPreviewItem
                     key={item.id}
                     item={item}
-                    currencyCode={cart.currency_code}
+                    currencyCode={cart?.currency_code}
                     onRemoveSuccess={handleRemoveSuccess}
                     onNavigate={handleNavigateFromDrawer}
                   />
@@ -89,28 +92,21 @@ export default function CartPreview({ cart }: CartPreviewProps) {
               </div>
 
               {/* Free Shipping Alert */}
-              <div className="border-t pt-4 pb-2">
-                <p className="text-sm text-muted-foreground text-center">
-                  Free shipping above €30 (LT) / €60 (Europe).{' '}
-                  <Link
-                    href="/shipping-returns"
-                    className="underline hover:text-foreground"
-                    onClick={handleNavigateFromDrawer}
-                  >
-                    Learn more
-                  </Link>
-                </p>
-              </div>
+              <ShippingInfoAlert
+                className="mt-4"
+                descriptionClassName="text-center"
+                onLearnMoreClick={handleNavigateFromDrawer}
+              />
 
               <div className="flex items-center justify-between py-2 text-sm">
                 <span className="text-muted-foreground">Subtotal (VAT included)</span>
                 <span className="font-medium">
-                  {formatPrice(cart.item_total, cart.currency_code)}
+                  {formatPrice(cart?.item_total, cart?.currency_code)}
                 </span>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col gap-2 pt-2">
+              <div className="flex flex-col gap-3 pt-2">
                 <Button asChild size="lg">
                   <Link href="/checkout" onClick={handleNavigateFromDrawer}>
                     Checkout
@@ -125,15 +121,7 @@ export default function CartPreview({ cart }: CartPreviewProps) {
             </>
           ) : (
             <div className="flex-1 flex items-center justify-center">
-              <div className="text-center text-muted-foreground">
-                <ShoppingBag className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                <p>Your cart is empty</p>
-                <Button asChild className="mt-4" variant="outline">
-                  <Link href="/shop" onClick={handleNavigateFromDrawer}>
-                    Continue shopping
-                  </Link>
-                </Button>
-              </div>
+              <CartEmptyState onNavigate={handleNavigateFromDrawer} />
             </div>
           )}
         </SheetContent>

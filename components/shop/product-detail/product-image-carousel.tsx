@@ -1,5 +1,6 @@
 'use client'
 import Image from 'next/image'
+import ProductCardImage from '../product-card-image'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -29,13 +30,11 @@ export default function ProductImageCarousel({
   return (
     <section>
       <div className="relative w-full aspect-square">
-        <Image
+        <ProductCardImage
           src={images[activeImage].url}
           alt={name}
-          fill
-          className="pink-img-shadow object-contain"
-          priority
-          sizes={`(max-width: ${screens.md}) 100vw, 50vw`}
+          preload
+          sizes={`(min-width:${screens.lg}) 50vw, 100vw`}
         />
         <button
           type="button"
@@ -81,7 +80,7 @@ export default function ProductImageCarousel({
                 alt={`${name} thumbnail ${idx + 1}`}
                 fill
                 className="object-contain"
-                sizes="80px"
+                sizes={`(min-width:${screens.lg}) 7vw, (min-width:${screens.md}) 14vw, (min-width:${screens.sm}) 16vw, 20vw`}
               />
             </button>
           ))}

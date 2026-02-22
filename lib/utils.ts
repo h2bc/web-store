@@ -36,7 +36,7 @@ export function formatPrice(
 ): string {
   const FRACTION_DIGITS = 2
 
-  if (!amount) {
+  if (amount == null || Number.isNaN(amount)) {
     return 'NOT AVAILABLE'
   }
 

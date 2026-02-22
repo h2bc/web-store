@@ -15,7 +15,7 @@ export default function ClientToastErrorHandler({
         toast.error(error)
       }
     })
-  })
+  }, [errors])
 
   return children
 }

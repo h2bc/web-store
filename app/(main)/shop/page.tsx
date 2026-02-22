@@ -3,6 +3,8 @@ import ProductGrid from '@/components/shop/product-grid'
 import ClientToastErrorHandler from '@/components/feedback/client-toast-error-handler'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-react'
+import { headers } from 'next/headers'
+import { userAgent } from 'next/server'
 import { getCategories } from '@/lib/data/categories'
 import { getProducts } from '@/lib/data/products'
 
@@ -16,6 +18,12 @@ export default async function ShopPage({
 }: {
   searchParams: Promise<{ category?: string }>
 }) {
+  const requestHeaders = await headers()
+  const { device } = userAgent({ headers: requestHeaders })
+  const enableHoverImages =
+    device.type !== 'mobile' && device.type !== 'tablet'
+  const productPriorityCount = device.type === 'mobile' ? 1 : 4
+
   const { products, error: productsError } = await getProducts()
 
   if (productsError) {
@@ -55,7 +63,11 @@ export default async function ShopPage({
           active={activeCategory}
         />
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 sm:gap-12">
-          <ProductGrid products={filtered} />
+          <ProductGrid
+            products={filtered}
+            enableHoverImages={enableHoverImages}
+            priorityCount={productPriorityCount}
+          />
         </section>
       </div>
     </ClientToastErrorHandler>

@@ -131,3 +131,38 @@ export async function removeItemFromCart(itemId: string): Promise<CartResult> {
     }
   }
 }
+
+export async function updateItemQuantity(
+  itemId: string,
+  quantity: number
+): Promise<CartResult> {
+  const cartId = await getCartId()
+
+  if (!cartId) {
+    return {
+      cart: null,
+      error: 'No cart found',
+    }
+  }
+
+  try {
+    const { cart } = await sdk.store.cart.updateLineItem(cartId, itemId, {
+      quantity,
+    })
+
+    return {
+      cart,
+      error: null,
+    }
+  } catch (error) {
+    const message =
+      error instanceof FetchError && error.status === 400
+        ? error.message
+        : 'Failed to update cart item quantity.'
+
+    return {
+      cart: null,
+      error: message,
+    }
+  }
+}

@@ -147,8 +147,8 @@ export default function ProductImageModal({
                       alt={`${name} ${idx + 1}`}
                       fill
                       className="object-contain"
-                      sizes={`(max-width: ${screens.sm}) 100vw, 90vw`}
-                      priority={idx === activeIndex}
+                      sizes="100vw"
+                      preload={idx === activeIndex}
                       onLoadStart={() => handleImageLoadStart(img.url)}
                       onLoad={() => handleImageLoad(img.url)}
                       onError={() => handleImageError(img.url)}
@@ -177,7 +177,7 @@ export default function ProductImageModal({
                   fill
                   className="object-contain"
                   sizes="90vw"
-                  priority
+                  preload
                   onLoadStart={() =>
                     handleImageLoadStart(images[activeIndex].url)
                   }
