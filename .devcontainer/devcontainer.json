@@ -6,12 +6,12 @@
   "mounts": [
     "type=bind,source=${localWorkspaceFolder},target=/workspace",
     "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent.sock,type=bind",
-    "type=bind,source=${localEnv:HOME}/.codex-shared,target=/codex"
+    "type=bind,source=${localEnv:HOME}/.claude,target=/claude"
   ],
   "postCreateCommand": "pnpm i --frozen",
   "remoteEnv": {
     "SSH_AUTH_SOCK": "/ssh-agent.sock",
-    "CODEX_HOME": "/codex"
+    "CLAUDE_CONFIG_DIR": "/claude"
   },
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {
@@ -19,12 +19,13 @@
     },
     "ghcr.io/devcontainers-extra/features/pnpm:2": {
       "version": "10"
-    }
+    },
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
   },
   "customizations": {
     "vscode": {
       "extensions": [
-        "openai.chatgpt",
+        "anthropic.claude-code",
         "dbaeumer.vscode-eslint",
         "github.vscode-github-actions",
         "bradlc.vscode-tailwindcss"
