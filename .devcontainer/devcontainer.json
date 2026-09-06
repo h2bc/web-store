@@ -5,7 +5,7 @@
   "workspaceFolder": "/workspace",
   "mounts": [
     "type=bind,source=${localWorkspaceFolder},target=/workspace",
-    "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent.sock,type=bind",
+    "source=${localEnv:HOME}/.ssh/agent.sock,target=/ssh-agent.sock,type=bind",
     "type=bind,source=${localEnv:HOME}/.claude-shared,target=/claude"
   ],
   "features": {
@@ -15,7 +15,8 @@
     "ghcr.io/devcontainers-extra/features/pnpm:2": {
       "version": "10"
     },
-    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
+    "ghcr.io/nullcoder/devcontainer-features/stripe-cli:1": {}
   },
   "remoteEnv": {
     "SSH_AUTH_SOCK": "/ssh-agent.sock",

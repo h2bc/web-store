@@ -48,6 +48,52 @@ const prodOnlyModules = [
   },
 ];
 
+const stripeApiKey = process.env.STRIPE_API_KEY;
+const resendApiKey = process.env.RESEND_API_KEY;
+
+const paymentModule = stripeApiKey
+  ? [
+      {
+        resolve: "@medusajs/medusa/payment",
+        options: {
+          providers: [
+            {
+              resolve: "@medusajs/medusa/payment-stripe",
+              id: "stripe",
+              options: {
+                apiKey: stripeApiKey,
+                webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+                capture: true,
+                automaticPaymentMethods: true,
+              },
+            },
+          ],
+        },
+      },
+    ]
+  : [];
+
+const emailFromName = "h2bc shop";
+const emailFrom = (address?: string) =>
+  address ? `${emailFromName} <${address}>` : undefined;
+
+const notificationProvider = resendApiKey
+  ? {
+      resolve: "./src/modules/resend",
+      id: "resend",
+      options: {
+        channels: ["email"],
+        api_key: resendApiKey,
+        from: emailFrom(process.env.RESEND_FROM_EMAIL),
+        logo_url: process.env.EMAIL_LOGO_URL,
+      },
+    }
+  : {
+      resolve: "@medusajs/medusa/notification-local",
+      id: "local",
+      options: { channels: ["email"] },
+    };
+
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
@@ -94,6 +140,11 @@ module.exports = defineConfig({
               ],
       },
     },
+    {
+      resolve: "@medusajs/medusa/notification",
+      options: { providers: [notificationProvider] },
+    },
+    ...paymentModule,
     ...(process.env.NODE_ENV === "production" ? prodOnlyModules : []),
   ],
 });

@@ -30,8 +30,10 @@
     "@medusajs/draft-order": "^2.13.1",
     "@medusajs/framework": "2.13.1",
     "@medusajs/medusa": "2.13.1",
+    "@react-email/components": "1.0.12",
     "awilix": "^8.0.1",
-    "pg": "^8.13.0"
+    "pg": "^8.13.0",
+    "resend": "^6.26.0"
   },
   "devDependencies": {
     "@medusajs/test-utils": "2.13.1",
@@ -66,4 +68,3 @@
     ]
   }
 }
-  

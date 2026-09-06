@@ -26,6 +26,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   const query = container.resolve(ContainerRegistrationKeys.QUERY);
 
   const fulfillment = container.resolve(Modules.FULFILLMENT);
+  const payment = container.resolve(Modules.PAYMENT);
   const salesChannelService = container.resolve(Modules.SALES_CHANNEL);
   const storeService = container.resolve(Modules.STORE);
 
@@ -99,6 +100,12 @@ export default async function seedDemoData({ container }: ExecArgs) {
   });
 
   logger.info("Regions");
+  const paymentProviderIds = (
+    await payment.listPaymentProviders({ is_enabled: true })
+  )
+    .map((provider) => provider.id)
+    .filter((id) => !id.startsWith("pp_stripe-"));
+
   const { result: regions } = await createRegionsWorkflow(container).run({
     input: {
       regions: [
@@ -106,13 +113,16 @@ export default async function seedDemoData({ container }: ExecArgs) {
           name: "Lithuania",
           currency_code: "eur",
           countries: ["lt"],
+          payment_providers: paymentProviderIds,
+          is_tax_inclusive: true,
           metadata: { shortName: "€ LT" },
         },
         {
           name: "Rest of Europe",
           currency_code: "eur",
           countries: restOfEurope,
-          payment_providers: ["pp_system_default"],
+          payment_providers: paymentProviderIds,
+          is_tax_inclusive: true,
           metadata: { shortName: "€ EU" },
         },
       ],
@@ -281,7 +291,9 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   const publishableApiKey = publishableApiKeys[0];
   if (!publishableApiKey) {
-    throw new Error("No publishable API key found to link to the sales channel");
+    throw new Error(
+      "No publishable API key found to link to the sales channel",
+    );
   }
 
   await linkSalesChannelsToApiKeyWorkflow(container).run({
@@ -317,28 +329,18 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   logger.info("Upload assets");
   const assetUrls = {
-    meduzaTeeFront: await uploadAsset(
-      "meduza tee/meduza-tee-front.png",
-    ),
+    meduzaTeeFront: await uploadAsset("meduza tee/meduza-tee-front.png"),
     meduzaTeeBack: await uploadAsset("meduza tee/meduza-tee-back.png"),
-    meduzaHoodFront: await uploadAsset(
-      "meduza hoodie/meduza-hood-front.png",
-    ),
-    meduzaHoodBack: await uploadAsset(
-      "meduza hoodie/meduza-hood-back.png",
-    ),
+    meduzaHoodFront: await uploadAsset("meduza hoodie/meduza-hood-front.png"),
+    meduzaHoodBack: await uploadAsset("meduza hoodie/meduza-hood-back.png"),
     trainerShortsFront: await uploadAsset(
       "training shorts/trainer-shorts-front-blank.png",
     ),
     trainerShortsBack: await uploadAsset(
       "training shorts/trainer-shorts-back-blank.png",
     ),
-    h2bcBeanieFront: await uploadAsset(
-      "h2bc beanie/h2bc-beanie-front.png",
-    ),
-    studdedBeltFront: await uploadAsset(
-      "studded belt/studded-belt-front.png",
-    ),
+    h2bcBeanieFront: await uploadAsset("h2bc beanie/h2bc-beanie-front.png"),
+    studdedBeltFront: await uploadAsset("studded belt/studded-belt-front.png"),
   };
 
   logger.info("Products");
@@ -349,9 +351,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       category_ids: [belts],
       shipping_profile_id: shippingProfile.id,
       status: ProductStatus.PUBLISHED,
-      images: [
-        { url: assetUrls.studdedBeltFront },
-      ],
+      images: [{ url: assetUrls.studdedBeltFront }],
       options: [{ title: "Size", values: ["ONESIZE"] }],
       variants: [
         {
@@ -396,9 +396,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       category_ids: [beanies],
       shipping_profile_id: shippingProfile.id,
       status: ProductStatus.PUBLISHED,
-      images: [
-        { url: assetUrls.h2bcBeanieFront },
-      ],
+      images: [{ url: assetUrls.h2bcBeanieFront }],
       options: [{ title: "Size", values: ["ONESIZE"] }],
       variants: [
         {
@@ -471,8 +469,8 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   logger.info("Inventory");
   const inventoryBySku: Record<string, number> = {
-    "h2bc-beanie": 0,
-    "cat-studded-belt": 0,
+    "h2bc-beanie": 10,
+    "cat-studded-belt": 10,
   };
 
   const { data: inventoryItems } = await query.graph({
