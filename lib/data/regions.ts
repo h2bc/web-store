@@ -14,7 +14,9 @@ const fetchRegionsFromAPI = cached(
       id: r.id,
       name: r.name,
       shortName:
-        typeof r.metadata?.shortName === 'string' ? r.metadata.shortName : '???',
+        typeof r.metadata?.shortName === 'string'
+          ? r.metadata.shortName
+          : r.currency_code.toUpperCase(),
       currencyCode: r.currency_code,
     }))
   },

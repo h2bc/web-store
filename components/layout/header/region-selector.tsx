@@ -27,12 +27,14 @@ export default function RegionSelector({
 }: RegionSelectorProps) {
   const [isPending, startTransition] = useTransition()
 
-  const displayLabel = currentRegion?.shortName || '???'
-
   const handleRegionChange = (regionId: string) => {
     startTransition(async () => {
       await onRegionChange(regionId)
     })
+  }
+
+  if (!currentRegion || regions.length === 0) {
+    return null
   }
 
   return (
@@ -43,7 +45,7 @@ export default function RegionSelector({
           disabled={disabled || isPending}
           className="gap-1 md:px-6"
         >
-          {displayLabel}
+          {currentRegion.shortName}
           <ChevronDown size={16} />
         </Button>
       </DropdownMenuTrigger>

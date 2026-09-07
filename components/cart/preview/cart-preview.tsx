@@ -99,7 +99,7 @@ export default function CartPreview({ cart }: CartPreviewProps) {
               />
 
               <div className="flex items-center justify-between py-2 text-sm">
-                <span className="text-muted-foreground">Subtotal (VAT included)</span>
+                <span className="text-muted-foreground">Subtotal</span>
                 <span className="font-medium">
                   {formatPrice(cart?.item_total, cart?.currency_code)}
                 </span>

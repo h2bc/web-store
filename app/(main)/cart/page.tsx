@@ -74,7 +74,7 @@ export default async function CartPage() {
 
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">
-                      Subtotal (VAT included)
+                      Subtotal
                     </span>
                     <span className="font-medium">
                       {formatPrice(cart?.item_total, cart?.currency_code)}

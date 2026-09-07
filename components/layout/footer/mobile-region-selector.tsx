@@ -28,13 +28,15 @@ export default function MobileRegionSelector({
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
 
-  const displayLabel = currentRegion?.shortName || '???'
-
   const handleRegionChange = (regionId: string) => {
     startTransition(async () => {
       await onRegionChange(regionId)
       setOpen(false)
     })
+  }
+
+  if (!currentRegion || regions.length === 0) {
+    return null
   }
 
   return (
@@ -45,7 +47,7 @@ export default function MobileRegionSelector({
         className="gap-1 tracking-wide"
         onClick={() => setOpen(true)}
       >
-        {displayLabel}
+        {currentRegion.shortName}
         <ChevronDown size={16} />
       </Button>
 

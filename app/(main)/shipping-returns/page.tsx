@@ -28,7 +28,7 @@ export default function ShippingReturnsPage() {
             </li>
             <li>
               <strong>European Union:</strong> Flat rate <strong>5.99 €</strong>{' '}
-              per order. Free shipping for orders over <strong>50 €</strong>.
+              per order. Free shipping for orders over <strong>60 €</strong>.
               Delivery in <strong>5–10 working days</strong>.
             </li>
             <li>
