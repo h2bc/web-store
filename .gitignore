@@ -1,0 +1,6 @@
+.env
+.env.*
+!.env.example
+!.env.template
+.claude/settings.local.json
+.DS_Store

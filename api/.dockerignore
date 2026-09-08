@@ -1,0 +1,9 @@
+node_modules
+.medusa
+.pnpm-store
+.env
+.env.*
+static
+uploads
+coverage
+.git

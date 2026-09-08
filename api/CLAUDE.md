@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Medusa v2 e-commerce application (version 2.10.2). Medusa is a composable commerce platform built with TypeScript that provides modular commerce functionality through independent modules.
+This is a Medusa v2 e-commerce application (version 2.13.1). Medusa is a composable commerce platform built with TypeScript that provides modular commerce functionality through independent modules.
 
 ## Commands
 
@@ -106,7 +106,7 @@ Integration tests use `@medusajs/test-utils`:
 - **Runtime**: Node.js >=20
 - **Language**: TypeScript 5.6+
 - **ORM**: MikroORM 6.4.3 with PostgreSQL
-- **Framework**: Medusa 2.10.2
+- **Framework**: Medusa 2.13.1
 - **Testing**: Jest 29 with SWC
 - **Admin UI**: React 18 with Vite 5
 - **Dependency Injection**: Awilix 8

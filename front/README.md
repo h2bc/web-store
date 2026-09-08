@@ -23,14 +23,7 @@
 
 ### Prerequisites
 
-To use this storefront, you need a Medusa server running locally on port 9000.
-For a quick setup, run:
-
-```shell
-npx create-medusa-app@latest
-```
-
-Check out [create-medusa-app docs](https://docs.medusajs.com/learn/installation) for more details.
+The Medusa server lives in `../api` and runs on port 9000 inside the shared devcontainer.
 
 ---
 
@@ -65,7 +58,7 @@ Features:
 Navigate into the project directory and copy the example:
 
 ```shell
-cd h2bc-web-front/
+cd front/
 cp .env.example .env.local
 ```
 
@@ -74,13 +67,13 @@ Edit `.env.local` with your Medusa backend configuration.
 ### Install dependencies
 
 ```shell
-npm install
+pnpm i --frozen
 ```
 
 ### Start developing
 
 ```shell
-npm run dev
+pnpm dev
 ```
 
 Your site is now running at http://localhost:3000
@@ -88,8 +81,8 @@ Your site is now running at http://localhost:3000
 ### Build for production
 
 ```shell
-npm run build
-npm start
+pnpm build
+pnpm start
 ```
 
 ### Run with Docker
