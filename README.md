@@ -15,4 +15,4 @@ Env files: copy `api/.env.template` → `api/.env` and `front/.env.example` → 
 
 ## Deploy
 
-Pushes to `main` build and push an image per changed app, then trigger the deploy in `h2bc/web-store-deploy`.
+Every push to `main` lints the storefront, builds and pushes both images, then triggers the deploy in `h2bc/web-store-deploy` once with both image refs.
