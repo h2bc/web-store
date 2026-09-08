@@ -1,5 +1,5 @@
 export default {
-  site: 'https://dev.h2bcweb.com',
+  site: 'http://localhost:3000',
   puppeteerOptions: {
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   },

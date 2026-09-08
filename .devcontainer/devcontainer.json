@@ -19,7 +19,8 @@
       "browsers": "chromium"
     },
     "ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
-    "ghcr.io/nullcoder/devcontainer-features/stripe-cli:1": {}
+    "ghcr.io/nullcoder/devcontainer-features/stripe-cli:1": {},
+    "ghcr.io/jrussellsmyth/devcontainer-features/openspec:1": {}
   },
   "remoteEnv": {
     "SSH_AUTH_SOCK": "/ssh-agent.sock",
