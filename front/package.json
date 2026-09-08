@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
     "format": "prettier --write ."
   },
   "dependencies": {
@@ -58,7 +59,9 @@
     "prettier": "^3.6.2",
     "shadcn": "^3.8.4",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite": "^8.2.2",
+    "vitest": "^5.0.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

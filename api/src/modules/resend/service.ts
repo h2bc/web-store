@@ -18,7 +18,9 @@ enum Templates {
   PASSWORD_RESET = "password-reset",
 }
 
-const templates: { [key in Templates]?: (props: any) => React.ReactNode } = {
+const templates: {
+  [key in Templates]?: (props: Record<string, unknown>) => React.ReactNode;
+} = {
   [Templates.ORDER_PLACED]: orderPlacedEmail,
   [Templates.USER_INVITED]: userInvitedEmail,
   [Templates.PASSWORD_RESET]: passwordResetEmail,
@@ -54,7 +56,7 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
     this.logger = logger;
   }
 
-  static validateOptions(options: Record<any, any>) {
+  static validateOptions(options: Record<string, unknown>) {
     if (!options.api_key) {
       throw new MedusaError(
         MedusaError.Types.INVALID_DATA,

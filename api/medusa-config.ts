@@ -105,7 +105,7 @@ module.exports = defineConfig({
       jwtSecret: process.env.JWT_SECRET || "supersecret",
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
-    //@ts-ignore
+    // @ts-expect-error workerMode is missing from the project config type
     workerMode: process.env.MEDUSA_WORKER_MODE || "shared",
   },
   admin: {

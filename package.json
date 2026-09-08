@@ -1,0 +1,25 @@
+{
+  "name": "h2bc-web-store",
+  "private": true,
+  "packageManager": "pnpm@10.34.5",
+  "scripts": {
+    "install:api": "pnpm --dir api i --frozen",
+    "install:front": "pnpm --dir front i --frozen",
+    "migrate": "pnpm --dir api predeploy",
+    "dev:api": "pnpm --dir api dev",
+    "dev:front": "pnpm --dir front dev",
+    "lint:api": "pnpm --dir api lint",
+    "lint:front": "pnpm --dir front lint",
+    "typecheck": "tsc --noEmit",
+    "typecheck:api": "pnpm --dir api typecheck",
+    "typecheck:front": "pnpm --dir front typecheck",
+    "test:api": "pnpm --dir api test",
+    "test:front": "pnpm --dir front test",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.5.0",
+    "typescript": "^5.9.3"
+  }
+}

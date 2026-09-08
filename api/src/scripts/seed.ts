@@ -130,7 +130,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
   });
 
   const ltRegion = regions.find((r) => r.name === "Lithuania")!;
-  const euRegion = regions.find((r) => r.name === "Rest of Europe")!;
 
   await updateStoresWorkflow(container).run({
     input: {
@@ -478,13 +477,18 @@ export default async function seedDemoData({ container }: ExecArgs) {
     fields: ["id", "sku"],
   });
 
-  const inventoryLevels: CreateInventoryLevelInput[] = inventoryItems
-    .filter((i: any) => inventoryBySku[i.sku] !== undefined)
-    .map((i: any) => ({
-      location_id: stockLocation.id,
-      inventory_item_id: i.id,
-      stocked_quantity: inventoryBySku[i.sku],
-    }));
+  const inventoryLevels: CreateInventoryLevelInput[] = inventoryItems.flatMap(
+    (i) =>
+      i.sku && inventoryBySku[i.sku] !== undefined
+        ? [
+            {
+              location_id: stockLocation.id,
+              inventory_item_id: i.id,
+              stocked_quantity: inventoryBySku[i.sku],
+            },
+          ]
+        : [],
+  );
 
   await createInventoryLevelsWorkflow(container).run({
     input: { inventory_levels: inventoryLevels },

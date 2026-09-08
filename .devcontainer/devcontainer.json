@@ -15,6 +15,9 @@
     "ghcr.io/devcontainers-extra/features/pnpm:2": {
       "version": "10"
     },
+    "ghcr.io/schlich/devcontainer-features/playwright:0": {
+      "browsers": "chromium"
+    },
     "ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
     "ghcr.io/nullcoder/devcontainer-features/stripe-cli:1": {}
   },
@@ -22,7 +25,7 @@
     "SSH_AUTH_SOCK": "/ssh-agent.sock",
     "CLAUDE_CONFIG_DIR": "/claude"
   },
-  "postCreateCommand": "cd /workspace/api && pnpm i --frozen && pnpm predeploy && cd /workspace/front && pnpm i --frozen",
+  "postCreateCommand": "pnpm i --frozen && pnpm install:api && pnpm install:front && pnpm migrate",
   "forwardPorts": [9000, 3000],
   "runServices": ["db", "redis"],
   "shutdownAction": "stopCompose",
@@ -34,7 +37,9 @@
         "esbenp.prettier-vscode",
         "ms-ossdata.vscode-pgsql",
         "github.vscode-github-actions",
-        "bradlc.vscode-tailwindcss"
+        "bradlc.vscode-tailwindcss",
+        "ms-playwright.playwright",
+        "jackiotyu.git-worktree-manager"
       ]
     }
   },

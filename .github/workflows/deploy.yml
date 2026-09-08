@@ -1,41 +1,117 @@
-name: Deploy
+name: CI
 
 on:
   push:
     branches:
       - main
+  pull_request:
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
 
 jobs:
-  lint-front:
-    name: Lint storefront
+  check:
+    name: Lint, typecheck, unit tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: front
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '25'
-
-      - name: Install pnpm
-        run: npm i -g pnpm@10
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            api/pnpm-lock.yaml
+            front/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: pnpm i --frozen
+        run: pnpm i --frozen && pnpm install:api && pnpm install:front
 
-      - name: Run lint
-        run: pnpm lint
+      - name: Lint
+        run: pnpm lint:api && pnpm lint:front
+
+      - name: Typecheck
+        run: pnpm typecheck && pnpm typecheck:api && pnpm typecheck:front
+
+      - name: Unit tests
+        run: pnpm test:api && pnpm test:front
+
+  e2e:
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: medusa
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      CI: true
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/medusa
+      DISABLE_MEDUSA_ADMIN: 'true'
+      STORE_CORS: http://localhost:3000
+      ADMIN_CORS: http://localhost:9000
+      AUTH_CORS: http://localhost:3000,http://localhost:9000
+      JWT_SECRET: ci
+      COOKIE_SECRET: ci
+      MEDUSA_BACKEND_URL: http://localhost:9000
+      DEFAULT_REGION_ID: ci
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '25'
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            api/pnpm-lock.yaml
+            front/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm i --frozen && pnpm install:api && pnpm install:front
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run migrations
+        run: pnpm migrate
+
+      - name: Run Playwright
+        run: pnpm test
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
 
   build-api:
     name: Publish API image
+    if: github.event_name != 'pull_request'
+    needs: [check, e2e]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -78,8 +154,9 @@ jobs:
 
   build-front:
     name: Publish storefront image
+    if: github.event_name != 'pull_request'
+    needs: [check, e2e]
     runs-on: ubuntu-latest
-    needs: lint-front
     permissions:
       contents: read
       packages: write
