@@ -15,11 +15,13 @@
     "typecheck:front": "pnpm --dir front typecheck",
     "test:api": "pnpm --dir api test",
     "test:front": "pnpm --dir front test",
-    "test": "playwright test"
+    "test": "playwright test",
+    "lighthouse": "unlighthouse-ci --config-file unlighthouse.config.ts --build-static"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@types/node": "^26.5.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "unlighthouse": "^0.18.0"
   }
 }
