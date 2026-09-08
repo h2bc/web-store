@@ -4,3 +4,5 @@
 !.env.template
 .claude/settings.local.json
 .DS_Store
+.pnpm-store/
+node_modules/
