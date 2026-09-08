@@ -28,8 +28,8 @@ Non-goals:
 
 ## Impact
 
-- `front/` only. New `app/sitemap.ts`, `app/robots.ts`, `app/opengraph-image.tsx`; metadata exports on every page; a JSON-LD component; data layer additions (`getProductHandles`, SEO and thumbnail fields on product detail); new env vars `SITE_URL` and `SEO_INDEXABLE` in `.env.example`.
+- `front/` only. One dev dependency, `schema-dts` (types only). New `app/sitemap.ts`, `app/robots.ts`, `app/opengraph-image.tsx`; metadata exports on every page; a JSON-LD component; data layer additions (`getProductHandles`, SEO and thumbnail fields on product detail); new env vars `SITE_URL` and `SEO_INDEXABLE` in `.env.example`.
 - Root `unlighthouse.config.ts` and the `lighthouse` script.
 - New Playwright e2e cases for metadata, sitemap and robots; unit tests for the metadata helpers.
-- Deploy repo `h2bc/web-store-deploy` must set `SITE_URL` and `SEO_INDEXABLE` for each environment (manual step, outside this repo).
+- Deploy repo `h2bc/web-store-deploy` must set `SITE_URL` and `SEO_INDEXABLE` per host: `dev.h2bcweb.com` now, `h2bcweb.com` when it launches (manual step, outside this repo).
 - No `api/` changes. Per-product overrides use the existing product metadata field edited in the admin.

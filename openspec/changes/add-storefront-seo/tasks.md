@@ -2,7 +2,7 @@
 
 - [ ] 1.1 Add `SITE_URL` and `SEO_INDEXABLE` to `front/.env.example`; create `front/lib/seo.ts` with `siteUrl()` (defaults to `http://localhost:3000` outside production, throws in production when unset) and `isIndexable()`; verify with a Vitest unit test covering both env states
 - [ ] 1.2 Add `truncateDescription(markdown, max)` to `lib/seo.ts` that strips Markdown and truncates at a word boundary; verify with unit tests for headings, links, long text and empty input
-- [ ] 1.3 Add `productMetadata(product)`, `productJsonLd(product, url)` and `organizationJsonLd()` helpers implementing the precedence rules in the spec; verify with unit tests for override, subtitle fallback, description fallback, no-image fallback, in-stock and sold-out availability
+- [ ] 1.3 Add `schema-dts` as a dev dependency in `front/`; add `productMetadata(product)`, `productJsonLd(product, url)` and `organizationJsonLd()` helpers typed with it implementing the precedence rules in the spec; verify with unit tests for override, subtitle fallback, description fallback, no-image fallback, in-stock and sold-out availability
 
 ## 2. front/ data layer
 
@@ -38,5 +38,5 @@
 
 - [ ] 7.1 Add Playwright e2e cases in `e2e/seo.spec.ts` asserting: product page title and canonical, `/sitemap.xml` returns 200 XML, `/robots.txt` returns `Disallow: /` when `SEO_INDEXABLE` is unset, `/cart` has noindex, unknown product returns 404; verify with `pnpm test` (CI has no catalog, so product assertions skip when the shop has no products)
 - [ ] 7.2 Run `pnpm lighthouse` against a local production build with the seeded catalog and confirm all pages pass the budgets; keep the report out of git
-- [ ] 7.3 After deploy, add `SITE_URL` and `SEO_INDEXABLE` in `h2bc/web-store-deploy`, validate one product URL in Google's Rich Results Test, and submit the sitemap in Search Console; verify the sitemap shows as processed
+- [ ] 7.3 After deploy, set `SITE_URL=https://dev.h2bcweb.com` and `SEO_INDEXABLE=true` for dev in `h2bc/web-store-deploy` (repeat for `h2bcweb.com` at launch), validate one product URL in Google's Rich Results Test, and submit the sitemap in Search Console; verify the sitemap shows as processed
 - [ ] 7.4 cd front && pnpm lint && pnpm typecheck

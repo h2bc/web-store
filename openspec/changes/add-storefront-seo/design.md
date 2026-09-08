@@ -26,7 +26,7 @@ See proposal.md for motivation. Constraints that shape the approach:
 `next-seo` predates the App Router and duplicates what `generateMetadata` does; `next-sitemap` generates at build time and cannot see the catalog. Built-ins keep zero new dependencies and match the "stay close to stock" rule.
 
 **2. Site URL and indexability come from environment variables.**
-`SITE_URL` (absolute origin) feeds `metadataBase`, canonical URLs, the sitemap and JSON-LD. `SEO_INDEXABLE=true` enables indexing; anything else yields `Disallow: /` plus a `noindex` meta on every page. Default-off means previews and the current dev host cannot be indexed unless someone decides they should. Deriving the origin from the `Host` header was rejected: behind Caddy and Cloudflare it is unreliable and lets a request forge canonicals. In development `SITE_URL` defaults to `http://localhost:3000`; in production the app throws at startup when it is missing, since a wrong origin poisons every canonical.
+`SITE_URL` (absolute origin) feeds `metadataBase`, canonical URLs, the sitemap and JSON-LD. `SEO_INDEXABLE=true` enables indexing; anything else yields `Disallow: /` plus a `noindex` meta on every page. Default-off means previews cannot be indexed unless someone decides they should. Decision: `dev.h2bcweb.com` is indexable now, and `h2bcweb.com` becomes indexable when it goes live. Two indexable hosts with the same catalog compete for the same queries, so once production is live, dev either gets `SEO_INDEXABLE` removed or its `SITE_URL` set to `https://h2bcweb.com`, which makes every dev canonical point at production and lets Google consolidate the pair. No code depends on this choice. Deriving the origin from the `Host` header was rejected: behind Caddy and Cloudflare it is unreliable and lets a request forge canonicals. In development `SITE_URL` defaults to `http://localhost:3000`; in production the app throws at startup when it is missing, since a wrong origin poisons every canonical.
 
 **3. Per-product overrides via product `metadata.seo_title` and `metadata.seo_description`.**
 The product detail query already fetches `metadata`. The admin lets the owner edit key/value pairs on a product, so no `api/` module, link or admin widget is needed. A dedicated SEO entity was rejected as over-engineering for a catalog of this size.
@@ -40,7 +40,7 @@ The product detail query already fetches `metadata`. The admin lets the owner ed
 Pure functions: `siteUrl()`, `isIndexable()`, `productMetadata(product)`, `productJsonLd(product)`, `organizationJsonLd()`, `truncateDescription(markdown)`. Pure functions are unit-testable with Vitest without a running backend, and pages stay thin.
 
 **6. JSON-LD is rendered as an inline script from a small server component.**
-`JSON.stringify` output has `<` escaped as `<` so product descriptions cannot break out of the script tag. The `Offer` uses the lowest purchasable variant price and the currency the data layer already returns; availability maps from the existing `manage_inventory` / `inventory_quantity` logic. The crawler sees default-region pricing, which is acceptable: Google documents that price in structured data should match the price a user in the crawler's locale would see, and the default region is the store's home market.
+Objects are typed with `schema-dts` (Google's Schema.org TypeScript definitions, types only, dev dependency in `front/`) so a misspelled property fails `pnpm typecheck` instead of surfacing in the Rich Results Test. `JSON.stringify` output has `<` escaped as `<` so product descriptions cannot break out of the script tag. The `Offer` uses the lowest purchasable variant price and the currency the data layer already returns; availability maps from the existing `manage_inventory` / `inventory_quantity` logic. The crawler sees default-region pricing, which is acceptable: Google documents that price in structured data should match the price a user in the crawler's locale would see, and the default region is the store's home market.
 
 **7. Canonical URLs are declared per page, resolved against `metadataBase`.**
 The root layout does not know the request path, so each page sets `alternates.canonical` to its own relative path. The shop page always declares `/shop`, ignoring the `category` query. Product pages declare `/shop/<handle>`.
@@ -57,7 +57,10 @@ Once the App Router starts streaming, an `error.tsx` boundary cannot change the 
 **11. Home page gets a visually hidden `h1` and real copy in metadata.**
 A screen-reader-only heading keeps the visual design untouched while giving crawlers a page topic. The root description becomes a one-sentence brand description; final wording is an open question but any real sentence beats the placeholder.
 
-**12. Lighthouse config becomes environment-driven with budgets.**
+**12. The storefront stays English.**
+Decision confirmed with the owner: `lang="en"`, `og:locale` `en_US`, English copy. The metadata layer hardcodes nothing locale-specific beyond those two values, so a later Lithuanian or bilingual change replaces them without touching the sitemap, canonicals or structured data.
+
+**13. Lighthouse config becomes environment-driven with budgets.**
 `site` reads `LIGHTHOUSE_SITE`, `scanner.exclude` lists `/cart`, `/checkout/*`, `/order/*`, and `ci.budget` sets `seo: 100`, `accessibility: 90`, `best-practices: 90`, `performance: 70`. The performance budget is deliberately loose until the 3D and video pages are tuned. The root script keeps `--build-static`. The README documents that the target must be a production build (`next build && next start`, or the deployed host) because a dev server fails minification and source-map audits and inflates every timing.
 
 ## Risks / Trade-offs
@@ -71,11 +74,11 @@ A screen-reader-only heading keeps the visual design untouched while giving craw
 
 ## Migration Plan
 
-1. Deploy the storefront with `SITE_URL` set and `SEO_INDEXABLE` unset. Nothing is indexed; metadata is inspectable.
-2. Set `SEO_INDEXABLE=true` on the host verified in Search Console and submit `/sitemap.xml` there.
-3. Rollback is removing the env var: robots returns `Disallow: /` and pages carry `noindex`.
+1. Deploy `dev.h2bcweb.com` with `SITE_URL=https://dev.h2bcweb.com` and `SEO_INDEXABLE=true`; submit `/sitemap.xml` in Search Console.
+2. When `h2bcweb.com` goes live, deploy it with its own `SITE_URL` and `SEO_INDEXABLE=true`, verify it in Search Console, and submit its sitemap.
+3. Then de-duplicate dev per decision 2 (drop `SEO_INDEXABLE` or point its `SITE_URL` at production).
+4. Rollback on any host is removing `SEO_INDEXABLE`: robots returns `Disallow: /` and pages carry `noindex`.
 
 ## Open Questions
 
 - Final wording of the site description and the hidden home heading. Any real sentence can ship; the owner can refine later without touching structure.
-- Which host is indexable first. Today only `dev.h2bcweb.com` exists and Search Console is verified against it; the env toggle makes this a deployment decision, not a code one.
