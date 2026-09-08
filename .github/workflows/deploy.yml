@@ -37,7 +37,6 @@ jobs:
   build-api:
     name: Publish API image
     runs-on: ubuntu-latest
-    environment: dev
     permissions:
       contents: read
       packages: write
@@ -81,7 +80,6 @@ jobs:
     name: Publish storefront image
     runs-on: ubuntu-latest
     needs: lint-front
-    environment: dev
     permissions:
       contents: read
       packages: write
@@ -125,6 +123,7 @@ jobs:
     name: Trigger deploy
     runs-on: ubuntu-latest
     needs: [build-api, build-front]
+    environment: dev
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
