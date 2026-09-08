@@ -1,0 +1,30 @@
+schema: spec-driven
+
+context: |
+  ## What h2bc is
+  Small Lithuanian streetwear brand (@_h2bc on Instagram and YouTube).
+  Blackletter + pink visual identity. Sells its own apparel and
+  accessories to Lithuania and the EU. Catalog, prices, regions and shipping rates
+  are configured in the Medusa admin, not in code.
+
+  ## Architecture
+  - api/ is a Medusa v2 backend and stays as close to stock as possible. Customize
+    only through Medusa's extension points (modules, workflows, subscribers, routes,
+    links). Anything a shop owner should be able to change (catalog, pricing,
+    regions, shipping, payment providers) belongs in the admin, not in code.
+  - External services (payments, email, file storage, Redis) are optional and
+    switched on by env. Local dev must work with none of them configured.
+  - front/ is a server-first Next.js storefront. Components never talk to the
+    backend directly; every call goes through the server-only data layer in
+    lib/data/, which returns { data, error } and never throws, so the site
+    degrades instead of crashing when the backend is unreachable.
+  - Reads are cached with tags and invalidated on mutation. Session state
+    (region, cart) lives in httpOnly cookies, never in client state.
+  - Checkout is guest-only by design. No accounts, no login, no order history.
+
+rules:
+  proposal:
+    - Keep it short. State the change, the reason, and non-goals.
+  tasks:
+    - Split tasks by app (api/, front/); do api/ first when the storefront needs new endpoints.
+    - End with "cd front && pnpm lint && pnpm typecheck" when the storefront changes.

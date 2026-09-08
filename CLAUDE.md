@@ -1,25 +1,8 @@
 # CLAUDE.md
 
-Single repo for the h2bc web store: Medusa v2 API and Next.js storefront, side by side.
+h2bc web store: Medusa v2 API in `api/` (port 9000, admin at `/app`), Next.js storefront in `front/` (port 3000). Two independent pnpm projects, no root `package.json`, no workspace.
 
-## Layout
+## Code style
 
-- `api/` — Medusa v2 backend (port 9000, admin at `/app`). See `api/CLAUDE.md`.
-- `front/` — Next.js storefront (port 3000). See `front/CLAUDE.md`.
-- `.devcontainer/` — one container for both, plus `db` (postgres) and `redis` sidecars.
-- `.github/workflows/deploy.yml` — on every push to `main`: lint the storefront, build and push both images (`ghcr.io/<repo>/api`, `ghcr.io/<repo>/front`, tagged `latest` + `sha-<short>`), then trigger the deploy in `h2bc/web-store-deploy` once with both image refs.
-
-The two apps are independent pnpm projects (own `package.json` and lockfile, no workspace). Their Dockerfiles build with the app directory as context.
-
-## Running things
-
-**Always `cd` into `api/` or `front/` first.** There is no root `package.json`. In particular, `api/medusa-config.ts` loads `.env` from `process.cwd()` — running `medusa` from the repo root silently loads no env and fails with confusing DB/CORS errors.
-
-- API: `cd api && pnpm dev`
-- Storefront: `cd front && pnpm dev`
-- Both run inside the same devcontainer, so the storefront reaches the API at `http://localhost:9000`.
-
-## Env files
-
-- `api/.env` (from `api/.env.template`) — also read by the devcontainer's `db` service for `POSTGRES_*`.
-- `front/.env.local` (from `front/.env.example`).
+- Do not preserve legacy compatibility. When behavior, APIs, configs, or schemas change, update callers and tests to the new shape directly. Remove obsolete paths, shims, aliases, compatibility layers, deprecation scaffolding, and dead code instead of leaving them behind.
+- Keep comments minimal and useful. Add them only when the code is not obvious.
