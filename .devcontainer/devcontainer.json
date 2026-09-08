@@ -1,18 +1,13 @@
 {
-  "name": "h2bc-web-dev",
-  "image": "node:25",
+  "name": "h2bc-web-store-dev",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
   "workspaceFolder": "/workspace",
-  "runArgs": ["--network=h2bc-web-dev"],
   "mounts": [
     "type=bind,source=${localWorkspaceFolder},target=/workspace",
-    "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent.sock,type=bind",
+    "source=${localEnv:HOME}/.ssh/agent.sock,target=/ssh-agent.sock,type=bind",
     "type=bind,source=${localEnv:HOME}/.claude,target=/claude"
   ],
-  "postCreateCommand": "pnpm i --frozen",
-  "remoteEnv": {
-    "SSH_AUTH_SOCK": "/ssh-agent.sock",
-    "CLAUDE_CONFIG_DIR": "/claude"
-  },
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {
       "username": "node"
@@ -20,13 +15,24 @@
     "ghcr.io/devcontainers-extra/features/pnpm:2": {
       "version": "10"
     },
-    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
+    "ghcr.io/nullcoder/devcontainer-features/stripe-cli:1": {}
   },
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "/ssh-agent.sock",
+    "CLAUDE_CONFIG_DIR": "/claude"
+  },
+  "postCreateCommand": "cd /workspace/api && pnpm i --frozen && pnpm predeploy && cd /workspace/front && pnpm i --frozen",
+  "forwardPorts": [9000, 3000],
+  "runServices": ["db", "redis"],
+  "shutdownAction": "stopCompose",
   "customizations": {
     "vscode": {
       "extensions": [
         "anthropic.claude-code",
         "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-ossdata.vscode-pgsql",
         "github.vscode-github-actions",
         "bradlc.vscode-tailwindcss"
       ]
