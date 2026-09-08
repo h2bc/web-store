@@ -15,4 +15,4 @@ Env files: copy `api/.env.template` → `api/.env` and `front/.env.example` → 
 
 ## Deploy
 
-Pushes to `main` build a Docker image per changed app (`.github/workflows/`), tagged `:dev`; `v*` tags build both. Images are pulled by the compose stack in `web-store-deploy`.
+Pushes to `main` build and push an image per changed app, then trigger the deploy in `h2bc/web-store-deploy`.

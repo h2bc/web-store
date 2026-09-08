@@ -83,7 +83,7 @@ Examples:
 - Cookie utilities in `lib/cookies.ts` (`getRegionId`, `setRegionId`)
 - Region data fetched from Medusa backend with custom cache wrapper (`cached` from `lib/cache.ts`, 1-hour revalidation)
 - Proxy (`proxy.ts`) sets default region_id cookie if not present
-- Fallback to `NEXT_PUBLIC_DEFAULT_REGION_ID` environment variable
+- Fallback to `DEFAULT_REGION_ID` environment variable
 - Selected via region selector in header
 
 ### Cart Management
@@ -109,10 +109,9 @@ The project uses a custom cache wrapper (`cached` from `lib/cache.ts`) instead o
 
 Required in `.env.local` (see `.env.example`):
 
-- `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` - Medusa store API key
-- `NEXT_PUBLIC_MEDUSA_BACKEND_URL` - Medusa backend URL (defaults to http://localhost:9000)
-- `NEXT_PUBLIC_DEFAULT_REGION_ID` - Fallback region ID (used by proxy)
-- `NEXT_PUBLIC_BASE_URL` - Frontend URL (defaults to http://localhost:3000)
+- `MEDUSA_PUBLISHABLE_KEY` - Medusa store API key
+- `MEDUSA_BACKEND_URL` - Medusa backend URL (defaults to http://localhost:9000)
+- `DEFAULT_REGION_ID` - Fallback region ID (used by proxy)
 - `DISABLE_CACHE` - Set to `true` to disable Next.js caching during development (optional, defaults to false)
 
 ### Styling Approach

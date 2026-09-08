@@ -1,5 +1,12 @@
-import { loadStripe } from '@stripe/stripe-js'
+import { loadStripe, type Stripe } from '@stripe/stripe-js'
 
-const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+const cache = new Map<string, Promise<Stripe | null>>()
 
-export const stripePromise = key ? loadStripe(key) : null
+export function getStripe(publishableKey: string): Promise<Stripe | null> {
+  let promise = cache.get(publishableKey)
+  if (!promise) {
+    promise = loadStripe(publishableKey)
+    cache.set(publishableKey, promise)
+  }
+  return promise
+}

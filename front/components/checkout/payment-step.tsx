@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   Elements,
@@ -12,7 +12,7 @@ import { toast } from 'sonner'
 import type { HttpTypes } from '@medusajs/types'
 import { Button } from '@/components/ui/button'
 import ErrorAlert from '@/components/feedback/error-alert'
-import { stripePromise } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { completeCart } from '@/lib/data/cart'
 import { getClientSecret } from '@/lib/payment-provider'
 
@@ -20,6 +20,7 @@ interface PaymentStepProps {
   cart: HttpTypes.StoreCart
   clientSecret: string | null
   error: string | null
+  stripePublishableKey: string | null
 }
 
 function PaymentForm({ cart }: { cart: HttpTypes.StoreCart }) {
@@ -119,14 +120,20 @@ export default function PaymentStep({
   cart,
   clientSecret,
   error,
+  stripePublishableKey,
 }: PaymentStepProps) {
+  const stripePromise = useMemo(
+    () => (stripePublishableKey ? getStripe(stripePublishableKey) : null),
+    [stripePublishableKey]
+  )
+
   if (error || !clientSecret) {
     return <ErrorAlert message={error ?? 'Could not start the payment.'} />
   }
 
   if (!stripePromise) {
     return (
-      <ErrorAlert message="Payments are unavailable: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set." />
+      <ErrorAlert message="Payments are unavailable: STRIPE_PUBLISHABLE_KEY is not set." />
     )
   }
 

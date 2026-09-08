@@ -7,7 +7,7 @@ Single repo for the h2bc web store: Medusa v2 API and Next.js storefront, side b
 - `api/` — Medusa v2 backend (port 9000, admin at `/app`). See `api/CLAUDE.md`.
 - `front/` — Next.js storefront (port 3000). See `front/CLAUDE.md`.
 - `.devcontainer/` — one container for both, plus `db` (postgres) and `redis` sidecars.
-- `.github/workflows/` — `api.yml` and `front.yml`, each path-scoped to its app, each pushing its own image (`ghcr.io/<repo>/api`, `ghcr.io/<repo>/front`).
+- `.github/workflows/` — `api.yml` and `front.yml`: build and push each app's image, then trigger the deploy in `h2bc/web-store-deploy`.
 
 The two apps are independent pnpm projects (own `package.json` and lockfile, no workspace). Their Dockerfiles build with the app directory as context.
 

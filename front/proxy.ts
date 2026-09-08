@@ -7,9 +7,9 @@ export async function proxy(request: NextRequest) {
   const regionId = request.cookies.get('region_id')?.value
 
   if (!regionId) {
-    const defaultRegionId = process.env.NEXT_PUBLIC_DEFAULT_REGION_ID
+    const defaultRegionId = process.env.DEFAULT_REGION_ID
     if (!defaultRegionId) {
-      throw new Error('NEXT_PUBLIC_DEFAULT_REGION_ID is not set')
+      throw new Error('DEFAULT_REGION_ID is not set')
     }
     response.cookies.set('region_id', defaultRegionId, {
       maxAge: 60 * 60 * 24 * 365, // 1 year

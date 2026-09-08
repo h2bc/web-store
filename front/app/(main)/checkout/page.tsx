@@ -149,6 +149,7 @@ export default async function CheckoutPage({
                 cart={cartWithSession ?? cart}
                 clientSecret={clientSecret}
                 error={paymentError}
+                stripePublishableKey={process.env.STRIPE_PUBLISHABLE_KEY ?? null}
               />
             </CheckoutStepSection>
           </div>
