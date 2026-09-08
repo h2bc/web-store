@@ -1,9 +1,12 @@
+'use client'
+
 import SocialIcons from './social-icons'
 import RightsNotice from './rights-notice'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import MobileRegionSelector from './mobile-region-selector'
-import { setRegionId } from '@/lib/cookies'
+import { changeRegion } from '@/lib/data/cart'
 import type { RegionSummary } from '@/lib/types/region'
 
 const FOOTER_LINKS = [
@@ -23,6 +26,8 @@ export default function FooterBar({
   currentRegion,
   regionSelectorDisabled,
 }: FooterBarProps) {
+  const isCheckout = usePathname().startsWith('/checkout')
+
   return (
     <footer className="w-full px-4 sm:px-8 md:px-12 lg:px-18 pt-8 sm:pt-10 md:pt-12 pb-6 sm:pb-8 md:pb-10 lg:pb-10 text-sm">
       <div className="flex justify-center pb-4 sm:hidden">
@@ -30,7 +35,7 @@ export default function FooterBar({
           regions={regions}
           currentRegion={currentRegion}
           disabled={regionSelectorDisabled}
-          onRegionChange={setRegionId}
+          onRegionChange={changeRegion}
         />
       </div>
 
@@ -55,11 +60,11 @@ export default function FooterBar({
               regions={regions}
               currentRegion={currentRegion}
               disabled={regionSelectorDisabled}
-              onRegionChange={setRegionId}
+              onRegionChange={changeRegion}
             />
           </div>
           <RightsNotice />
-          <SocialIcons />
+          {!isCheckout && <SocialIcons />}
         </div>
       </div>
     </footer>

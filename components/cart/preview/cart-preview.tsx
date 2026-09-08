@@ -29,15 +29,13 @@ export default function CartPreview({ cart }: CartPreviewProps) {
   const [open, setOpen] = useState(false)
   const items = cart?.items ?? []
 
-  const itemCount =
-    items.reduce((total, item) => total + item.quantity, 0) ?? 0
+  const itemCount = items.reduce((total, item) => total + item.quantity, 0) ?? 0
+  const isCheckout = pathname.startsWith('/checkout')
 
   const handleCartClick = () => {
-    // If on cart or checkout page, redirect to cart
-    if (pathname === '/cart' || pathname === '/checkout') {
+    if (pathname === '/cart' || isCheckout) {
       router.push('/cart')
     } else {
-      // Otherwise, open the drawer
       setOpen(true)
     }
   }
@@ -56,7 +54,7 @@ export default function CartPreview({ cart }: CartPreviewProps) {
   return (
     <>
       <Button variant="ghost" onClick={handleCartClick} aria-label="Cart">
-        {itemCount ? (
+        {itemCount && !isCheckout ? (
           <IconBadge badge={`${itemCount}`} badgeClassName="bg-pink-500">
             <ShoppingBag />
           </IconBadge>

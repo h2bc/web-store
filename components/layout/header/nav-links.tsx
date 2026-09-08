@@ -23,6 +23,11 @@ export default function NavLinks({
   onNavigate,
 }: NavLinksProps) {
   const pathname = usePathname()
+  const isCheckout = pathname.startsWith('/checkout')
+
+  if (isCheckout) {
+    return null
+  }
 
   return (
     <ul className={ulClassName}>

@@ -18,6 +18,8 @@ interface CartLineItemProps {
   onRemoveSuccess?: () => void
   onNavigate?: () => void
   imageSize?: 'sm' | 'md'
+  /** Hides the quantity stepper and remove button (used during checkout). */
+  readOnly?: boolean
 }
 
 const imageSizeConfig = {
@@ -31,6 +33,7 @@ export default function CartLineItem({
   onRemoveSuccess,
   onNavigate,
   imageSize = 'md',
+  readOnly = false,
 }: CartLineItemProps) {
   const router = useRouter()
   const [isRemoving, setIsRemoving] = useState(false)
@@ -144,49 +147,53 @@ export default function CartLineItem({
               {formatPrice(item.unit_price, currencyCode)}
             </div>
 
-            <div className="mt-3 flex items-center gap-3 sm:hidden">
-              <Stepper
-                value={quantity}
-                onChange={handleQuantityChange}
-                min={1}
-                max={maxQuantity}
-                disabled={isRemoving || isUpdating || isPending}
-              />
+            {!readOnly && (
+              <div className="mt-3 flex items-center gap-3 sm:hidden">
+                <Stepper
+                  value={quantity}
+                  onChange={handleQuantityChange}
+                  min={1}
+                  max={maxQuantity}
+                  disabled={isRemoving || isUpdating || isPending}
+                />
 
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={handleRemove}
-                disabled={isRemoving || isUpdating || isPending}
-                aria-label="Remove item"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={handleRemove}
+                  disabled={isRemoving || isUpdating || isPending}
+                  aria-label="Remove item"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="hidden items-center justify-end gap-3 sm:mt-0 sm:flex sm:shrink-0">
-          <Stepper
-            value={quantity}
-            onChange={handleQuantityChange}
-            min={1}
-            max={maxQuantity}
-            disabled={isRemoving || isUpdating || isPending}
-          />
+        {!readOnly && (
+          <div className="hidden items-center justify-end gap-3 sm:mt-0 sm:flex sm:shrink-0">
+            <Stepper
+              value={quantity}
+              onChange={handleQuantityChange}
+              min={1}
+              max={maxQuantity}
+              disabled={isRemoving || isUpdating || isPending}
+            />
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={handleRemove}
-            disabled={isRemoving || isUpdating || isPending}
-            aria-label="Remove item"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={handleRemove}
+              disabled={isRemoving || isUpdating || isPending}
+              aria-label="Remove item"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   )

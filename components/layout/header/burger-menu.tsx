@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { FiMenu } from 'react-icons/fi'
 import { X } from 'lucide-react'
 import NavLinks from './nav-links'
@@ -13,6 +14,10 @@ import {
 
 export default function BurgerMenu() {
   const [isOpen, setIsOpen] = useState(false)
+
+  if (usePathname().startsWith('/checkout')) {
+    return null
+  }
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>

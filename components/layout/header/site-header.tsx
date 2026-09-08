@@ -1,11 +1,10 @@
-import Link from 'next/link'
-import Image from 'next/image'
 import NavLinks from './nav-links'
+import HeaderLogo from './header-logo'
 import BurgerMenu from './burger-menu'
 import RegionSelector from './region-selector'
 import CartPreview from '@/components/cart/preview/cart-preview'
 import ClientToastErrorHandler from '@/components/feedback/client-toast-error-handler'
-import { setRegionId } from '@/lib/cookies'
+import { changeRegion } from '@/lib/data/cart'
 import { getCart } from '@/lib/data/cart'
 import type { RegionSummary } from '@/lib/types/region'
 
@@ -36,38 +35,17 @@ export default async function SiteHeader({
             <div className="md:hidden">
               <BurgerMenu />
             </div>
-
-            {/* desktop: logo on left */}
-            <Link href="/" aria-label="Home" className="hidden md:inline-flex">
-              <Image
-                src="/bw-logo.svg"
-                alt="h2bc"
-                width={200}
-                height={80}
-                className="h-12 md:h-18 w-auto"
-                preload
-              />
-            </Link>
+            <HeaderLogo position="left" />
           </div>
 
           {/* CENTER */}
           <div className="flex items-center justify-center">
-            {/* mobile: logo centered */}
-            <Link href="/" aria-label="Home" className="md:hidden inline-flex">
-              <Image
-                src="/bw-logo.svg"
-                alt="h2bc"
-                width={200}
-                height={80}
-                className="h-12 w-auto"
-                preload
-              />
-            </Link>
+            <HeaderLogo position="center" />
 
             {/* desktop: nav links centered */}
             <nav
               aria-label="Primary"
-              className="hidden md:flex items-center justify-center flex-1"
+              className="hidden md:flex items-center justify-center"
             >
               <NavLinks ulClassName="flex items-center gap-5 lg:gap-12 text-2xl leading-none tracking-wide" />
             </nav>
@@ -84,7 +62,7 @@ export default async function SiteHeader({
                 regions={regions}
                 currentRegion={currentRegion}
                 disabled={regionSelectorDisabled}
-                onRegionChange={setRegionId}
+                onRegionChange={changeRegion}
               />
             </div>
 

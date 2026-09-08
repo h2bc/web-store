@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { usePathname } from 'next/navigation'
 import { ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -27,6 +28,7 @@ export default function MobileRegionSelector({
 }: MobileRegionSelectorProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const isCheckout = usePathname().startsWith('/checkout')
 
   const handleRegionChange = (regionId: string) => {
     startTransition(async () => {
@@ -35,7 +37,7 @@ export default function MobileRegionSelector({
     })
   }
 
-  if (!currentRegion || regions.length === 0) {
+  if (!currentRegion || regions.length === 0 || isCheckout) {
     return null
   }
 

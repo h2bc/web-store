@@ -29,3 +29,8 @@ export async function setCartId(cartId: string) {
     httpOnly: true,
   })
 }
+
+export async function removeCartId() {
+  const cookieStore = await cookies()
+  cookieStore.delete('cart_id')
+}

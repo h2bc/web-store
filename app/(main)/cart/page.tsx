@@ -1,10 +1,9 @@
 import Link from 'next/link'
-import { AlertCircle } from 'lucide-react'
 import Heading from '@/components/layout/heading'
 import CartLineItem from '@/components/cart/cart-line-item'
 import CartEmptyState from '@/components/cart/cart-empty-state'
 import ShippingInfoAlert from '@/components/cart/shipping-info-alert'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import ErrorAlert from '@/components/feedback/error-alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -23,11 +22,7 @@ export default async function CartPage() {
     return (
       <div className="flex justify-center pt-15">
         <div className="max-w-4xl w-full flex flex-col">
-          <Alert variant="destructive" className="max-w-2xl">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <ErrorAlert message={error} />
         </div>
       </div>
     )
@@ -51,7 +46,10 @@ export default async function CartPage() {
             <section className="rounded-xl border divide-y">
               {items.map((item) => (
                 <div key={item.id} className="px-4 sm:px-6">
-                  <CartLineItem item={item} currencyCode={cart?.currency_code} />
+                  <CartLineItem
+                    item={item}
+                    currencyCode={cart?.currency_code}
+                  />
                 </div>
               ))}
             </section>
@@ -73,9 +71,7 @@ export default async function CartPage() {
                   <Separator />
 
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      Subtotal
-                    </span>
+                    <span className="text-muted-foreground">Subtotal</span>
                     <span className="font-medium">
                       {formatPrice(cart?.item_total, cart?.currency_code)}
                     </span>

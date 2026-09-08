@@ -1,8 +1,7 @@
 import CategoryFilter from '@/components/shop/category-filter'
 import ProductGrid from '@/components/shop/product-grid'
 import ClientToastErrorHandler from '@/components/feedback/client-toast-error-handler'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertCircle } from 'lucide-react'
+import ErrorAlert from '@/components/feedback/error-alert'
 import { headers } from 'next/headers'
 import { userAgent } from 'next/server'
 import { getCategories } from '@/lib/data/categories'
@@ -20,8 +19,7 @@ export default async function ShopPage({
 }) {
   const requestHeaders = await headers()
   const { device } = userAgent({ headers: requestHeaders })
-  const enableHoverImages =
-    device.type !== 'mobile' && device.type !== 'tablet'
+  const enableHoverImages = device.type !== 'mobile' && device.type !== 'tablet'
   const productPriorityCount = device.type === 'mobile' ? 1 : 4
 
   const { products, error: productsError } = await getProducts()
@@ -29,11 +27,7 @@ export default async function ShopPage({
   if (productsError) {
     return (
       <div className="flex justify-center pt-15">
-        <Alert variant="destructive" className="max-w-2xl">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{productsError}</AlertDescription>
-        </Alert>
+        <ErrorAlert message={productsError} />
       </div>
     )
   }
