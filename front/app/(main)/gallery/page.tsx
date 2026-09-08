@@ -4,6 +4,7 @@ export const metadata = {
 }
 
 const VIDEOS: { id: string; title: string }[] = [
+  { id: 'srRVUe4_wW4', title: 'verkei?' },
   { id: 'C8Hkml0CRmo', title: 'meduza' },
   { id: 'qI8fDbBXW2s', title: '2DRIP' },
 ]
