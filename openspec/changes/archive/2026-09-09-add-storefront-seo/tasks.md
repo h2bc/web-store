@@ -43,5 +43,5 @@
 ## 8. Verification
 
 - [x] 8.1 Add Playwright e2e cases in `e2e/seo.test.ts` asserting: every public page has one canonical under `SITE_URL`; the product page has a canonical, a Product JSON-LD with numeric price and currency, and appears in the sitemap; unknown product returns 404; `/cart` is noindex and no private URL is in the sitemap; robots and the shop page's robots meta follow `SEO_INDEXABLE`; every case that needs catalog data skips when the shop lists no products, including the 404 case; verify with `pnpm test:e2e` locally and with `MEDUSA_PUBLISHABLE_KEY` unset to mirror CI
-- [ ] 8.2 After deploy, set `SITE_URL=https://dev.h2bcweb.com` and `SEO_INDEXABLE=true` for dev in `h2bc/web-store-deploy` (repeat for `h2bcweb.com` at launch), validate one product URL in Google's Rich Results Test, and submit the sitemap in Search Console; verify the sitemap shows as processed
+- [x] 8.2 After deploy, set `SITE_URL=https://dev.h2bcweb.com` and `SEO_INDEXABLE=true` for dev in `h2bc/web-store-deploy` (repeat for `h2bcweb.com` at launch), validate one product URL in Google's Rich Results Test, and submit the sitemap in Search Console; verify the sitemap shows as processed
 - [x] 8.3 cd front && pnpm lint && pnpm typecheck
