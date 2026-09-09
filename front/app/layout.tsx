@@ -11,6 +11,8 @@ import {
   siteUrl,
 } from '@/lib/seo'
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(siteUrl()),

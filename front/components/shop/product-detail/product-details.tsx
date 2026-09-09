@@ -3,7 +3,7 @@ import { useMemo, useState, ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import SizeSelector from './size-selector'
-import { formatPrice } from '@/lib/utils'
+import { formatPrice, isVariantAvailable } from '@/lib/utils'
 import type {
   SizeOption,
   ProductVariant,
@@ -52,13 +52,10 @@ export default function ProductDetails({
   const [isAdding, setIsAdding] = useState(false)
   const [quantity, setQuantity] = useState(1)
 
-  const canAdd = useMemo(() => {
-    return (
-      selectedVariant &&
-      (!selectedVariant.manage_inventory ||
-        selectedVariant.inventory_quantity > 0)
-    )
-  }, [selectedVariant])
+  const canAdd = useMemo(
+    () => !!selectedVariant && isVariantAvailable(selectedVariant),
+    [selectedVariant]
+  )
 
   const maxQuantity = useMemo(() => {
     if (!selectedVariant?.manage_inventory) {
@@ -129,8 +126,7 @@ export default function ProductDetails({
         disabled={!canAdd || isAdding}
         onClick={handleAddToCart}
       >
-        {selectedVariant?.manage_inventory &&
-        selectedVariant.inventory_quantity <= 0
+        {selectedVariant && !isVariantAvailable(selectedVariant)
           ? 'Out of Stock'
           : isAdding
             ? 'Adding...'

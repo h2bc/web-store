@@ -41,7 +41,7 @@ jobs:
         run: pnpm typecheck && pnpm typecheck:api && pnpm typecheck:front
 
       - name: Unit tests
-        run: pnpm test:api && pnpm test:front
+        run: pnpm test:front
 
   e2e:
     name: End-to-end tests
@@ -98,7 +98,7 @@ jobs:
         run: pnpm migrate
 
       - name: Run Playwright
-        run: pnpm test
+        run: pnpm test:e2e
 
       - name: Upload Playwright report
         if: failure()

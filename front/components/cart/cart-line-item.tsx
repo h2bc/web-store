@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import Stepper from '@/components/ui/stepper'
 import { removeItemFromCart, updateItemQuantity } from '@/lib/data/cart'
 import { formatPrice } from '@/lib/utils'
+import { productPath } from '@/lib/routes'
 
 interface CartLineItemProps {
   item: HttpTypes.StoreCartLineItem
@@ -99,7 +100,7 @@ export default function CartLineItem({
             >
               {slug ? (
                 <Link
-                  href={`/shop/${slug}`}
+                  href={productPath(slug)}
                   className="relative block w-full h-full"
                   onClick={() => onNavigate?.()}
                 >
@@ -122,7 +123,7 @@ export default function CartLineItem({
           <div className="min-w-0 flex-1">
             {slug ? (
               <Link
-                href={`/shop/${slug}`}
+                href={productPath(slug)}
                 className="text-base font-medium hover:underline line-clamp-1"
                 onClick={() => onNavigate?.()}
               >

@@ -1,5 +1,4 @@
-'use server'
-
+import 'server-only'
 import { cache } from 'react'
 import { sdk } from '@/lib/medusa'
 import type { HttpTypes } from '@medusajs/types'
@@ -13,8 +12,25 @@ import type {
   ProductVariant,
   SizeOption,
 } from '@/lib/types/product-detail'
+import { isVariantAvailable, selectDisplayVariant } from '@/lib/utils'
 
 const CACHE_REVALIDATE_TIME = 60
+
+function toProductVariant(v: HttpTypes.StoreProductVariant): ProductVariant {
+  return {
+    id: v.id,
+    title: v.title ?? '',
+    price: v.calculated_price?.calculated_amount ?? 0,
+    currency: v.calculated_price?.currency_code ?? '',
+    inventory_quantity: v.inventory_quantity ?? 0,
+    manage_inventory: v.manage_inventory ?? false,
+    options:
+      v.options?.map((o) => ({
+        option_id: o.option_id ?? '',
+        value: o.value,
+      })) ?? [],
+  }
+}
 
 type ProductsResult = {
   products: ProductItem[]
@@ -25,11 +41,6 @@ type ProductByHandleResult = {
   product: ProductDetail | null
   error: string | null
   notFound: boolean
-}
-
-type ProductHandlesResult = {
-  handles: ProductHandle[]
-  error: string | null
 }
 
 const fetchProducts = async (regionId: string): Promise<ProductItem[]> => {
@@ -46,24 +57,17 @@ const fetchProducts = async (regionId: string): Promise<ProductItem[]> => {
       })
 
       return products.map((p: HttpTypes.StoreProduct): ProductItem => {
-        const allVariantsManaged =
-          p.variants?.every((v) => v.manage_inventory) ?? false
-        const totalQty =
-          p.variants?.reduce(
-            (sum, v) => sum + (v.inventory_quantity ?? 0),
-            0
-          ) ?? 0
-
-        const firstVariant = p.variants?.[0]
+        const variants = p.variants?.map(toProductVariant) ?? []
+        const displayVariant = selectDisplayVariant(variants)
 
         return {
           slug: p.handle,
           name: p.title,
-          price: firstVariant?.calculated_price?.calculated_amount ?? null,
-          currencyCode: firstVariant?.calculated_price?.currency_code ?? null,
+          price: displayVariant?.price ?? null,
+          currencyCode: displayVariant?.currency ?? null,
           image: p.images?.[0]?.url ?? '',
           hoverImage: p.images?.[1]?.url,
-          soldOut: allVariantsManaged && totalQty <= 0,
+          soldOut: !variants.some(isVariantAvailable),
           category: p.categories?.[0]?.name ?? '',
         }
       })
@@ -76,8 +80,7 @@ const fetchProducts = async (regionId: string): Promise<ProductItem[]> => {
   )()
 }
 
-// React cache() dedupes across generateMetadata and the page body within one request.
-const getProductsOnce = cache(async (): Promise<ProductsResult> => {
+export const getProducts = cache(async (): Promise<ProductsResult> => {
   const regionId = await getRegionId()
 
   if (!regionId) {
@@ -102,10 +105,6 @@ const getProductsOnce = cache(async (): Promise<ProductsResult> => {
     }
   }
 })
-
-export async function getProducts(): Promise<ProductsResult> {
-  return getProductsOnce()
-}
 
 const fetchProductDetails = async (
   handle: string,
@@ -141,9 +140,7 @@ const fetchProductDetails = async (
           ?.map((v) => ({
             size: v.options?.find((o) => o.option_id === sizeOption?.id)?.value,
             rank: v.variant_rank,
-            available: v.manage_inventory
-              ? (v.inventory_quantity ?? 0) > 0
-              : true,
+            available: isVariantAvailable(v),
           }))
           .filter((item) => item.size) ?? []
 
@@ -173,20 +170,7 @@ const fetchProductDetails = async (
       const categoryAlert =
         typeof categoryAlertValue === 'string' ? categoryAlertValue : undefined
 
-      const variants: ProductVariant[] =
-        product.variants?.map((v) => ({
-          id: v.id,
-          title: v.title ?? '',
-          price: v.calculated_price?.calculated_amount ?? 0,
-          currency: v.calculated_price?.currency_code ?? '',
-          inventory_quantity: v.inventory_quantity ?? 0,
-          manage_inventory: v.manage_inventory ?? false,
-          options:
-            v.options?.map((o) => ({
-              option_id: o.option_id ?? '',
-              value: o.value,
-            })) ?? [],
-        })) ?? []
+      const variants = product.variants?.map(toProductVariant) ?? []
 
       const options: ProductOption[] =
         product.options?.map((o) => ({
@@ -227,7 +211,7 @@ const fetchProductDetails = async (
   )()
 }
 
-const getProductByHandleOnce = cache(
+export const getProductByHandle = cache(
   async (handle: string): Promise<ProductByHandleResult> => {
     const regionId = await getRegionId()
 
@@ -257,12 +241,6 @@ const getProductByHandleOnce = cache(
     }
   }
 )
-
-export async function getProductByHandle(
-  handle: string
-): Promise<ProductByHandleResult> {
-  return getProductByHandleOnce(handle)
-}
 
 const HANDLES_PAGE_SIZE = 100
 
@@ -294,11 +272,11 @@ const fetchProductHandles = cached(
   { revalidate: CACHE_REVALIDATE_TIME, tags: ['products'] }
 )
 
-export async function getProductHandles(): Promise<ProductHandlesResult> {
+export async function getProductHandles(): Promise<ProductHandle[]> {
   try {
-    return { handles: await fetchProductHandles(), error: null }
+    return await fetchProductHandles()
   } catch (error) {
     console.error('Failed to fetch product handles:', error)
-    return { handles: [], error: 'Failed to fetch product handles' }
+    return []
   }
 }

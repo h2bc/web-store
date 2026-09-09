@@ -1,10 +1,10 @@
+import type { Metadata } from 'next'
 import NavLinks from '@/components/layout/header/nav-links'
 import Logo3DViewer from '@/components/landing/logo-3d-viewer'
 import JsonLd from '@/components/seo/json-ld'
 import { HOME_HEADING, organizationJsonLd } from '@/lib/seo'
 
-// Metadata and JSON-LD depend on runtime env, so never prerender at build.
-export const dynamic = 'force-dynamic'
+export const metadata: Metadata = { alternates: { canonical: '/' } }
 
 export default function Home() {
   return (
