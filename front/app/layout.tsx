@@ -3,10 +3,22 @@ import './globals.css'
 import { cn } from '@/lib/utils'
 import { Toaster } from '@/components/ui/sonner'
 import { unifraktur, edwardian } from './fonts'
+import {
+  OPEN_GRAPH_DEFAULTS,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  isIndexable,
+  siteUrl,
+} from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: { default: 'h2bc', template: '%s | h2bc' },
-  description: 'culture | culture | culture',
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    metadataBase: new URL(siteUrl()),
+    title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
+    description: SITE_DESCRIPTION,
+    openGraph: OPEN_GRAPH_DEFAULTS,
+    ...(isIndexable() ? {} : { robots: { index: false } }),
+  }
 }
 
 export default function RootLayout({

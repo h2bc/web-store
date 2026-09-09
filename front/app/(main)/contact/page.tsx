@@ -1,9 +1,11 @@
+import type { Metadata } from 'next'
 import Heading from '@/components/layout/heading'
 import ContactForm from '@/components/contact/contact-form'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Contact',
-  description: 'Get in touch with h2bc',
+  description: 'Get in touch with h2bc about orders, sizing or collaborations.',
+  alternates: { canonical: '/contact' },
 }
 
 export default function ContactPage() {

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CheckCircle2 } from 'lucide-react'
 import Heading from '@/components/layout/heading'
@@ -8,7 +9,7 @@ import { Separator } from '@/components/ui/separator'
 import { getOrder } from '@/lib/data/orders'
 import { formatPrice } from '@/lib/utils'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Order confirmed',
   robots: { index: false, follow: false },
 }

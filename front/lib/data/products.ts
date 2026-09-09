@@ -1,13 +1,15 @@
 'use server'
 
+import { cache } from 'react'
 import { sdk } from '@/lib/medusa'
 import type { HttpTypes } from '@medusajs/types'
 import { getRegionId } from '@/lib/cookies'
 import { cached } from '@/lib/cache'
-import type { ProductItem } from '@/lib/types/product'
+import type { ProductHandle, ProductItem } from '@/lib/types/product'
 import type {
   ProductDetail,
   ProductOption,
+  ProductSeo,
   ProductVariant,
   SizeOption,
 } from '@/lib/types/product-detail'
@@ -23,6 +25,11 @@ type ProductByHandleResult = {
   product: ProductDetail | null
   error: string | null
   notFound: boolean
+}
+
+type ProductHandlesResult = {
+  handles: ProductHandle[]
+  error: string | null
 }
 
 const fetchProducts = async (regionId: string): Promise<ProductItem[]> => {
@@ -69,7 +76,8 @@ const fetchProducts = async (regionId: string): Promise<ProductItem[]> => {
   )()
 }
 
-export async function getProducts(): Promise<ProductsResult> {
+// React cache() dedupes across generateMetadata and the page body within one request.
+const getProductsOnce = cache(async (): Promise<ProductsResult> => {
   const regionId = await getRegionId()
 
   if (!regionId) {
@@ -93,6 +101,10 @@ export async function getProducts(): Promise<ProductsResult> {
       error: 'Failed to fetch products',
     }
   }
+})
+
+export async function getProducts(): Promise<ProductsResult> {
+  return getProductsOnce()
 }
 
 const fetchProductDetails = async (
@@ -105,7 +117,7 @@ const fetchProductDetails = async (
         handle,
         region_id: regionId,
         fields:
-          'id,handle,title,subtitle,description,*categories,*options,metadata,' +
+          'id,handle,title,subtitle,description,thumbnail,*categories,*options,metadata,' +
           'images,images.url,' +
           '*variants, *variants.options, *variants.inventory_quantity',
       })
@@ -182,10 +194,20 @@ const fetchProductDetails = async (
           title: o.title,
         })) ?? []
 
+      const seo: ProductSeo = {}
+      if (typeof product.metadata?.seo_title === 'string') {
+        seo.title = product.metadata.seo_title.trim() || undefined
+      }
+      if (typeof product.metadata?.seo_description === 'string') {
+        seo.description = product.metadata.seo_description.trim() || undefined
+      }
+
       return {
         slug: product.handle,
         name: product.title,
         subtitle: product.subtitle ?? '',
+        seo,
+        thumbnail: product.thumbnail ?? null,
         images:
           product.images
             ?.filter((img) => img.url)
@@ -205,33 +227,78 @@ const fetchProductDetails = async (
   )()
 }
 
+const getProductByHandleOnce = cache(
+  async (handle: string): Promise<ProductByHandleResult> => {
+    const regionId = await getRegionId()
+
+    if (!regionId) {
+      return {
+        product: null,
+        error: 'Region is not set',
+        notFound: false,
+      }
+    }
+
+    try {
+      const product = await fetchProductDetails(handle, regionId)
+
+      return {
+        product,
+        error: null,
+        notFound: !product,
+      }
+    } catch (error) {
+      console.error('Failed to fetch product:', error)
+      return {
+        product: null,
+        error: 'Failed to fetch product',
+        notFound: false,
+      }
+    }
+  }
+)
+
 export async function getProductByHandle(
   handle: string
 ): Promise<ProductByHandleResult> {
-  const regionId = await getRegionId()
+  return getProductByHandleOnce(handle)
+}
 
-  if (!regionId) {
-    return {
-      product: null,
-      error: 'Region is not set',
-      notFound: false,
+const HANDLES_PAGE_SIZE = 100
+
+const fetchProductHandles = cached(
+  async (): Promise<ProductHandle[]> => {
+    const handles: ProductHandle[] = []
+    let offset = 0
+
+    while (true) {
+      const { products, count } = await sdk.store.product.list({
+        fields: 'handle,updated_at',
+        limit: HANDLES_PAGE_SIZE,
+        offset,
+      })
+
+      for (const p of products) {
+        if (p.handle) {
+          handles.push({ handle: p.handle, updatedAt: p.updated_at ?? null })
+        }
+      }
+
+      offset += products.length
+      if (products.length === 0 || offset >= count) break
     }
-  }
 
+    return handles
+  },
+  ['product-handles'],
+  { revalidate: CACHE_REVALIDATE_TIME, tags: ['products'] }
+)
+
+export async function getProductHandles(): Promise<ProductHandlesResult> {
   try {
-    const product = await fetchProductDetails(handle, regionId)
-
-    return {
-      product,
-      error: null,
-      notFound: !product,
-    }
+    return { handles: await fetchProductHandles(), error: null }
   } catch (error) {
-    console.error('Failed to fetch product:', error)
-    return {
-      product: null,
-      error: 'Failed to fetch product',
-      notFound: false,
-    }
+    console.error('Failed to fetch product handles:', error)
+    return { handles: [], error: 'Failed to fetch product handles' }
   }
 }

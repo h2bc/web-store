@@ -27,10 +27,17 @@ export interface ProductOption {
   title: string
 }
 
+export interface ProductSeo {
+  title?: string
+  description?: string
+}
+
 export interface ProductDetail {
   slug: string
   name: string
   subtitle: string
+  seo: ProductSeo
+  thumbnail: string | null
   images: ProductImage[]
   sizes: SizeOption[]
   description: string
