@@ -3,6 +3,7 @@ import ProductCardImage from '@/components/shop/product-card-image'
 import { cn, formatPrice } from '@/lib/utils'
 import { screens } from '@/lib/breakpoints'
 import type { ProductItem } from '@/lib/types/product'
+import { productPath } from '@/lib/routes'
 
 interface ProductCardProps extends Omit<ProductItem, 'category'> {
   preload?: boolean
@@ -20,7 +21,7 @@ export default function ProductCard({
   currencyCode,
   enableHoverImage = true,
 }: ProductCardProps) {
-  const href = `/shop/${slug}`
+  const href = productPath(slug)
   const showHoverImage = !!hoverImage && enableHoverImage
 
   return (

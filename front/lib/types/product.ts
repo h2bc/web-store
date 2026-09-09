@@ -8,3 +8,8 @@ export interface ProductItem {
   category: string
   currencyCode: string | null
 }
+
+export interface ProductHandle {
+  handle: string
+  updatedAt: string | null
+}

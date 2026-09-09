@@ -1,10 +1,13 @@
+import type { Metadata } from 'next'
 import Heading from '@/components/layout/heading'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Shipping & Returns',
-  description: 'Shipping information and returns policy',
+  description:
+    'h2bc shipping rates and delivery times for Lithuania and the EU, and our 14-day return policy.',
+  alternates: { canonical: '/shipping-returns' },
 }
 
 export default function ShippingReturnsPage() {

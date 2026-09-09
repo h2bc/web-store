@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import Heading from '@/components/layout/heading'
 import CheckoutStepSection from '@/components/checkout/checkout-step-section'
@@ -11,7 +12,7 @@ import { listCartShippingOptions } from '@/lib/data/shipping'
 import { initiateStripeSession } from '@/lib/data/payment'
 import { CHECKOUT_STEPS, type CheckoutStep } from '@/lib/schemas/checkout'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Checkout',
   description: 'Complete your order',
   robots: { index: false, follow: false },

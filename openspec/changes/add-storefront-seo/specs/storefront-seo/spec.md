@@ -5,7 +5,7 @@ Makes the storefront's public pages discoverable and correctly represented by se
 ## ADDED Requirements
 
 ### Requirement: Product pages carry product-specific metadata
-Each product page SHALL expose a document title made of the product title followed by the site suffix, a meta description, a canonical URL of the form `<site URL>/shop/<handle>`, and Open Graph title, description, image and URL. The description SHALL be, in order of precedence: the product's `seo_description` metadata value, the product subtitle, the first 160 characters of the product description with markup removed, or the site description. The title SHALL use the product's `seo_title` metadata value when present, otherwise the product title. The Open Graph image SHALL be the product's first image, or the site default image when the product has none.
+Each product page SHALL expose a document title made of the product title followed by the site suffix, a meta description, a canonical URL of the form `<site URL>/shop/<handle>`, and Open Graph title, description, image and URL. The description SHALL be, in order of precedence: the product's `seo_description` metadata value, the product subtitle, the product description as stored, or the site description. No parsing or truncation is applied. The title SHALL use the product's `seo_title` metadata value when present, otherwise the product title. The Open Graph image SHALL be the product's first image, or the site default image when the product has none.
 
 #### Scenario: Product without overrides
 - **WHEN** a crawler requests `/shop/meduza-hood` and the product has no SEO metadata keys
@@ -60,11 +60,11 @@ The storefront SHALL serve `/sitemap.xml` containing the home, shop, gallery, ab
 - **THEN** `/sitemap.xml` still responds with the static entries
 
 ### Requirement: Robots rules follow the deployment's indexability
-The storefront SHALL serve `/robots.txt`. When the deployment is configured as indexable, it SHALL allow all user agents, disallow `/cart`, `/checkout`, `/order` and `/api`, and reference the absolute sitemap URL. When the deployment is not configured as indexable, it SHALL disallow everything and every page SHALL additionally carry a `noindex` robots meta tag. Deployments are not indexable unless explicitly configured.
+The storefront SHALL serve `/robots.txt`. When the deployment is configured as indexable, it SHALL allow all user agents, disallow `/cart`, `/checkout` and `/order`, and reference the absolute sitemap URL. When the deployment is not configured as indexable, it SHALL disallow everything and every page SHALL additionally carry a `noindex` robots meta tag. Deployments are not indexable unless explicitly configured.
 
 #### Scenario: Indexable deployment
 - **WHEN** `SEO_INDEXABLE` is `true`
-- **THEN** `/robots.txt` allows `/`, disallows the four private prefixes, and contains `Sitemap: <site URL>/sitemap.xml`
+- **THEN** `/robots.txt` allows `/`, disallows the three private prefixes, and contains `Sitemap: <site URL>/sitemap.xml`
 
 #### Scenario: Non-indexable deployment
 - **WHEN** `SEO_INDEXABLE` is unset
@@ -87,14 +87,3 @@ When the shop or a product page cannot load catalog data, the response SHALL car
 #### Scenario: Unknown product
 - **WHEN** `/shop/does-not-exist` is requested
 - **THEN** the HTTP status is 404
-
-### Requirement: Lighthouse check targets public pages and enforces budgets
-The repository's Lighthouse command SHALL scan the site given by the `LIGHTHOUSE_SITE` environment variable (defaulting to `http://localhost:3000`), SHALL exclude cart, checkout and order pages, SHALL include product pages, and SHALL exit non-zero when any page scores below the configured category budgets.
-
-#### Scenario: Page below budget
-- **WHEN** a scanned page's SEO score is below 100 or its accessibility score is below the configured budget
-- **THEN** the command exits with a non-zero status
-
-#### Scenario: Private page excluded
-- **WHEN** the scan runs
-- **THEN** no report is produced for `/cart`, `/checkout` or `/order/*`

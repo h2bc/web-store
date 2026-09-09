@@ -3,19 +3,13 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { NAV_LINKS } from '@/lib/routes'
 
 interface NavLinksProps {
   ulClassName?: string
   linkClassName?: string
   onNavigate?: () => void
 }
-
-const navItems = [
-  { href: '/shop', label: 'Shop' },
-  { href: '/gallery', label: 'Gallery' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
-]
 
 export default function NavLinks({
   ulClassName = '',
@@ -31,7 +25,7 @@ export default function NavLinks({
 
   return (
     <ul className={ulClassName}>
-      {navItems.map(({ href, label }) => {
+      {NAV_LINKS.map(({ href, label }) => {
         const isActive = pathname === href || pathname.startsWith(href + '/')
 
         return (

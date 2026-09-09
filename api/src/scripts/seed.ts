@@ -5,6 +5,7 @@ import {
   ProductStatus,
 } from "@medusajs/framework/utils";
 import {
+  createDefaultsWorkflow,
   createInventoryLevelsWorkflow,
   createProductCategoriesWorkflow,
   createProductsWorkflow,
@@ -80,6 +81,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   ];
 
   logger.info("Store + Sales Channel");
+  await createDefaultsWorkflow(container).run();
   const [store] = await storeService.listStores();
   if (!store) throw new Error("No store exists");
 

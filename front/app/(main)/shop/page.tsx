@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import CategoryFilter from '@/components/shop/category-filter'
 import ProductGrid from '@/components/shop/product-grid'
 import ClientToastErrorHandler from '@/components/feedback/client-toast-error-handler'
@@ -7,9 +8,17 @@ import { userAgent } from 'next/server'
 import { getCategories } from '@/lib/data/categories'
 import { getProducts } from '@/lib/data/products'
 
-export const metadata = {
+const SHOP_METADATA: Metadata = {
   title: 'Shop',
-  description: 'Browse products',
+  description: 'Shop h2bc hoodies, tees, beanies and accessories.',
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { error } = await getProducts()
+  if (error) {
+    return { ...SHOP_METADATA, robots: { index: false } }
+  }
+  return { ...SHOP_METADATA, alternates: { canonical: '/shop' } }
 }
 
 export default async function ShopPage({

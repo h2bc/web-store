@@ -1,8 +1,10 @@
+import type { Metadata } from 'next'
 import Heading from '@/components/layout/heading'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'About',
-  description: 'About h2bc',
+  description: 'The story behind h2bc, a streetwear brand from Lithuania.',
+  alternates: { canonical: '/about' },
 }
 
 export default function AboutPage() {

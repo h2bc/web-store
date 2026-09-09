@@ -1,33 +1,28 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { NextResponse } from 'next/server'
-import { z } from 'zod'
+import type { ProductVariant } from '@/lib/types/product-detail'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function validateQueryParams<T extends z.ZodType>(
-  request: Request,
-  schema: T
-):
-  | { success: true; data: z.infer<T> }
-  | { success: false; response: NextResponse } {
-  const { searchParams } = new URL(request.url)
-  const params = Object.fromEntries(searchParams.entries())
+export function isVariantAvailable(variant: {
+  manage_inventory?: boolean | null
+  inventory_quantity?: number | null
+}): boolean {
+  return !variant.manage_inventory || (variant.inventory_quantity ?? 0) > 0
+}
 
-  const validation = schema.safeParse(params)
-  if (!validation.success) {
-    return {
-      success: false,
-      response: NextResponse.json(
-        { error: validation.error.format() },
-        { status: 400 }
-      ),
-    }
-  }
-
-  return { success: true, data: validation.data }
+export function selectDisplayVariant(
+  variants: ProductVariant[]
+): ProductVariant | null {
+  const available = variants.filter(isVariantAvailable)
+  return (available.length ? available : variants)
+    .filter((v) => v.currency)
+    .reduce<ProductVariant | null>(
+      (best, v) => (best === null || v.price < best.price ? v : best),
+      null
+    )
 }
 
 export function formatPrice(

@@ -1,9 +1,16 @@
+import type { Metadata } from 'next'
 import NavLinks from '@/components/layout/header/nav-links'
 import Logo3DViewer from '@/components/landing/logo-3d-viewer'
+import JsonLd from '@/components/seo/json-ld'
+import { HOME_HEADING, organizationJsonLd } from '@/lib/seo'
+
+export const metadata: Metadata = { alternates: { canonical: '/' } }
 
 export default function Home() {
   return (
     <div className="flex-1 flex items-center justify-center">
+      <h1 className="sr-only">{HOME_HEADING}</h1>
+      <JsonLd data={organizationJsonLd()} />
       <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
         <Logo3DViewer />
 

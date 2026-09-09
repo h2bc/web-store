@@ -1,18 +1,36 @@
-'use server'
-
+import 'server-only'
+import { cache } from 'react'
 import { sdk } from '@/lib/medusa'
 import type { HttpTypes } from '@medusajs/types'
 import { getRegionId } from '@/lib/cookies'
 import { cached } from '@/lib/cache'
-import type { ProductItem } from '@/lib/types/product'
+import type { ProductHandle, ProductItem } from '@/lib/types/product'
 import type {
   ProductDetail,
   ProductOption,
+  ProductSeo,
   ProductVariant,
   SizeOption,
 } from '@/lib/types/product-detail'
+import { isVariantAvailable, selectDisplayVariant } from '@/lib/utils'
 
 const CACHE_REVALIDATE_TIME = 60
+
+function toProductVariant(v: HttpTypes.StoreProductVariant): ProductVariant {
+  return {
+    id: v.id,
+    title: v.title ?? '',
+    price: v.calculated_price?.calculated_amount ?? 0,
+    currency: v.calculated_price?.currency_code ?? '',
+    inventory_quantity: v.inventory_quantity ?? 0,
+    manage_inventory: v.manage_inventory ?? false,
+    options:
+      v.options?.map((o) => ({
+        option_id: o.option_id ?? '',
+        value: o.value,
+      })) ?? [],
+  }
+}
 
 type ProductsResult = {
   products: ProductItem[]
@@ -39,24 +57,17 @@ const fetchProducts = async (regionId: string): Promise<ProductItem[]> => {
       })
 
       return products.map((p: HttpTypes.StoreProduct): ProductItem => {
-        const allVariantsManaged =
-          p.variants?.every((v) => v.manage_inventory) ?? false
-        const totalQty =
-          p.variants?.reduce(
-            (sum, v) => sum + (v.inventory_quantity ?? 0),
-            0
-          ) ?? 0
-
-        const firstVariant = p.variants?.[0]
+        const variants = p.variants?.map(toProductVariant) ?? []
+        const displayVariant = selectDisplayVariant(variants)
 
         return {
           slug: p.handle,
           name: p.title,
-          price: firstVariant?.calculated_price?.calculated_amount ?? null,
-          currencyCode: firstVariant?.calculated_price?.currency_code ?? null,
+          price: displayVariant?.price ?? null,
+          currencyCode: displayVariant?.currency ?? null,
           image: p.images?.[0]?.url ?? '',
           hoverImage: p.images?.[1]?.url,
-          soldOut: allVariantsManaged && totalQty <= 0,
+          soldOut: !variants.some(isVariantAvailable),
           category: p.categories?.[0]?.name ?? '',
         }
       })
@@ -69,7 +80,7 @@ const fetchProducts = async (regionId: string): Promise<ProductItem[]> => {
   )()
 }
 
-export async function getProducts(): Promise<ProductsResult> {
+export const getProducts = cache(async (): Promise<ProductsResult> => {
   const regionId = await getRegionId()
 
   if (!regionId) {
@@ -93,7 +104,7 @@ export async function getProducts(): Promise<ProductsResult> {
       error: 'Failed to fetch products',
     }
   }
-}
+})
 
 const fetchProductDetails = async (
   handle: string,
@@ -105,7 +116,7 @@ const fetchProductDetails = async (
         handle,
         region_id: regionId,
         fields:
-          'id,handle,title,subtitle,description,*categories,*options,metadata,' +
+          'id,handle,title,subtitle,description,thumbnail,*categories,*options,metadata,' +
           'images,images.url,' +
           '*variants, *variants.options, *variants.inventory_quantity',
       })
@@ -129,9 +140,7 @@ const fetchProductDetails = async (
           ?.map((v) => ({
             size: v.options?.find((o) => o.option_id === sizeOption?.id)?.value,
             rank: v.variant_rank,
-            available: v.manage_inventory
-              ? (v.inventory_quantity ?? 0) > 0
-              : true,
+            available: isVariantAvailable(v),
           }))
           .filter((item) => item.size) ?? []
 
@@ -161,20 +170,7 @@ const fetchProductDetails = async (
       const categoryAlert =
         typeof categoryAlertValue === 'string' ? categoryAlertValue : undefined
 
-      const variants: ProductVariant[] =
-        product.variants?.map((v) => ({
-          id: v.id,
-          title: v.title ?? '',
-          price: v.calculated_price?.calculated_amount ?? 0,
-          currency: v.calculated_price?.currency_code ?? '',
-          inventory_quantity: v.inventory_quantity ?? 0,
-          manage_inventory: v.manage_inventory ?? false,
-          options:
-            v.options?.map((o) => ({
-              option_id: o.option_id ?? '',
-              value: o.value,
-            })) ?? [],
-        })) ?? []
+      const variants = product.variants?.map(toProductVariant) ?? []
 
       const options: ProductOption[] =
         product.options?.map((o) => ({
@@ -182,10 +178,20 @@ const fetchProductDetails = async (
           title: o.title,
         })) ?? []
 
+      const seo: ProductSeo = {}
+      if (typeof product.metadata?.seo_title === 'string') {
+        seo.title = product.metadata.seo_title.trim() || undefined
+      }
+      if (typeof product.metadata?.seo_description === 'string') {
+        seo.description = product.metadata.seo_description.trim() || undefined
+      }
+
       return {
         slug: product.handle,
         name: product.title,
         subtitle: product.subtitle ?? '',
+        seo,
+        thumbnail: product.thumbnail ?? null,
         images:
           product.images
             ?.filter((img) => img.url)
@@ -205,33 +211,72 @@ const fetchProductDetails = async (
   )()
 }
 
-export async function getProductByHandle(
-  handle: string
-): Promise<ProductByHandleResult> {
-  const regionId = await getRegionId()
+export const getProductByHandle = cache(
+  async (handle: string): Promise<ProductByHandleResult> => {
+    const regionId = await getRegionId()
 
-  if (!regionId) {
-    return {
-      product: null,
-      error: 'Region is not set',
-      notFound: false,
+    if (!regionId) {
+      return {
+        product: null,
+        error: 'Region is not set',
+        notFound: false,
+      }
+    }
+
+    try {
+      const product = await fetchProductDetails(handle, regionId)
+
+      return {
+        product,
+        error: null,
+        notFound: !product,
+      }
+    } catch (error) {
+      console.error('Failed to fetch product:', error)
+      return {
+        product: null,
+        error: 'Failed to fetch product',
+        notFound: false,
+      }
     }
   }
+)
 
+const HANDLES_PAGE_SIZE = 100
+
+const fetchProductHandles = cached(
+  async (): Promise<ProductHandle[]> => {
+    const handles: ProductHandle[] = []
+    let offset = 0
+
+    while (true) {
+      const { products, count } = await sdk.store.product.list({
+        fields: 'handle,updated_at',
+        limit: HANDLES_PAGE_SIZE,
+        offset,
+      })
+
+      for (const p of products) {
+        if (p.handle) {
+          handles.push({ handle: p.handle, updatedAt: p.updated_at ?? null })
+        }
+      }
+
+      offset += products.length
+      if (products.length === 0 || offset >= count) break
+    }
+
+    return handles
+  },
+  ['product-handles'],
+  { revalidate: CACHE_REVALIDATE_TIME, tags: ['products'] }
+)
+
+export async function getProductHandles(): Promise<ProductHandle[]> {
   try {
-    const product = await fetchProductDetails(handle, regionId)
-
-    return {
-      product,
-      error: null,
-      notFound: !product,
-    }
+    return await fetchProductHandles()
   } catch (error) {
-    console.error('Failed to fetch product:', error)
-    return {
-      product: null,
-      error: 'Failed to fetch product',
-      notFound: false,
-    }
+    console.error('Failed to fetch product handles:', error)
+    return []
   }
 }

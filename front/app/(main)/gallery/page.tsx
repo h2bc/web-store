@@ -1,6 +1,9 @@
-export const metadata = {
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
   title: 'Gallery',
-  description: 'Video gallery',
+  description: 'Videos from h2bc: drops, lookbooks and behind the scenes.',
+  alternates: { canonical: '/gallery' },
 }
 
 const VIDEOS: { id: string; title: string }[] = [

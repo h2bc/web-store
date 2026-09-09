@@ -1,4 +1,8 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import JsonLd from '@/components/seo/json-ld'
+import { productJsonLd, productMetadata, siteUrl } from '@/lib/seo'
+import { productPath } from '@/lib/routes'
 import ProductImageCarousel from '@/components/shop/product-detail/product-image-carousel'
 import ProductDetails from '@/components/shop/product-detail/product-details'
 import ProductDescription from '@/components/shop/product-detail/product-description'
@@ -9,6 +13,22 @@ import { getProductByHandle } from '@/lib/data/products'
 
 interface Props {
   params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  const { product, error, notFound: isNotFound } =
+    await getProductByHandle(slug)
+
+  if (isNotFound) {
+    notFound()
+  }
+
+  if (error || !product) {
+    return { robots: { index: false } }
+  }
+
+  return productMetadata(product)
 }
 
 export default async function ProductDetailPage({ params }: Props) {
@@ -38,6 +58,9 @@ export default async function ProductDetailPage({ params }: Props) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <JsonLd
+        data={productJsonLd(product!, siteUrl() + productPath(product!.slug))}
+      />
       {/* Left: Gallery */}
       <ProductImageCarousel images={product!.images} name={product!.name} />
 

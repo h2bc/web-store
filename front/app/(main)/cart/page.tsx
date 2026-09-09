@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Heading from '@/components/layout/heading'
 import CartLineItem from '@/components/cart/cart-line-item'
@@ -10,9 +11,10 @@ import { Separator } from '@/components/ui/separator'
 import { getCart } from '@/lib/data/cart'
 import { formatPrice } from '@/lib/utils'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Cart',
   description: 'Review your cart items',
+  robots: { index: false, follow: false },
 }
 
 export default async function CartPage() {

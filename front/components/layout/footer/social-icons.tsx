@@ -1,20 +1,10 @@
 import { FiInstagram, FiYoutube } from 'react-icons/fi'
 import { Button } from '@/components/ui/button'
-
-export const INSTAGRAM_HANDLE = '_h2bc'
-export const YOUTUBE_HANDLE = '_h2bc'
+import { INSTAGRAM_URL, YOUTUBE_URL } from '@/lib/social'
 
 const SOCIAL_LINKS = [
-  {
-    href: `https://instagram.com/${INSTAGRAM_HANDLE}`,
-    label: 'Instagram',
-    Icon: FiInstagram,
-  },
-  {
-    href: `https://youtube.com/@${YOUTUBE_HANDLE}`,
-    label: 'YouTube',
-    Icon: FiYoutube,
-  },
+  { href: INSTAGRAM_URL, label: 'Instagram', Icon: FiInstagram },
+  { href: YOUTUBE_URL, label: 'YouTube', Icon: FiYoutube },
 ]
 
 export default function SocialIcons() {
