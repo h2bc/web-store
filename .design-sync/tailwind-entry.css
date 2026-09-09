@@ -1,0 +1,43 @@
+/* Design-sync Tailwind entry: compiles the storefront's globals.css into a static
+   stylesheet (front/.ds-sync-styles.css) for the Claude Design bundle.
+   Sources: the storefront's components + app pages, plus the authored previews.
+   The inline safelist ships the layout/typography/color utilities the design
+   agent composes with, since the bundle has no Tailwind runtime. */
+@import '../front/app/globals.css';
+
+@source '../front/components';
+@source '../front/app';
+@source './previews';
+
+/* next/font sets these on <body> in the app; the bundle defines them globally. */
+:root {
+  --font-unifraktur: 'UnifrakturMaguntia';
+  --font-edwardian: 'Edwardian Script ITC';
+}
+
+/* Layout */
+@source inline("{sm:,md:,lg:,}{flex,inline-flex,grid,block,inline-block,hidden,flex-col,flex-row,flex-wrap,flex-1,shrink-0,grow}");
+@source inline("{sm:,md:,lg:,}{items-{start,center,end,stretch,baseline},justify-{start,center,end,between,around}}");
+@source inline("{sm:,md:,lg:,}{gap-{0,1,2,3,4,5,6,8,10,12,16},gap-x-{2,4,6,8},gap-y-{2,4,6,8}}");
+@source inline("{sm:,md:,lg:,}{grid-cols-{1,2,3,4,5,6,12},col-span-{1,2,3,4,6,full}}");
+@source inline("{relative,absolute,fixed,sticky,inset-0,top-0,bottom-0,left-0,right-0,z-{0,10,20,50}}");
+@source inline("{overflow-{hidden,auto,x-auto,y-auto},aspect-{square,video}}");
+/* Spacing */
+@source inline("{sm:,md:,lg:,}{p,px,py,pt,pb,pl,pr,m,mx,my,mt,mb,ml,mr}-{0,1,2,3,4,5,6,8,10,12,16,20,24}");
+@source inline("{mx-auto,my-auto,space-y-{1,2,3,4,6,8},space-x-{1,2,3,4,6,8},divide-y,divide-x}");
+/* Sizing */
+@source inline("{sm:,md:,lg:,}{w-{full,auto,fit,screen,1/2,1/3,2/3,1/4,3/4,4,5,6,8,10,12,16,20,24,32,48,64},h-{full,auto,screen,4,5,6,8,10,12,16,20,24,32,48,64}}");
+@source inline("{min-h-screen,min-h-full,min-w-0,max-w-{xs,sm,md,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,none,full,prose,screen-sm,screen-md,screen-lg,screen-xl}}");
+/* Typography */
+@source inline("{sm:,md:,lg:,}{text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl},text-{left,center,right}}");
+@source inline("{font-{sans,blackletter,script,mono},font-{normal,medium,semibold,bold},tracking-{tight,normal,wide,wider,widest},leading-{none,tight,snug,normal,relaxed,loose}}");
+@source inline("{uppercase,lowercase,capitalize,italic,underline,no-underline,line-through,truncate,whitespace-nowrap,break-words,tabular-nums,select-none,sr-only}");
+@source inline("{text-shadow-xl,text-shadow-2xl,prose,prose-sm,prose-lg,pink-img-shadow}");
+/* Theme colors */
+@source inline("{hover:,}{bg,text,border}-{background,foreground,card,card-foreground,popover,popover-foreground,primary,primary-foreground,secondary,secondary-foreground,muted,muted-foreground,accent,accent-foreground,destructive,border,input,ring}");
+@source inline("{bg,text}-{foreground,background,muted-foreground,primary,destructive}/{10,20,40,50,60,80,90}");
+@source inline("{bg-transparent,bg-white,bg-black,text-white,text-black,bg-pink-500,text-pink-500,border-pink-500}");
+/* Borders, radius, shadows, effects */
+@source inline("{border,border-{0,2,t,b,l,r},rounded-{none,sm,md,lg,xl,2xl,full},shadow-{none,sm,md,lg,xl}}");
+@source inline("{opacity-{0,40,50,60,80,90,100},cursor-{pointer,not-allowed,default},pointer-events-none,transition,transition-{colors,opacity,transform},duration-{150,200,300,500},ease-in-out}");
+@source inline("{hover:underline,hover:opacity-{80,90},hover:bg-accent,hover:text-foreground,focus-visible:ring-2,disabled:opacity-50,group,group-hover:underline,group-hover:opacity-{0,100}}");

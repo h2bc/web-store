@@ -1,0 +1,17 @@
+/* Brand display fonts. The app loads UnifrakturMaguntia via next/font (Google)
+   and Edwardian Script ITC as a local font; the bundle ships both from
+   front/public/fonts so previews and designs render them offline. */
+@font-face {
+  font-family: 'UnifrakturMaguntia';
+  src: url('../front/public/fonts/UnifrakturMaguntia-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Edwardian Script ITC';
+  src: url('../front/public/fonts/Edwardian Script ITC Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
