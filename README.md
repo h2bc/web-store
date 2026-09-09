@@ -2,8 +2,8 @@
 
 Two independent pnpm projects, each with its own README:
 
-- [`api/`](api/README.md) — Medusa v2 API (port 9000, admin at `/app`)
-- [`front/`](front/README.md) — Next.js storefront (port 3000)
+- [`api/`](api/README.md) — Medusa v2 API (admin at `/app`)
+- [`front/`](front/README.md) — Next.js storefront
 
 ## Develop
 

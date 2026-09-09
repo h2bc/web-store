@@ -70,7 +70,6 @@ jobs:
       JWT_SECRET: ci
       COOKIE_SECRET: ci
       MEDUSA_BACKEND_URL: http://localhost:9000
-      DEFAULT_REGION_ID: ci
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -96,6 +95,14 @@ jobs:
 
       - name: Run migrations
         run: pnpm migrate
+
+      - name: Seed database
+        run: pnpm --dir api seed
+
+      - name: Export storefront credentials
+        run: |
+          echo "MEDUSA_PUBLISHABLE_KEY=$(psql "$DATABASE_URL" -tAc "select token from api_key where type = 'publishable' limit 1")" >> "$GITHUB_ENV"
+          echo "DEFAULT_REGION_ID=$(psql "$DATABASE_URL" -tAc "select default_region_id from store limit 1")" >> "$GITHUB_ENV"
 
       - name: Run Playwright
         run: pnpm test:e2e
