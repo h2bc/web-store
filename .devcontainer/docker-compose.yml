@@ -3,8 +3,6 @@ services:
     image: node:25
     init: true
     command: sleep infinity
-    env_file:
-      - ../api/.env
     environment:
       NODE_ENV: development
     depends_on:
