@@ -47,7 +47,7 @@ The delivery step SHALL list the shipping options available for the cart with th
 - **THEN** the cart's shipping method is that option and the payment step is shown
 
 ### Requirement: Payment step confirms payment and places the order
-The payment step SHALL show a payment form offering every payment method enabled in the Stripe Dashboard that the device and store support, including card, Apple Pay and Google Pay. Placing the order SHALL confirm the payment for the cart's total and then complete the cart. A method that confirms in place SHALL complete the cart on the same page. A method that leaves the site SHALL return the customer to a return page that verifies the payment and completes the cart. A payment still being processed by the bank SHALL tell the customer the confirmation will arrive by email and release the cart, leaving completion to the Stripe webhook. A failed or declined payment SHALL show the reason and leave the cart in place so the customer can retry. A completed cart SHALL redirect to the order confirmation page. Completing a cart that was already completed SHALL return the existing order and SHALL NOT charge again.
+The payment step SHALL show a payment form offering every payment method enabled in the Stripe Dashboard that the device and store support, including card, Apple Pay and Google Pay. Placing the order SHALL confirm the payment for the cart's total and then complete the cart. A method that confirms in place SHALL complete the cart on the same page. A method that leaves the site SHALL return the customer to a return page that verifies the payment and completes the cart. A payment still being processed by the bank SHALL tell the customer the confirmation will arrive by email and release the cart, leaving completion to the Stripe webhook. A failed or declined payment SHALL show the reason and leave the cart in place so the customer can retry. A payment that succeeded but whose cart could not be completed SHALL tell the customer not to pay again, release the cart and leave completion to the Stripe webhook; it SHALL NOT offer a way back to the payment step. The return page SHALL act only on a client secret that belongs to a payment session of the visitor's own cart and SHALL redirect to the checkout otherwise. A completed cart SHALL redirect to the order confirmation page. Completing a cart that was already completed SHALL return the existing order and SHALL NOT charge again.
 
 #### Scenario: Card payment succeeds
 - **WHEN** the customer places the order with a valid test card
@@ -64,6 +64,14 @@ The payment step SHALL show a payment form offering every payment method enabled
 #### Scenario: Redirect method fails
 - **WHEN** the customer places the order with a method that leaves the site and the payment is refused
 - **THEN** the return page shows the reason and offers a way back to the payment step with the cart intact
+
+#### Scenario: Paid but the cart could not be completed
+- **WHEN** the payment succeeded and completing the cart fails
+- **THEN** the return page says the payment was received and the order is not confirmed yet, tells the customer not to pay again and releases the cart
+
+#### Scenario: Client secret of another cart
+- **WHEN** the return page is opened with a client secret that belongs to no payment session of the visitor's cart
+- **THEN** the customer is redirected to the checkout and the cart is left untouched
 
 ### Requirement: Order confirmation page
 The confirmation page for an order SHALL use the checkout's layout and order summary. It SHALL show the customer's first name, order number, order date and the email the confirmation was sent to; the contact details, shipping address, delivery method with its cost and the payment method with the amount charged; the ordered items with thumbnails, quantities and prices; subtotal, delivery and total; and a primary action back to the shop. It SHALL NOT be indexed by search engines. An unknown order id SHALL show an error instead of the page.

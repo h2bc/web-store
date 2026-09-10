@@ -7,6 +7,7 @@ import type { HttpTypes } from '@medusajs/types'
 import { Button } from '@/components/ui/button'
 import ErrorAlert from '@/components/feedback/error-alert'
 import { completeCart } from '@/lib/data/cart'
+import { getClientSecret } from '@/lib/payment-provider'
 
 interface PaymentStepProps {
   cart: HttpTypes.StoreCart
@@ -66,11 +67,15 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
       return
     }
 
-    const { orderId, error: cartError } = await completeCart()
+    const orderId = await completeCart()
 
-    if (cartError || !orderId) {
-      setPaymentError(cartError ?? 'Could not place the order.')
-      setIsPlacing(false)
+    if (!orderId) {
+      const clientSecret = getClientSecret(cart)
+      router.replace(
+        clientSecret
+          ? `/checkout/return?payment_intent_client_secret=${encodeURIComponent(clientSecret)}`
+          : '/checkout/return'
+      )
       return
     }
 

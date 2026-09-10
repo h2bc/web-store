@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import Heading from '@/components/layout/heading'
 import PaymentReturn from '@/components/checkout/payment-return'
+import { getCart } from '@/lib/data/cart'
+import { cartOwnsClientSecret } from '@/lib/payment-provider'
 
 export const metadata: Metadata = {
   title: 'Confirming payment',
@@ -19,6 +21,11 @@ export default async function CheckoutReturnPage({
   const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY
 
   if (!clientSecret || !publishableKey) {
+    redirect('/checkout')
+  }
+
+  const { cart } = await getCart()
+  if (!cart || !cartOwnsClientSecret(cart, clientSecret)) {
     redirect('/checkout')
   }
 

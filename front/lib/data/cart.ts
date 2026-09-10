@@ -188,11 +188,6 @@ export async function updateItemQuantity(
   }
 }
 
-type CompleteCartResult = {
-  orderId: string | null
-  error: string | null
-}
-
 export async function setCheckoutContact({
   email,
   address,
@@ -264,35 +259,29 @@ export async function setShippingMethod(optionId: string): Promise<CartResult> {
   }
 }
 
-export async function completeCart(): Promise<CompleteCartResult> {
+export async function completeCart(): Promise<string | null> {
   const cartId = await getCartId()
 
   if (!cartId) {
-    return { orderId: null, error: 'No cart found' }
+    console.error('Failed to complete cart: no cart_id cookie')
+    return null
   }
 
   try {
     const result = await sdk.store.cart.complete(cartId)
 
     if (result.type !== 'order') {
-      const message =
-        typeof result.error?.message === 'string'
-          ? result.error.message
-          : 'Payment could not be completed. You have not been charged.'
-
-      return { orderId: null, error: message }
+      console.error('Failed to complete cart:', result.error)
+      return null
     }
 
     await removeCartId()
     revalidatePath('/', 'layout')
 
-    return { orderId: result.order.id, error: null }
+    return result.order.id
   } catch (error) {
     console.error('Failed to complete cart:', error)
-    return {
-      orderId: null,
-      error: 'Failed to place the order. You have not been charged.',
-    }
+    return null
   }
 }
 

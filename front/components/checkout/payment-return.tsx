@@ -18,6 +18,7 @@ interface PaymentReturnProps {
 type State =
   | { kind: 'verifying' }
   | { kind: 'processing' }
+  | { kind: 'unconfirmed' }
   | { kind: 'failed'; message: string }
 
 export default function PaymentReturn({
@@ -51,9 +52,10 @@ export default function PaymentReturn({
       switch (paymentIntent.status) {
         case 'succeeded':
         case 'requires_capture': {
-          const { orderId, error: cartError } = await completeCart()
-          if (cartError || !orderId) {
-            fail(cartError ?? 'Could not place the order.')
+          const orderId = await completeCart()
+          if (!orderId) {
+            await releaseCart()
+            setState({ kind: 'unconfirmed' })
             return
           }
           router.replace(`/order/${orderId}/confirmed`)
@@ -92,6 +94,33 @@ export default function PaymentReturn({
         <aside className="lg:sticky lg:top-24">
           <Button asChild size="lg" className="w-full">
             <Link href="/checkout?step=payment">Back to payment</Link>
+          </Button>
+        </aside>
+      </>
+    )
+  }
+
+  if (state.kind === 'unconfirmed') {
+    return (
+      <>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Order not confirmed yet</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-1 text-sm text-muted-foreground">
+            <p>
+              Your payment was received, but we could not confirm your order.
+              Please do not pay again.
+            </p>
+            <p>
+              We will email your order confirmation once the payment is
+              processed. Get in touch if it does not arrive.
+            </p>
+          </CardContent>
+        </Card>
+        <aside className="lg:sticky lg:top-24">
+          <Button asChild size="lg" className="w-full">
+            <Link href="/contact">Contact us</Link>
           </Button>
         </aside>
       </>
