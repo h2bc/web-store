@@ -21,7 +21,7 @@ Event names and payloads, confirmed in `@medusajs/utils` 2.13.1: `order.placed` 
 
 **Idempotency on order confirmation.** The workflow passes `idempotency_key: order-placed-<order id>` to `sendNotificationsStep`, so a redelivered event does not email the customer twice. The Notification module enforces the key.
 
-**Dashboard links come from `admin.backendUrl` and `admin.path`.** `admin.backendUrl` is set from `MEDUSA_BACKEND_URL` in `medusa-config.ts`. Subscribers read both through `ContainerRegistrationKeys.CONFIG_MODULE` and build `${backendUrl}${adminPath}/reset-password?token=…&email=…` and `${backendUrl}${adminPath}/invite?token=…`, the routes the bundled dashboard serves. `admin.path` defaults to `/app`. A missing `backendUrl` logs a warning and falls back to `http://localhost:9000` so dev keeps working. Alternative: a dedicated `EMAIL_LINK_BASE_URL`. Rejected; Medusa already has the config field and the docs use it.
+**Dashboard links come from `admin.backendUrl` and `admin.path`.** `admin.backendUrl` is set from `MEDUSA_BACKEND_URL` in `medusa-config.ts`. Subscribers read both through `ContainerRegistrationKeys.CONFIG_MODULE` and build `${backendUrl}${adminPath}/reset-password?token=…&email=…` and `${backendUrl}${adminPath}/invite?token=…`, the routes the bundled dashboard serves. `admin.path` defaults to `/app`. A missing `backendUrl` is a configuration error and the subscriber throws; `MEDUSA_BACKEND_URL` is set in `.env`, `.env.template`, CI and every deployed container. Alternative: a dedicated `EMAIL_LINK_BASE_URL`. Rejected; Medusa already has the config field and the docs use it.
 
 **Reset subscriber ignores non-`user` actors.** No customer accounts exist, and a customer link would need a storefront page that does not exist. When accounts arrive, the subscriber gains a `customer` branch using `admin.storefrontUrl`.
 
@@ -31,7 +31,7 @@ Event names and payloads, confirmed in `@medusajs/utils` 2.13.1: `order.placed` 
 
 ## Risks / Trade-offs
 
-- [Worker container lacks Resend or backend URL vars] → Emails silently go through the local provider or carry localhost links. Mitigation: post-deploy checklist in tasks, and the subscriber logs a warning when `backendUrl` is unset.
+- [Worker container lacks Resend or backend URL vars] → Emails silently go through the local provider or carry localhost links. Mitigation: post-deploy checklist in tasks, and the subscriber throws when `backendUrl` is unset, so the failure is visible in the worker logs.
 - [Reset flow emits the event even for unknown emails] → Medusa does this by design to avoid leaking accounts; the subscriber simply sends nothing when the token workflow did not run. No change needed.
 - [`order.placed` fires before the order query sees related data] → The event is emitted after the order transaction commits. If the query still returns no email, the workflow logs and stops rather than throwing.
 - [Order query cost] → One graph query per order; negligible at this store's volume.

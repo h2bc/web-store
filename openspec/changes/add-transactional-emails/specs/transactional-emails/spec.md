@@ -38,11 +38,15 @@ When an admin invite is created or its token is refreshed, the system SHALL send
 - **THEN** a new `user-invited` notification is recorded carrying the refreshed token
 
 ### Requirement: Email links are built from the configured backend URL
-Links to the admin dashboard in emails SHALL be built from the API's configured public backend URL and admin path. In local development the backend URL SHALL be `http://localhost:9000`. When the backend URL is not configured, the system SHALL log a warning and fall back to `http://localhost:9000` rather than fail.
+Links to the admin dashboard in emails SHALL be built from the API's configured public backend URL and admin path. In local development the backend URL SHALL be `http://localhost:9000`. When the backend URL is not configured, building the link SHALL fail with a configuration error.
 
 #### Scenario: Backend URL configured
 - **WHEN** `MEDUSA_BACKEND_URL` is `https://api.example.com`
 - **THEN** every dashboard link in reset and invite emails starts with `https://api.example.com/app/`
+
+#### Scenario: Backend URL missing
+- **WHEN** `MEDUSA_BACKEND_URL` is not set and a reset or invite email is triggered
+- **THEN** the subscriber fails with a configuration error and no notification is recorded
 
 ### Requirement: Emails work without a mail provider configured
 When no Resend API key is configured, the system SHALL still record each notification through the local provider, which logs it instead of sending. Sending failures at the provider SHALL be logged and SHALL NOT fail the commerce operation that triggered the email.
