@@ -27,6 +27,7 @@ import {
   checkoutAddressSchema,
   type CheckoutAddressData,
 } from '@/lib/schemas/checkout'
+import { DEFAULT_COUNTRY_CODE } from '@/lib/store'
 import { setCheckoutContact } from '@/lib/data/cart'
 
 interface AddressStepProps {
@@ -51,7 +52,7 @@ export default function AddressStep({ cart, countries }: AddressStepProps) {
       address_2: address?.address_2 ?? '',
       city: address?.city ?? '',
       postal_code: address?.postal_code ?? '',
-      country_code: address?.country_code ?? countries[0]?.code ?? '',
+      country_code: address?.country_code ?? DEFAULT_COUNTRY_CODE,
       province: address?.province ?? '',
       phone: address?.phone ?? '',
     },

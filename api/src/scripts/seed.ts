@@ -108,35 +108,26 @@ export default async function seedDemoData({ container }: ExecArgs) {
     .map((provider) => provider.id)
     .filter((id) => !id.startsWith("pp_stripe-"));
 
-  const { result: regions } = await createRegionsWorkflow(container).run({
+  const {
+    result: [region],
+  } = await createRegionsWorkflow(container).run({
     input: {
       regions: [
         {
-          name: "Lithuania",
+          name: "Europe",
           currency_code: "eur",
-          countries: ["lt"],
+          countries: ["lt", ...restOfEurope],
           payment_providers: paymentProviderIds,
           is_tax_inclusive: true,
-          metadata: { shortName: "€ LT" },
-        },
-        {
-          name: "Rest of Europe",
-          currency_code: "eur",
-          countries: restOfEurope,
-          payment_providers: paymentProviderIds,
-          is_tax_inclusive: true,
-          metadata: { shortName: "€ EU" },
         },
       ],
     },
   });
 
-  const ltRegion = regions.find((r) => r.name === "Lithuania")!;
-
   await updateStoresWorkflow(container).run({
     input: {
       selector: { id: store.id },
-      update: { default_region_id: ltRegion.id },
+      update: { default_region_id: region.id },
     },
   });
 

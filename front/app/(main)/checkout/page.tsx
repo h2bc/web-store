@@ -58,10 +58,12 @@ export default async function CheckoutPage({
       ? requested!
       : furthest
 
-  const countries = (cart.region?.countries ?? []).map((c) => ({
-    code: c.iso_2 ?? '',
-    name: c.display_name ?? c.name ?? '',
-  }))
+  const countries = (cart.region?.countries ?? [])
+    .map((c) => ({
+      code: c.iso_2 ?? '',
+      name: c.display_name ?? c.name ?? '',
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   const needsShippingOptions = step === 'delivery' || deliveryDone
   const { options, error: shippingError } = needsShippingOptions

@@ -3,13 +3,7 @@
 import xss from 'xss'
 import { revalidatePath } from 'next/cache'
 import { sdk } from '@/lib/medusa'
-import {
-  getCartId,
-  setCartId,
-  getRegionId,
-  setRegionId,
-  removeCartId,
-} from '@/lib/cookies'
+import { getCartId, setCartId, removeCartId } from '@/lib/cookies'
 import type { HttpTypes } from '@medusajs/types'
 import { FetchError } from '@medusajs/js-sdk'
 import {
@@ -57,6 +51,7 @@ export async function getCart(): Promise<CartResult> {
 
   try {
     const { cart } = await sdk.store.cart.retrieve(cartId)
+
     return {
       cart: sortCartItems(cart),
       error: null,
@@ -71,19 +66,8 @@ export async function getCart(): Promise<CartResult> {
 }
 
 export async function initCart(): Promise<CartResult> {
-  const regionId = await getRegionId()
-
-  if (!regionId) {
-    return {
-      cart: null,
-      error: 'No region selected',
-    }
-  }
-
   try {
-    const { cart } = await sdk.store.cart.create({
-      region_id: regionId,
-    })
+    const { cart } = await sdk.store.cart.create({})
 
     await setCartId(cart.id)
 
@@ -320,20 +304,4 @@ export async function completeCart(): Promise<CompleteCartResult> {
       error: 'Failed to place the order. You have not been charged.',
     }
   }
-}
-
-export async function changeRegion(regionId: string): Promise<void> {
-  await setRegionId(regionId)
-
-  const cartId = await getCartId()
-
-  if (cartId) {
-    try {
-      await sdk.store.cart.update(cartId, { region_id: regionId })
-    } catch (error) {
-      console.error('Failed to move cart to new region:', error)
-    }
-  }
-
-  revalidatePath('/', 'layout')
 }

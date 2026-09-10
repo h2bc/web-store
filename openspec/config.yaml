@@ -19,7 +19,7 @@ context: |
     lib/data/, which returns { data, error } and never throws, so the site
     degrades instead of crashing when the backend is unreachable.
   - Reads are cached with tags and invalidated on mutation. Session state
-    (region, cart) lives in httpOnly cookies, never in client state.
+    (cart) lives in an httpOnly cookie, never in client state.
   - Checkout is guest-only by design. No accounts, no login, no order history.
 
 rules:

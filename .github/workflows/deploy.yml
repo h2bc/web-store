@@ -102,7 +102,6 @@ jobs:
       - name: Export storefront credentials
         run: |
           echo "MEDUSA_PUBLISHABLE_KEY=$(psql "$DATABASE_URL" -tAc "select token from api_key where type = 'publishable' limit 1")" >> "$GITHUB_ENV"
-          echo "DEFAULT_REGION_ID=$(psql "$DATABASE_URL" -tAc "select default_region_id from store limit 1")" >> "$GITHUB_ENV"
 
       - name: Run Playwright
         run: pnpm test:e2e

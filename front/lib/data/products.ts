@@ -2,7 +2,7 @@ import 'server-only'
 import { cache } from 'react'
 import { sdk } from '@/lib/medusa'
 import type { HttpTypes } from '@medusajs/types'
-import { getRegionId } from '@/lib/cookies'
+import { DEFAULT_COUNTRY_CODE } from '@/lib/store'
 import { cached } from '@/lib/cache'
 import type { ProductHandle, ProductItem } from '@/lib/types/product'
 import type {
@@ -43,55 +43,41 @@ type ProductByHandleResult = {
   notFound: boolean
 }
 
-const fetchProducts = async (regionId: string): Promise<ProductItem[]> => {
-  return cached(
-    async (): Promise<ProductItem[]> => {
-      const { products } = await sdk.store.product.list({
-        region_id: regionId,
-        order: '-created_at',
-        fields:
-          'id,handle,title,' +
-          'images,images.url,' +
-          'categories,categories.name,' +
-          '*variants, *variants.options, *variants.inventory_quantity',
-      })
+const fetchProducts = cached(
+  async (): Promise<ProductItem[]> => {
+    const { products } = await sdk.store.product.list({
+      country_code: DEFAULT_COUNTRY_CODE,
+      order: '-created_at',
+      fields:
+        'id,handle,title,' +
+        'images,images.url,' +
+        'categories,categories.name,' +
+        '*variants, *variants.calculated_price, *variants.options, *variants.inventory_quantity',
+    })
 
-      return products.map((p: HttpTypes.StoreProduct): ProductItem => {
-        const variants = p.variants?.map(toProductVariant) ?? []
-        const displayVariant = selectDisplayVariant(variants)
+    return products.map((p: HttpTypes.StoreProduct): ProductItem => {
+      const variants = p.variants?.map(toProductVariant) ?? []
+      const displayVariant = selectDisplayVariant(variants)
 
-        return {
-          slug: p.handle,
-          name: p.title,
-          price: displayVariant?.price ?? null,
-          currencyCode: displayVariant?.currency ?? null,
-          image: p.images?.[0]?.url ?? '',
-          hoverImage: p.images?.[1]?.url,
-          soldOut: !variants.some(isVariantAvailable),
-          category: p.categories?.[0]?.name ?? '',
-        }
-      })
-    },
-    [`products-${regionId}`],
-    {
-      revalidate: CACHE_REVALIDATE_TIME,
-      tags: ['products', `products-${regionId}`],
-    }
-  )()
-}
+      return {
+        slug: p.handle,
+        name: p.title,
+        price: displayVariant?.price ?? null,
+        currencyCode: displayVariant?.currency ?? null,
+        image: p.images?.[0]?.url ?? '',
+        hoverImage: p.images?.[1]?.url,
+        soldOut: !variants.some(isVariantAvailable),
+        category: p.categories?.[0]?.name ?? '',
+      }
+    })
+  },
+  ['products'],
+  { revalidate: CACHE_REVALIDATE_TIME, tags: ['products'] }
+)
 
 export const getProducts = cache(async (): Promise<ProductsResult> => {
-  const regionId = await getRegionId()
-
-  if (!regionId) {
-    return {
-      products: [],
-      error: 'Region is not set',
-    }
-  }
-
   try {
-    const products = await fetchProducts(regionId)
+    const products = await fetchProducts()
 
     return {
       products,
@@ -107,18 +93,17 @@ export const getProducts = cache(async (): Promise<ProductsResult> => {
 })
 
 const fetchProductDetails = async (
-  handle: string,
-  regionId: string
+  handle: string
 ): Promise<ProductDetail | null> => {
   return cached(
     async (): Promise<ProductDetail | null> => {
       const { products } = await sdk.store.product.list({
         handle,
-        region_id: regionId,
+        country_code: DEFAULT_COUNTRY_CODE,
         fields:
           'id,handle,title,subtitle,description,thumbnail,*categories,*options,metadata,' +
           'images,images.url,' +
-          '*variants, *variants.options, *variants.inventory_quantity',
+          '*variants, *variants.calculated_price, *variants.options, *variants.inventory_quantity',
       })
 
       if (!products || products.length === 0) {
@@ -203,28 +188,18 @@ const fetchProductDetails = async (
         options,
       }
     },
-    [`product-${handle}-${regionId}`],
+    [`product-${handle}`],
     {
       revalidate: CACHE_REVALIDATE_TIME,
-      tags: ['products', `product-${handle}`, `products-${regionId}`],
+      tags: ['products', `product-${handle}`],
     }
   )()
 }
 
 export const getProductByHandle = cache(
   async (handle: string): Promise<ProductByHandleResult> => {
-    const regionId = await getRegionId()
-
-    if (!regionId) {
-      return {
-        product: null,
-        error: 'Region is not set',
-        notFound: false,
-      }
-    }
-
     try {
-      const product = await fetchProductDetails(handle, regionId)
+      const product = await fetchProductDetails(handle)
 
       return {
         product,

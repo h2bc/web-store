@@ -1,19 +1,19 @@
 ## Purpose
 
-Defines how the storefront resolves the store's single market (region and currency) for product pricing and carts, and which countries a customer can ship to at checkout.
+Defines how the storefront prices products and creates carts without knowing the store's region, and which countries a customer can ship to at checkout.
 
 ## ADDED Requirements
 
-### Requirement: Storefront operates on the store's single region
-The storefront SHALL resolve the region from the backend's region list, not from request state such as cookies, headers or query parameters, and SHALL use it for product prices and for creating carts. Every visitor, including crawlers, SHALL see the same prices. When the backend lists more than one region, the storefront SHALL use the first one and log a warning. When the region cannot be resolved, product and cart operations SHALL report an error in the same way they do when the catalog is unavailable, without crashing the page.
+### Requirement: Storefront does not resolve a region
+The storefront SHALL NOT fetch, store or select a region. Product prices SHALL be requested for the store's home country, Lithuania, and carts SHALL be created without a region so that the backend places them in the store's default region. Every visitor, including crawlers, SHALL see the same prices, and no request state such as cookies, headers or query parameters SHALL influence them.
 
 #### Scenario: Two visitors, different countries
 - **WHEN** a visitor in Lithuania and a visitor in Germany open the same product page
 - **THEN** both see the same price in EUR
 
-#### Scenario: Backend unreachable
-- **WHEN** the region list cannot be fetched
-- **THEN** the shop page renders its catalog error state and no cart is created
+#### Scenario: New cart
+- **WHEN** a visitor without a cart adds a product
+- **THEN** the cart is created in the store's default region and the checkout lists that region's countries
 
 ### Requirement: No region selection in the storefront
 The storefront SHALL NOT present a region, country or currency selector outside the checkout shipping address, and SHALL NOT set a cookie or other session state for region.
@@ -44,9 +44,3 @@ Shipping options and prices SHALL be determined by the shipping address country 
 - **WHEN** the shipping address country is any other region country
 - **THEN** the delivery step offers the Rest of Europe shipping option and price
 
-### Requirement: Carts from a removed region keep working
-When a cart is loaded whose region differs from the resolved region, the storefront SHALL move the cart to the resolved region before using it.
-
-#### Scenario: Cart created before the region merge
-- **WHEN** a visitor returns with a cart cookie pointing at a cart in a deleted region
-- **THEN** the cart loads, its region is the current region, and its items and prices are intact
