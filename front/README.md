@@ -41,7 +41,6 @@ Features:
 
 - Product catalog with filtering
 - Product detail pages
-- Multi-region/currency support
 - Contact form with validation
 - Next.js 15 features:
   - App Router

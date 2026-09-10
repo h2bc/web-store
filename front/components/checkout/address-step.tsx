@@ -10,13 +10,14 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { setCheckoutContact } from '@/lib/data/cart'
+import { DEFAULT_COUNTRY_CODE } from '@/lib/store'
 
 interface AddressStepProps {
   cart: HttpTypes.StoreCart
-  countries: { code: string; name: string }[]
+  countryCodes: string[]
 }
 
-export default function AddressStep({ cart, countries }: AddressStepProps) {
+export default function AddressStep({ cart, countryCodes }: AddressStepProps) {
   const router = useRouter()
   const [email, setEmail] = useState(cart.email ?? '')
   const [address, setAddress] = useState<
@@ -62,9 +63,7 @@ export default function AddressStep({ cart, countries }: AddressStepProps) {
       <AddressElement
         options={{
           mode: 'shipping',
-          allowedCountries: countries.map((country) =>
-            country.code.toUpperCase()
-          ),
+          allowedCountries: countryCodes,
           display: { name: 'split' },
           fields: { phone: 'always' },
           validation: { phone: { required: 'never' } },
@@ -79,10 +78,9 @@ export default function AddressStep({ cart, countries }: AddressStepProps) {
               city: saved?.city ?? null,
               state: saved?.province ?? null,
               postal_code: saved?.postal_code ?? null,
-              country:
-                saved?.country_code?.toUpperCase() ??
-                countries[0]?.code.toUpperCase() ??
-                'LT',
+              country: (
+                saved?.country_code ?? DEFAULT_COUNTRY_CODE
+              ).toUpperCase(),
             },
           },
         }}

@@ -65,10 +65,9 @@ export default async function CheckoutPage({
       ? requested!
       : furthest
 
-  const countries = (cart.region?.countries ?? []).map((c) => ({
-    code: c.iso_2 ?? '',
-    name: c.display_name ?? c.name ?? '',
-  }))
+  const countryCodes = (cart.region?.countries ?? []).flatMap((c) =>
+    c.iso_2 ? [c.iso_2.toUpperCase()] : []
+  )
 
   const { options, error: shippingError } =
     step === 'delivery'
@@ -118,7 +117,7 @@ export default async function CheckoutPage({
                     </div>
                   }
                 >
-                  <AddressStep cart={cart} countries={countries} />
+                  <AddressStep cart={cart} countryCodes={countryCodes} />
                 </CheckoutStepSection>
 
                 <CheckoutStepSection

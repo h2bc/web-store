@@ -33,6 +33,17 @@ function paymentFrame(page: Page): FrameLocator {
   return page.frameLocator('main iframe[title="Secure payment input frame"]');
 }
 
+function countryField(page: Page) {
+  return addressFrame(page).getByRole("combobox", {
+    name: "Country or region",
+    exact: true,
+  });
+}
+
+function shippingOption(page: Page, name: string) {
+  return page.locator("label", { hasText: name });
+}
+
 async function fillAddress(page: Page) {
   await page.getByLabel("Email").fill(EMAIL);
   const frame = addressFrame(page);
@@ -42,6 +53,13 @@ async function fillAddress(page: Page) {
   await frame.getByRole("textbox", { name: "Postal code" }).fill("01103");
   await frame.getByRole("textbox", { name: "City" }).fill("Vilnius");
   await page.getByLabel("Email").click();
+}
+
+async function continueToDelivery(page: Page) {
+  const button = page.getByRole("button", { name: "Continue to delivery" });
+  await expect(button).toBeEnabled();
+  await button.click();
+  await expect(page).toHaveURL(/step=delivery/);
 }
 
 async function fillCard(page: Page, number: string) {
@@ -60,21 +78,46 @@ async function fillCard(page: Page, number: string) {
   await frame.getByRole("textbox", { name: "Security code" }).fill("123");
 }
 
+test("checkout ships to every country of the region", async ({ page }) => {
+  await addFirstProductToCart(page);
+  await page.goto("/checkout");
+
+  await expect(countryField(page)).toHaveValue("LT");
+  const countries = await countryField(page)
+    .locator('option:not([value=""])')
+    .allTextContents();
+  expect(countries.length).toBeGreaterThan(1);
+  expect(countries).toEqual(
+    [...countries].sort((a, b) => a.localeCompare(b)),
+  );
+
+  await fillAddress(page);
+  await continueToDelivery(page);
+  await expect(shippingOption(page, "Standard Shipping LT")).toContainText(/2[.,]99/);
+
+  await page.goto("/checkout?step=address");
+  await expect(countryField(page)).toHaveValue("LT");
+  await countryField(page).selectOption("DE");
+  await addressFrame(page).getByRole("textbox", { name: "Postal code" }).fill("10115");
+  await addressFrame(page).getByRole("textbox", { name: "City" }).fill("Berlin");
+  await page.getByLabel("Email").click();
+  await continueToDelivery(page);
+  await expect(shippingOption(page, "Standard Shipping EU")).toContainText(/5[.,]99/);
+});
+
 test("guest checkout with a test card lands on the confirmation page", async ({
   page,
 }) => {
   await addFirstProductToCart(page);
   await page.goto("/checkout");
 
-  const continueToDelivery = page.getByRole("button", {
+  const continueButton = page.getByRole("button", {
     name: "Continue to delivery",
   });
-  await expect(continueToDelivery).toBeDisabled();
+  await expect(continueButton).toBeDisabled();
   await fillAddress(page);
-  await expect(continueToDelivery).toBeEnabled();
-  await continueToDelivery.click();
+  await continueToDelivery(page);
 
-  await expect(page).toHaveURL(/step=delivery/);
   await page.getByRole("button", { name: "Continue to payment" }).click();
 
   await expect(page).toHaveURL(/step=payment/);
