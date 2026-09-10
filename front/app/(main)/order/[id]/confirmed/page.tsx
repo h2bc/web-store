@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CheckCircle2 } from 'lucide-react'
 import Heading from '@/components/layout/heading'
 import ErrorAlert from '@/components/feedback/error-alert'
+import CheckoutSummary from '@/components/checkout/checkout-summary'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getOrder } from '@/lib/data/orders'
 import { formatPrice } from '@/lib/utils'
 
@@ -30,70 +29,96 @@ export default async function OrderConfirmedPage({
     )
   }
 
-  const currency = order.currency_code
+  const address = order.shipping_address
+  const shippingMethod = order.shipping_methods?.[0]
+  const placedOn = new Date(order.created_at).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
 
   return (
     <div className="flex justify-center pt-15">
-      <div className="max-w-2xl w-full flex flex-col pb-12">
-        <div className="flex flex-col items-center text-center mb-8">
-          <CheckCircle2 className="h-12 w-12 mb-4" />
-          <Heading level={1} font="blackletter" className="mb-2">
-            Thank you
-          </Heading>
-          <p className="text-muted-foreground">
-            Your order is confirmed. A receipt is on its way to {order.email}.
-          </p>
-        </div>
+      <div className="max-w-5xl w-full flex flex-col pb-12">
+        <Heading level={1} font="blackletter" className="mb-8">
+          Order confirmed
+        </Heading>
 
-        <Card>
-          <CardContent className="space-y-4 pt-6">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Order</span>
-              <span className="font-medium">#{order.display_id}</span>
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_22rem] gap-8 items-start">
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">
+                  Thank you
+                  {address?.first_name ? `, ${address.first_name}` : ''}!
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-1 text-sm text-muted-foreground">
+                <p>
+                  Order #{order.display_id} was placed on {placedOn}.
+                </p>
+                <p>A confirmation email is on its way to {order.email}.</p>
+              </CardContent>
+            </Card>
 
-            <Separator />
-
-            <div className="divide-y">
-              {(order.items ?? []).map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between py-3 text-sm"
-                >
-                  <span>
-                    {item.product_title}
-                    {item.variant_title &&
-                    item.variant_title !== 'Default Variant'
-                      ? ` · ${item.variant_title}`
-                      : ''}{' '}
-                    × {item.quantity}
-                  </span>
-                  <span className="font-medium">
-                    {formatPrice(item.unit_price, currency)}
-                  </span>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Order details</CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+                <div>
+                  <p className="font-medium mb-1">Contact</p>
+                  <div className="text-muted-foreground">
+                    <p>{order.email}</p>
+                    {address?.phone && <p>{address.phone}</p>}
+                  </div>
                 </div>
-              ))}
-            </div>
 
-            <Separator />
+                <div>
+                  <p className="font-medium mb-1">Shipping address</p>
+                  <div className="text-muted-foreground">
+                    <p>
+                      {address?.first_name} {address?.last_name}
+                    </p>
+                    <p>
+                      {address?.address_1}
+                      {address?.address_2 ? `, ${address.address_2}` : ''}
+                    </p>
+                    <p>
+                      {address?.postal_code} {address?.city},{' '}
+                      {address?.country_code?.toUpperCase()}
+                    </p>
+                  </div>
+                </div>
 
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Delivery</span>
-              <span>{formatPrice(order.shipping_total, currency)}</span>
-            </div>
+                <div>
+                  <p className="font-medium mb-1">Delivery</p>
+                  <div className="text-muted-foreground">
+                    <p>{shippingMethod?.name ?? '—'}</p>
+                    <p>
+                      {formatPrice(order.shipping_total, order.currency_code)}
+                    </p>
+                  </div>
+                </div>
 
-            <div className="flex items-center justify-between">
-              <span className="font-medium">Total</span>
-              <span className="font-medium">
-                {formatPrice(order.total, currency)}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+                <div>
+                  <p className="font-medium mb-1">Payment</p>
+                  <div className="text-muted-foreground">
+                    <p>Card</p>
+                    <p>{formatPrice(order.total, order.currency_code)}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-        <Button asChild variant="outline" size="lg" className="mt-8">
-          <Link href="/shop">Continue shopping</Link>
-        </Button>
+          <aside className="lg:sticky lg:top-24 space-y-4">
+            <CheckoutSummary cart={order} />
+            <Button asChild size="lg" className="w-full">
+              <Link href="/shop">Continue shopping</Link>
+            </Button>
+          </aside>
+        </div>
       </div>
     </div>
   )

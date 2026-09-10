@@ -34,7 +34,7 @@ The CI e2e job seeds a fresh database and then runs a `psql` query against `stor
 
 **Default country is a storefront constant.** `DEFAULT_COUNTRY_CODE = 'lt'` in `lib/store.ts`, in the same spirit as the Instagram handle in `lib/social.ts`: it is brand identity, not shop configuration. It is the pricing context for product queries and the preselected country when the cart has no shipping address. Alternative: derive it from the stock location. Rejected because the store API does not expose stock locations and the value will not change.
 
-**Country list sorted in the checkout page.** `app/(main)/checkout/page.tsx` already maps `cart.region.countries`; it sorts by display name before passing the list down. The address step keeps the dropdown as-is.
+**Country codes passed to the Stripe Address Element.** `app/(main)/checkout/page.tsx` maps `cart.region.countries` to upper-case ISO codes and passes them to the address step as `allowedCountries`. The element renders the country list alphabetically by display name on its own, so the page does not sort. The address step defaults the element's country to the saved shipping address country or `DEFAULT_COUNTRY_CODE`.
 
 **Remove, do not disable.** `proxy.ts`, both selector components, `lib/types/region.ts`, `changeRegion`, `getRegionId`, `setRegionId`, the `regions`/`currentRegion`/`regionSelectorDisabled`/`regionsError`/`currentRegionError` props and the `ClientToastErrorHandler` wrapper in the header (its only inputs were the two region errors) are deleted. The footer keeps its links, rights notice and social icons.
 

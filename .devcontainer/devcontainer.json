@@ -5,7 +5,6 @@
   "workspaceFolder": "/workspace",
   "mounts": [
     "type=bind,source=${localWorkspaceFolder},target=/workspace",
-    "source=${localEnv:HOME}/.ssh/agent.sock,target=/ssh-agent.sock,type=bind",
     "type=bind,source=${localEnv:HOME}/.claude,target=/claude"
   ],
   "features": {
@@ -19,11 +18,11 @@
       "browsers": "chromium"
     },
     "ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/nullcoder/devcontainer-features/stripe-cli:1": {},
     "ghcr.io/jrussellsmyth/devcontainer-features/openspec:1": {}
   },
   "remoteEnv": {
-    "SSH_AUTH_SOCK": "/ssh-agent.sock",
     "CLAUDE_CONFIG_DIR": "/claude"
   },
   "postCreateCommand": "pnpm i --frozen && pnpm install:api && pnpm install:front && pnpm migrate",

@@ -16,8 +16,8 @@
 
 ## 4. Checkout countries
 
-- [x] 4.1 In `app/(main)/checkout/page.tsx` sort the country list by display name; in `components/checkout/address-step.tsx` default `country_code` to the existing address country or `DEFAULT_COUNTRY_CODE`; verify a fresh cart's address step preselects Lithuania with an alphabetical list, and a cart with a German address keeps Germany
-- [x] 4.2 Add `e2e/checkout.test.ts`: add the first shop product to the cart, open checkout, confirm the country field preselects Lithuania and the dropdown is alphabetical, submit a Lithuanian address and assert the delivery step offers "Standard Shipping LT" at 2.99, then edit the address to Germany and assert "Standard Shipping EU" at 5.99; skip when the shop lists no products; verify with `pnpm test:e2e`
+- [x] 4.1 In `app/(main)/checkout/page.tsx` map `cart.region.countries` to upper-case ISO codes and pass them to `components/checkout/address-step.tsx` as the Address Element's `allowedCountries`; default the element's country to the existing address country or `DEFAULT_COUNTRY_CODE`; verify a fresh cart's address step preselects Lithuania with an alphabetical list, and a cart with a German address keeps Germany
+- [x] 4.2 In `e2e/checkout.test.ts` add a case next to the card payment flow: add the first shop product to the cart, open checkout, confirm the Address Element's country select preselects Lithuania and lists countries alphabetically, submit a Lithuanian address and assert the delivery step offers "Standard Shipping LT" at 2.99, then edit the address to Germany and assert "Standard Shipping EU" at 5.99; the file already skips without `STRIPE_PUBLISHABLE_KEY`; verify with `pnpm test:e2e`
 
 ## 5. Docs and specs
 

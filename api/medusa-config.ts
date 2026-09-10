@@ -64,7 +64,6 @@ const paymentModule = stripeApiKey
                 apiKey: stripeApiKey,
                 webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
                 capture: true,
-                automaticPaymentMethods: true,
               },
             },
           ],
@@ -110,6 +109,7 @@ module.exports = defineConfig({
   },
   admin: {
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
+    backendUrl: process.env.MEDUSA_BACKEND_URL,
   },
   modules: [
     {

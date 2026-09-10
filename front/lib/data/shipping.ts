@@ -8,7 +8,6 @@ export type ShippingOptionSummary = {
   id: string
   name: string
   amount: number | null
-  isCalculated: boolean
 }
 
 type ShippingOptionsResult = {
@@ -34,7 +33,6 @@ export async function listCartShippingOptions(): Promise<ShippingOptionsResult> 
           id: option.id,
           name: option.name,
           amount: option.amount ?? null,
-          isCalculated: option.price_type === 'calculated',
         })
       ),
       error: null,
@@ -42,29 +40,5 @@ export async function listCartShippingOptions(): Promise<ShippingOptionsResult> 
   } catch (error) {
     console.error('Failed to fetch shipping options:', error)
     return { options: [], error: 'Failed to load delivery options.' }
-  }
-}
-
-export async function calculateShippingPrice(
-  optionId: string
-): Promise<{ amount: number | null; error: string | null }> {
-  const cartId = await getCartId()
-
-  if (!cartId) {
-    return { amount: null, error: 'No cart found' }
-  }
-
-  try {
-    const { shipping_option } = await sdk.store.fulfillment.calculate(
-      optionId,
-      {
-        cart_id: cartId,
-      }
-    )
-
-    return { amount: shipping_option.amount ?? null, error: null }
-  } catch (error) {
-    console.error('Failed to calculate shipping price:', error)
-    return { amount: null, error: 'Failed to calculate the delivery price.' }
   }
 }
