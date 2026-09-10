@@ -222,5 +222,4 @@ jobs:
             --repo h2bc/web-store-deploy \
             --ref main \
             --field name="web-store: ${commit_title} (${short_sha})" \
-            --field api_image="${REGISTRY}/${{ github.repository }}/api:sha-${short_sha}" \
-            --field front_image="${REGISTRY}/${{ github.repository }}/front:sha-${short_sha}"
+            --field tag="sha-${short_sha}"
