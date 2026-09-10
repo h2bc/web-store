@@ -92,9 +92,6 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
           wallets: { link: 'never' },
         }}
         onReady={() => setIsReady(true)}
-        onChange={(event) => {
-          if (event.complete) setPaymentError(null)
-        }}
       />
 
       {paymentError && <ErrorAlert message={paymentError} />}

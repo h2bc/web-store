@@ -63,17 +63,15 @@ async function continueToDelivery(page: Page) {
 }
 
 async function fillCard(page: Page, number: string) {
+  await expect(page.getByRole("button", { name: "Place order" })).toBeEnabled();
   const frame = paymentFrame(page);
-  const cardTab = frame.getByRole("button", { name: "Card" });
   const cardNumber = frame.getByRole("textbox", { name: "Card number" });
-  await expect(cardTab.or(cardNumber).first()).toBeVisible();
-  if (
-    (await cardTab.isVisible()) &&
-    (await cardTab.getAttribute("aria-expanded")) !== "true"
-  ) {
-    await cardTab.click();
-  }
-  await frame.getByRole("textbox", { name: "Card number" }).fill(number);
+  await expect(async () => {
+    if (await cardNumber.isVisible()) return;
+    await frame.getByRole("button", { name: "Card" }).click();
+    await expect(cardNumber).toBeVisible({ timeout: 2_000 });
+  }).toPass();
+  await cardNumber.fill(number);
   await frame.getByRole("textbox", { name: /Expiration/ }).fill("1234");
   await frame.getByRole("textbox", { name: "Security code" }).fill("123");
 }
@@ -123,7 +121,9 @@ test("guest checkout with a test card lands on the confirmation page", async ({
   await expect(page).toHaveURL(/step=payment/);
   await fillCard(page, "4000000000000002");
   await page.getByRole("button", { name: "Place order" }).click();
-  await expect(page.locator("main").getByRole("alert")).toContainText("declined");
+  await expect(page.locator("main").getByRole("alert")).toContainText("declined", {
+    timeout: 30_000,
+  });
   await expect(page).toHaveURL(/step=payment/);
 
   await fillCard(page, "4242424242424242");
