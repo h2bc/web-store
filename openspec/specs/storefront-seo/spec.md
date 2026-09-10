@@ -22,7 +22,7 @@ Each product page SHALL expose a document title made of the product title follow
 - **THEN** `og:image` is the site default image
 
 ### Requirement: Product pages publish Product structured data
-Each product page SHALL embed a JSON-LD `Product` object with name, description, image list, canonical URL, brand `h2bc`, and an `Offer` with price, currency and availability for the region the request resolves to. Availability SHALL be `InStock` when any variant is purchasable and `OutOfStock` otherwise. The embedded JSON SHALL be safe to inline in HTML.
+Each product page SHALL embed a JSON-LD `Product` object with name, description, image list, canonical URL, brand `h2bc`, and an `Offer` with price, currency and availability in the store's currency. Availability SHALL be `InStock` when any variant is purchasable and `OutOfStock` otherwise. The embedded JSON SHALL be safe to inline in HTML.
 
 #### Scenario: In-stock product
 - **WHEN** at least one variant is purchasable

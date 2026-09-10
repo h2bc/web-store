@@ -45,7 +45,7 @@ The delivery step SHALL list the shipping options available for the cart with th
 - **THEN** the cart's shipping method is that option and the payment step is shown
 
 ### Requirement: Payment step confirms payment and places the order
-The payment step SHALL show a payment form offering card payment and, where the device and store support them, Apple Pay and Google Pay. Payment methods that require leaving the site SHALL NOT be offered. Placing the order SHALL confirm the payment for the cart's total in place and then complete the cart. A failed or declined payment SHALL show the reason and leave the cart in place so the customer can retry. A completed cart SHALL redirect to the order confirmation page. A cart that was already completed SHALL NOT be charged again.
+The payment step SHALL show a payment form offering every payment method enabled in the Stripe Dashboard that the device and store support, including card, Apple Pay and Google Pay. Placing the order SHALL confirm the payment for the cart's total and then complete the cart. A method that confirms in place SHALL complete the cart on the same page. A method that leaves the site SHALL return the customer to a return page that verifies the payment and completes the cart. A payment still being processed by the bank SHALL tell the customer the confirmation will arrive by email and release the cart, leaving completion to the Stripe webhook. A failed or declined payment SHALL show the reason and leave the cart in place so the customer can retry. A completed cart SHALL redirect to the order confirmation page. Completing a cart that was already completed SHALL return the existing order and SHALL NOT charge again.
 
 #### Scenario: Card payment succeeds
 - **WHEN** the customer places the order with a valid test card
@@ -55,9 +55,13 @@ The payment step SHALL show a payment form offering card payment and, where the 
 - **WHEN** the customer places the order with a declined test card
 - **THEN** the decline reason is shown, the cart is unchanged and the customer can try again
 
-#### Scenario: Only in-place methods offered
-- **WHEN** the customer reaches the payment step in Stripe test mode, where every method type is normally shown
-- **THEN** card is offered and no redirect-based method such as Klarna or Bancontact appears
+#### Scenario: Redirect method succeeds
+- **WHEN** the customer places the order with a method that leaves the site and approves the payment
+- **THEN** the customer returns to the return page, the cart is completed and the customer lands on the confirmation page for the new order
+
+#### Scenario: Redirect method fails
+- **WHEN** the customer places the order with a method that leaves the site and the payment is refused
+- **THEN** the return page shows the reason and offers a way back to the payment step with the cart intact
 
 ### Requirement: Order confirmation page
 The confirmation page for an order SHALL use the checkout's layout and order summary. It SHALL show the customer's first name, order number, order date and the email the confirmation was sent to; the contact details, shipping address, delivery method with its cost and the payment method with the amount charged; the ordered items with thumbnails, quantities and prices; subtotal, delivery and total; and a primary action back to the shop. It SHALL NOT be indexed by search engines. An unknown order id SHALL show an error instead of the page.
