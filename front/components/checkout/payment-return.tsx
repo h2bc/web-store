@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import ErrorAlert from '@/components/feedback/error-alert'
 import { completeCart, releaseCart } from '@/lib/data/cart'
 import { getStripe } from '@/lib/stripe'
@@ -74,28 +76,68 @@ export default function PaymentReturn({
 
   if (state.kind === 'failed') {
     return (
-      <div className="space-y-6">
-        <ErrorAlert message={state.message} />
-        <Button asChild>
-          <Link href="/checkout?step=payment">Back to payment</Link>
-        </Button>
-      </div>
+      <>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Payment failed</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm text-muted-foreground">
+            <ErrorAlert message={state.message} className="max-w-none" />
+            <p>
+              You have not been charged. You can try again or use a different
+              payment method.
+            </p>
+          </CardContent>
+        </Card>
+        <aside className="lg:sticky lg:top-24">
+          <Button asChild size="lg" className="w-full">
+            <Link href="/checkout?step=payment">Back to payment</Link>
+          </Button>
+        </aside>
+      </>
     )
   }
 
   if (state.kind === 'processing') {
     return (
-      <div className="space-y-2 max-w-2xl">
-        <p className="text-sm">
-          Your payment is being processed. This can take a few days for bank
-          payments.
-        </p>
-        <p className="text-sm text-muted-foreground">
-          We will email your order confirmation as soon as the payment clears.
-        </p>
-      </div>
+      <>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Payment pending</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-1 text-sm text-muted-foreground">
+            <p>
+              Your payment is being processed. This can take a few days for bank
+              payments.
+            </p>
+            <p>
+              We will email your order confirmation as soon as the payment
+              clears.
+            </p>
+          </CardContent>
+        </Card>
+        <aside className="lg:sticky lg:top-24">
+          <Button asChild size="lg" className="w-full">
+            <Link href="/shop">Continue shopping</Link>
+          </Button>
+        </aside>
+      </>
     )
   }
 
-  return <p className="text-sm text-muted-foreground">Confirming payment…</p>
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Confirming payment
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="text-sm text-muted-foreground">
+        <p>
+          Please wait while we confirm your payment. Do not close this page.
+        </p>
+      </CardContent>
+    </Card>
+  )
 }

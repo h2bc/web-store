@@ -28,10 +28,12 @@ export default async function CheckoutReturnPage({
         <Heading level={1} font="blackletter" className="mb-8">
           Checkout
         </Heading>
-        <PaymentReturn
-          publishableKey={publishableKey}
-          clientSecret={clientSecret}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_22rem] gap-8 items-start">
+          <PaymentReturn
+            publishableKey={publishableKey}
+            clientSecret={clientSecret}
+          />
+        </div>
       </div>
     </div>
   )
