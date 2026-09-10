@@ -34,6 +34,7 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
         elements,
         redirect: 'if_required',
         confirmParams: {
+          return_url: `${window.location.origin}/checkout/return`,
           payment_method_data: {
             billing_details: {
               name: `${address?.first_name ?? ''} ${address?.last_name ?? ''}`.trim(),

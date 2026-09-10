@@ -270,15 +270,6 @@ export async function completeCart(): Promise<CompleteCartResult> {
   }
 
   try {
-    const { cart } = await sdk.store.cart.retrieve(cartId)
-    if (cart.completed_at) {
-      return { orderId: null, error: 'This order has already been placed.' }
-    }
-  } catch {
-    return { orderId: null, error: 'Failed to load cart.' }
-  }
-
-  try {
     const result = await sdk.store.cart.complete(cartId)
 
     if (result.type !== 'order') {
@@ -301,4 +292,9 @@ export async function completeCart(): Promise<CompleteCartResult> {
       error: 'Failed to place the order. You have not been charged.',
     }
   }
+}
+
+export async function releaseCart(): Promise<void> {
+  await removeCartId()
+  revalidatePath('/', 'layout')
 }

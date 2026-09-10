@@ -15,10 +15,7 @@ async function createStripeSession(
 ): Promise<string | null> {
   const { payment_collection } = await sdk.store.payment.initiatePaymentSession(
     cart,
-    {
-      provider_id: STRIPE_PROVIDER_ID,
-      data: { payment_method_types: ['card'] },
-    }
+    { provider_id: STRIPE_PROVIDER_ID }
   )
 
   const session = payment_collection.payment_sessions?.find(
