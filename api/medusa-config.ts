@@ -64,7 +64,6 @@ const paymentModule = stripeApiKey
                 apiKey: stripeApiKey,
                 webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
                 capture: true,
-                automaticPaymentMethods: true,
               },
             },
           ],

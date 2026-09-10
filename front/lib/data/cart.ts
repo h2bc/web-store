@@ -1,6 +1,5 @@
 'use server'
 
-import xss from 'xss'
 import { revalidatePath } from 'next/cache'
 import { sdk } from '@/lib/medusa'
 import {
@@ -12,10 +11,12 @@ import {
 } from '@/lib/cookies'
 import type { HttpTypes } from '@medusajs/types'
 import { FetchError } from '@medusajs/js-sdk'
-import {
-  checkoutAddressSchema,
-  type CheckoutAddressData,
-} from '@/lib/schemas/checkout'
+import type { StripeAddressElementChangeEvent } from '@stripe/stripe-js'
+
+type CheckoutContact = {
+  email: string
+  address: StripeAddressElementChangeEvent['value']
+}
 
 type CartResult = {
   cart: HttpTypes.StoreCart | null
@@ -70,7 +71,7 @@ export async function getCart(): Promise<CartResult> {
   }
 }
 
-export async function initCart(): Promise<CartResult> {
+async function initCart(): Promise<CartResult> {
   const regionId = await getRegionId()
 
   if (!regionId) {
@@ -206,41 +207,37 @@ type CompleteCartResult = {
   error: string | null
 }
 
-export async function setCheckoutContact(
-  data: CheckoutAddressData
-): Promise<CartResult> {
+export async function setCheckoutContact({
+  email,
+  address,
+}: CheckoutContact): Promise<CartResult> {
   const cartId = await getCartId()
 
   if (!cartId) {
     return { cart: null, error: 'No cart found' }
   }
 
-  const validated = checkoutAddressSchema.safeParse(data)
-
-  if (!validated.success) {
-    return { cart: null, error: 'Please fix the errors and try again.' }
+  if (!email || !address.address.line1 || !address.address.country) {
+    return { cart: null, error: 'Please fill in your email and address.' }
   }
 
-  const v = validated.data
-  const clean = (value?: string) => (value ? xss(value.trim()) : undefined)
-
-  const address = {
-    first_name: clean(v.first_name),
-    last_name: clean(v.last_name),
-    address_1: clean(v.address_1),
-    address_2: clean(v.address_2),
-    city: clean(v.city),
-    postal_code: clean(v.postal_code),
-    country_code: v.country_code.toLowerCase(),
-    province: clean(v.province),
-    phone: clean(v.phone),
+  const medusaAddress = {
+    first_name: address.firstName,
+    last_name: address.lastName,
+    address_1: address.address.line1,
+    address_2: address.address.line2 ?? undefined,
+    city: address.address.city,
+    postal_code: address.address.postal_code,
+    country_code: address.address.country.toLowerCase(),
+    province: address.address.state,
+    phone: address.phone,
   }
 
   try {
     const { cart } = await sdk.store.cart.update(cartId, {
-      email: xss(v.email.trim().toLowerCase()),
-      shipping_address: address,
-      billing_address: address,
+      email: email.trim().toLowerCase(),
+      shipping_address: medusaAddress,
+      billing_address: medusaAddress,
     })
 
     revalidatePath('/checkout')

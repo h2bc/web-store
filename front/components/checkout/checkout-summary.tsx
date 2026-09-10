@@ -5,7 +5,7 @@ import { Separator } from '@/components/ui/separator'
 import { formatPrice } from '@/lib/utils'
 
 interface CheckoutSummaryProps {
-  cart: HttpTypes.StoreCart
+  cart: HttpTypes.StoreCart | HttpTypes.StoreOrder
 }
 
 export default function CheckoutSummary({ cart }: CheckoutSummaryProps) {

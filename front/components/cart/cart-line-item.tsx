@@ -14,12 +14,11 @@ import { formatPrice } from '@/lib/utils'
 import { productPath } from '@/lib/routes'
 
 interface CartLineItemProps {
-  item: HttpTypes.StoreCartLineItem
+  item: HttpTypes.StoreCartLineItem | HttpTypes.StoreOrderLineItem
   currencyCode?: string
   onRemoveSuccess?: () => void
   onNavigate?: () => void
   imageSize?: 'sm' | 'md'
-  /** Hides the quantity stepper and remove button (used during checkout). */
   readOnly?: boolean
 }
 
