@@ -51,7 +51,9 @@ export async function getCart(): Promise<CartResult> {
   }
 
   try {
-    const { cart } = await sdk.store.cart.retrieve(cartId)
+    const { cart } = await sdk.store.cart.retrieve(cartId, {
+      fields: '+shipping_methods.name',
+    })
 
     return {
       cart: sortCartItems(cart),
