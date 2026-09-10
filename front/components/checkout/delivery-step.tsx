@@ -68,9 +68,7 @@ export default function DeliveryStep({
               <span>{option.name}</span>
             </div>
             <span className="font-medium">
-              {option.isCalculated && option.amount == null
-                ? 'Calculated at checkout'
-                : formatPrice(option.amount, currencyCode)}
+              {formatPrice(option.amount, currencyCode)}
             </span>
           </Label>
         ))}
