@@ -35,7 +35,7 @@
 ## 4. Verification
 
 - [ ] 4.1 Run `/code-review` on this branch and confirm its report cites `front.md` or `api.md` for at least one finding or states none of the listed failures were found; verify the report names the rule files, and if the CI review on the PR does not, record the one-line `prompt` fallback from the design under Review findings
-- [ ] 4.2 Run `pnpm lint`, `pnpm format:check`, `pnpm typecheck:api`, `pnpm typecheck:front` and `pnpm test:api` on the final tree and confirm `git status --porcelain .claude/commands .claude/skills/openspec-*` prints nothing; verify green and empty
+- [ ] 4.2 Run `pnpm lint`, `pnpm format`, `pnpm typecheck:api`, `pnpm typecheck:front` and `pnpm test:api` on the final tree and confirm `git status --porcelain .claude/commands .claude/skills/openspec-*` prints nothing; verify green and empty
 
 ## 5. Outside this repo
 
