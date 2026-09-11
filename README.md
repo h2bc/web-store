@@ -14,7 +14,9 @@ Root scripts wrap the sub-projects (`<cmd>:<scope>`), e.g.:
 ```sh
 pnpm dev:api
 pnpm dev:front
-pnpm test:e2e
+pnpm migrate
 ```
+
+`pnpm lint` and `pnpm format:check` run ESLint and Prettier over both apps; the pre-commit hook runs both. CI also runs the typechecks, the API tests and the e2e suite.
 
 See each project's README for setup, env files and project-specific commands.

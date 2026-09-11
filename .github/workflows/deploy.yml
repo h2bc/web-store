@@ -12,39 +12,7 @@ env:
 
 jobs:
   check:
-    name: Lint, typecheck, unit tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '25'
-          cache: pnpm
-          cache-dependency-path: |
-            pnpm-lock.yaml
-            api/pnpm-lock.yaml
-            front/pnpm-lock.yaml
-
-      - name: Install dependencies
-        run: pnpm i --frozen && pnpm install:api && pnpm install:front
-
-      - name: Lint
-        run: pnpm lint:api && pnpm lint:front
-
-      - name: Typecheck
-        run: pnpm typecheck && pnpm typecheck:api && pnpm typecheck:front
-
-      - name: Unit tests
-        run: pnpm test:front
-
-  e2e:
-    name: End-to-end tests
+    name: Check
     runs-on: ubuntu-latest
     services:
       db:
@@ -63,6 +31,9 @@ jobs:
     env:
       CI: true
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/medusa
+      DB_HOST: localhost
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
       DISABLE_MEDUSA_ADMIN: 'true'
       STORE_CORS: http://localhost:3000
       ADMIN_CORS: http://localhost:9000
@@ -103,8 +74,17 @@ jobs:
         run: |
           echo "MEDUSA_PUBLISHABLE_KEY=$(psql "$DATABASE_URL" -tAc "select token from api_key where type = 'publishable' limit 1")" >> "$GITHUB_ENV"
 
-      - name: Run Playwright
-        run: pnpm test:e2e
+      - name: Format
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck && pnpm typecheck:api && pnpm typecheck:front
+
+      - name: Tests
+        run: pnpm test:api && pnpm test:e2e
 
       - name: Upload Playwright report
         if: failure()
@@ -117,7 +97,7 @@ jobs:
   build-api:
     name: Publish API image
     if: github.event_name != 'pull_request'
-    needs: [check, e2e]
+    needs: [check]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -161,7 +141,7 @@ jobs:
   build-front:
     name: Publish storefront image
     if: github.event_name != 'pull_request'
-    needs: [check, e2e]
+    needs: [check]
     runs-on: ubuntu-latest
     permissions:
       contents: read

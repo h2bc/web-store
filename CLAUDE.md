@@ -7,4 +7,6 @@ For Medusa API questions, fetch https://docs.medusajs.com/llms.txt and follow it
 ## Code style
 
 - Do not preserve legacy compatibility. When behavior, APIs, configs, or schemas change, update callers and tests to the new shape directly. Remove obsolete paths, shims, aliases, compatibility layers, deprecation scaffolding, and dead code instead of leaving them behind.
+- Prefer small methods: decompose long functions into short, single-purpose ones with descriptive names.
+- Prefer functional programming patterns: immutable data, pure functions, and `map`/`filter`/`reduce` over loops and mutation.
 - Do not comment the code. Good code is clear enough by itself. The only exceptions are special markers such as TODO items or a note about something genuinely non-obvious.
