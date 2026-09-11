@@ -13,9 +13,20 @@ context: |
   the deploy repository. The per-app invariants are in .claude/rules/api.md and
   .claude/rules/front.md.
 
+  ## How we build
+  Prefer what already exists over custom code, in this order: a feature of
+  Medusa or Next.js, a component or helper already in the repo (shadcn/ui in
+  front/components/ui, existing workflows, steps and middlewares in api/), a
+  well-maintained library, and only then hand-written code. Prefer the plain
+  solution over the clever one; the brand is small and the code is maintained
+  by one developer with an agent.
+
 rules:
   proposal:
     - Keep it short. State the change, the reason, and non-goals.
+  design:
+    - For every decision that adds code, name the existing feature, repo component or library that was considered and why it is not enough. Custom code is the last option, not the default.
+    - A new dependency needs one sentence on why it beats what the repo already has.
   tasks:
     - Split tasks by app (api/, front/); do api/ first when the storefront needs new endpoints.
     - A verify clause that names a commit, a push or a pull request describes the developer's step; apply stops before it and reports the tree as ready to review.
