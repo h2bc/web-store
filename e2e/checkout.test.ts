@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import path from "node:path";
 import { expect, test, type FrameLocator, type Page } from "@playwright/test";
 
 const EMAIL = "e2e@example.com";
@@ -9,7 +8,7 @@ function stripePublishableKey(): string | undefined {
     return process.env.STRIPE_PUBLISHABLE_KEY;
   }
   try {
-    const env = readFileSync(path.join(__dirname, "../front/.env.local"), "utf8");
+    const env = readFileSync(new URL("../front/.env.local", import.meta.url), "utf8");
     return env.match(/^STRIPE_PUBLISHABLE_KEY=(.+)$/m)?.[1]?.trim();
   } catch {
     return undefined;

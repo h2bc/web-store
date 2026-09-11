@@ -7,14 +7,14 @@ import {
   Tailwind,
   Head,
   Preview,
-  Body
-} from "@react-email/components"
+  Body,
+} from "@react-email/components";
 
 type EmailLayoutProps = {
-  preview: string
-  logo_url?: string
-  children: React.ReactNode
-}
+  preview: string;
+  logo_url?: string;
+  children: React.ReactNode;
+};
 
 export function EmailLayout({ preview, logo_url, children }: EmailLayoutProps) {
   return (
@@ -40,5 +40,5 @@ export function EmailLayout({ preview, logo_url, children }: EmailLayoutProps) {
         </Body>
       </Html>
     </Tailwind>
-  )
+  );
 }

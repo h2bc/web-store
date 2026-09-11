@@ -1,11 +1,17 @@
 {
   "name": "h2bc-web-store",
   "private": true,
+  "type": "module",
   "packageManager": "pnpm@10.34.5",
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks",
     "install:api": "pnpm --dir api i --frozen",
     "install:front": "pnpm --dir front i --frozen",
     "migrate": "pnpm --dir api predeploy",
+    "lint": "pnpm lint:api && pnpm lint:front",
+    "format": "pnpm format:api && pnpm format:front",
+    "format:api": "pnpm --dir api format",
+    "format:front": "pnpm --dir front format",
     "dev:api": "pnpm --dir api dev",
     "dev:front": "pnpm --dir front dev",
     "lint:api": "pnpm --dir api lint",

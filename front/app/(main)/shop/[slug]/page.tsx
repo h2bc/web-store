@@ -17,8 +17,11 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const { product, error, notFound: isNotFound } =
-    await getProductByHandle(slug)
+  const {
+    product,
+    error,
+    notFound: isNotFound,
+  } = await getProductByHandle(slug)
 
   if (isNotFound) {
     notFound()

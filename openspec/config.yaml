@@ -7,24 +7,16 @@ context: |
   accessories to Lithuania and the EU. Catalog, prices, regions and shipping rates
   are configured in the Medusa admin, not in code.
 
-  ## Architecture
-  - api/ is a Medusa v2 backend and stays as close to stock as possible. Customize
-    only through Medusa's extension points (modules, workflows, subscribers, routes,
-    links). Anything a shop owner should be able to change (catalog, pricing,
-    regions, shipping, payment providers) belongs in the admin, not in code.
-  - External services (payments, email, file storage, Redis) are optional and
-    switched on by env. Local dev must work with none of them configured.
-  - front/ is a server-first Next.js storefront. Components never talk to the
-    backend directly; every call goes through the server-only data layer in
-    lib/data/, which returns { data, error } and never throws, so the site
-    degrades instead of crashing when the backend is unreachable.
-  - Reads are cached with tags and invalidated on mutation. Session state
-    (cart) lives in an httpOnly cookie, never in client state.
-  - Checkout is guest-only by design. No accounts, no login, no order history.
+  ## Before writing an artifact
+  Read docs/architecture.md. It is the one description of the two apps, the
+  storefront data layer, caching, session, checkout, the optional services and
+  the deploy repository. The per-app invariants are in .claude/rules/api.md and
+  .claude/rules/front.md.
 
 rules:
   proposal:
     - Keep it short. State the change, the reason, and non-goals.
   tasks:
     - Split tasks by app (api/, front/); do api/ first when the storefront needs new endpoints.
-    - End with "cd front && pnpm lint && pnpm typecheck" when the storefront changes.
+    - A verify clause that names a commit, a push or a pull request describes the developer's step; apply stops before it and reports the tree as ready to review.
+    - The last task of a change runs `pnpm lint`, `pnpm format`, `pnpm typecheck:api`, `pnpm typecheck:front` and `pnpm test:api`.

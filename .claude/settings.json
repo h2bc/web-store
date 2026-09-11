@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path'); case \"${f#$CLAUDE_PROJECT_DIR/}\" in api/*) app=api;; front/*) app=front;; *) exit 0;; esac; pnpm --dir \"$app\" exec prettier --write --ignore-unknown \"$f\" && pnpm --dir \"$app\" exec eslint \"$f\" >&2 || exit 2"
+          }
+        ]
+      }
+    ]
+  }
+}
