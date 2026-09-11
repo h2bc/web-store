@@ -1,0 +1,14 @@
+#!/bin/sh
+zero=0000000000000000000000000000000000000000
+branch=$(git branch --show-current)
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    echo "pre-push: main takes no direct pushes; push ${branch:-a work branch} and open a pull request" >&2
+    exit 1
+  fi
+  if [ "$remote_sha" != "$zero" ] && [ "$local_sha" != "$zero" ] && ! git merge-base --is-ancestor "$remote_sha" "$local_sha"; then
+    echo "pre-push: ${remote_ref#refs/heads/} would lose commits; force pushes are refused, merge the remote in instead" >&2
+    exit 1
+  fi
+done

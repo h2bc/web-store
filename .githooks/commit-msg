@@ -1,0 +1,25 @@
+#!/bin/sh
+subject=$(grep -v '^#' "$1" | sed -n '1p')
+
+case "$subject" in
+  Merge\ *) exit 0 ;;
+esac
+
+refuse() {
+  echo "commit-msg: $1" >&2
+  echo "  $2" >&2
+  exit 1
+}
+
+if echo "$subject" | grep -Eiq '^[a-z]+(\([^)]*\))?!?:'; then
+  refuse "no conventional-commit prefix" "$subject"
+fi
+
+case "$subject" in
+  [a-z]*) refuse "the subject must start with a capital letter" "$subject" ;;
+esac
+
+trailer=$(grep -v '^#' "$1" | grep -Ei '^(Co-Authored-By|Claude-Session|Signed-off-by)' | head -1)
+if [ -n "$trailer" ]; then
+  refuse "no tool-attribution trailer" "$trailer"
+fi

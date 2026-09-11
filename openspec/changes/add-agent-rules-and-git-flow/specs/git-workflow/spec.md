@@ -58,7 +58,7 @@ The commit skill SHALL run `pnpm typecheck:api`, `pnpm typecheck:front` and `pnp
 - **THEN** the skill stops, reports the file, and makes no commit
 
 ### Requirement: One command opens or refreshes the pull request
-The PR skill SHALL refuse on `main` and on a branch with unpushed commits. It SHALL run `/opsx:verify` on the active change and refuse while the report carries a CRITICAL finding, listing them. When an open PR exists for the branch it SHALL refresh that PR's body and report its URL, never opening a second one. Otherwise it SHALL open the PR with the title from the argument or the latest commit subject and the body from the template filled from evidence. When the GitHub CLI is unavailable it SHALL print the browser link to create the PR and say what to install, never fake the call.
+The PR skill SHALL refuse on `main` and on a branch with unpushed commits. It SHALL run `/opsx:verify` on the active change and refuse while the report carries a CRITICAL finding, listing them, except findings for tasks under an `## Outside this repo` group or tasks whose verify clause is the pull request itself being opened, reviewed or merged; those SHALL appear in the body as remaining work. When an open PR exists for the branch it SHALL refresh that PR's body and report its URL, never opening a second one. Otherwise it SHALL open the PR with the title from the argument or the latest commit subject and the body from the template filled from evidence. When the GitHub CLI is unavailable it SHALL print the browser link to create the PR and say what to install, never fake the call.
 
 #### Scenario: First PR
 - **WHEN** the skill runs on a pushed branch with no open PR
@@ -73,8 +73,12 @@ The PR skill SHALL refuse on `main` and on a branch with unpushed commits. It SH
 - **THEN** the skill refuses and points at the commit skill
 
 #### Scenario: Change incomplete
-- **WHEN** `/opsx:verify` reports an unticked task or an unimplemented requirement
+- **WHEN** `/opsx:verify` reports an unticked implementation task or an unimplemented requirement
 - **THEN** the skill refuses to open or refresh the PR and lists the CRITICAL findings
+
+#### Scenario: Only post-merge tasks open
+- **WHEN** the only unticked tasks are under `## Outside this repo` or verify against the PR itself
+- **THEN** the PR opens and its body lists them as remaining work
 
 ### Requirement: A pull request describes how it was verified
 A pull request body, written by the PR skill, SHALL follow the repository template: what and why, the changes, how to verify (the scripts that ran with results, the scripts that did not run, the `/opsx:verify` summary, the page loaded or the statement that none was), the risk and its undo step, and the steps outside this repository with how each was verified, or None.
