@@ -16,20 +16,23 @@ Turns a pushed branch into a mergeable, reviewable pull request. Runs only when 
 
 1. **Branch.** `git branch --show-current` is not `main`.
 2. **Pushed.** `git rev-parse HEAD` equals `git rev-parse @{u}` and `git status --porcelain` is empty. Otherwise stop and point at `/git-commit-push`.
-3. **Change verified.** Run `/opsx:verify` on the active OpenSpec change (the most recently modified one from `openspec list --json`, or the one named in the conversation). A CRITICAL finding stops this skill, except for a task under an `## Outside this repo` group or a task whose verify clause is this PR being opened, reviewed or merged; those are unticked by definition now and go into the body under **Remaining work**. Any other CRITICAL: list the findings and say what to finish or tick. When the branch carries no OpenSpec change, say so and continue.
 
 ## Catch up with main
 
-4. `git fetch origin`. If `git log HEAD..origin/main --oneline` is non-empty, `git merge origin/main`.
+3. `git fetch origin`. If `git log HEAD..origin/main --oneline` is non-empty, `git merge origin/main`.
    - On a conflict, for each file read `git show :1:<path>` (base), `:2:` (ours) and `:3:` (theirs). Keep both intents. Never resolve wholesale with `--ours` or `--theirs`. When the other side's intent is unclear, stop and ask; do not guess.
-   - The merge commit message stays the default. The `commit-msg` hook exempts an in-progress merge.
-5. After a merge that brought commits in, run `pnpm typecheck:api`, `pnpm typecheck:front` and `pnpm test:api` on the merged tree. Red means fix, then continue; a fix is its own commit through `/git-commit-push`.
-6. `git push`. Never `--force`. The open PR, when there is one, picks the merge up on its own.
+   - A resolved conflict is agent-written code: leave the merge uncommitted, list the files, and stop. The developer reviews, commits through `/git-commit-push`, and reruns this skill.
+   - A clean merge commits with the default message. The `commit-msg` hook exempts an in-progress merge.
+4. After a merge that brought commits in, run `pnpm typecheck:api`, `pnpm typecheck:front` and `pnpm test:api` on the merged tree. Red means fix, then stop: the fix stays uncommitted for the developer to review and commit through `/git-commit-push`, then rerun this skill.
+5. `git push`. Never `--force`. The open PR, when there is one, picks the merge up on its own.
+
+## Change verified
+
+6. Run `/opsx:verify` on the active OpenSpec change (the most recently modified one from `openspec list --json`, or the one named in the conversation). A CRITICAL finding stops this skill, except for a task under an `## Outside this repo` group or a task whose verify clause is this PR being opened, reviewed or merged; those are unticked by definition now and go into the body under **Remaining work**. Any other CRITICAL: list the findings and say what to finish or tick. When the branch carries no OpenSpec change, say so and continue.
 
 ## Body
 
 7. Fill `.github/pull_request_template.md` for a reviewer who was not in the room, following `.claude/rules/writing.md`: a paragraph is at most three sentences, a bullet is one fact, a file is named only when the reader has to go there. Every section is filled or reads `None`; strip the guidance comments.
-   - **Page loaded**: the storefront page opened during apply to see the change, with its screenshot from `.tmp/` attached, or `None`.
    - **Changes**: bold group labels such as Rules, Tests, Tooling, each with one-fact bullets.
    - **Risk**: the level in the heading, `## Risk: 🟢 Low`, `🟡 Medium` or `🔴 High`; then bold labels **Breaks**, **Undo** and **Open findings**, each with one-fact bullets, the verify warnings under the last, or `None`.
    - **Outside this repo**: the change's `## Outside this repo` tasks, each with how it was verified, or `None`.
@@ -56,3 +59,4 @@ Merging is `/git-merge-pr`, only after the owner accepts.
 - Never open from `main` or from a branch with unpushed commits or a dirty tree.
 - Never resolve a conflict wholesale, never guess an unclear intent, never push a merged tree the checks have not passed.
 - Never open past a CRITICAL verify finding, and never claim a tool ran that did not.
+- Never commit agent-written code: a conflict resolution or a check fix waits for the developer.
