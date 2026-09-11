@@ -6,10 +6,6 @@
 
 <!-- Bold group labels such as Rules, Tests, Tooling, each with one-fact bullets, in the order a reviewer should read them. -->
 
-## Page loaded
-
-<!-- The storefront page opened to see the change, or None. -->
-
 ## Risk: 🟢 Low
 
 <!-- Level in the heading: 🟢 Low, 🟡 Medium or 🔴 High. Then bold labels Breaks, Undo and Open findings, each with one-fact bullets, or None. -->
