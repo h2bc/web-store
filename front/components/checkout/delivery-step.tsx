@@ -44,6 +44,7 @@ export default function DeliveryStep({
     if (error) {
       toast.error(error)
       setIsSubmitting(false)
+
       return
     }
 

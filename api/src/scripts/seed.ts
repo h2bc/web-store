@@ -32,6 +32,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   const storeService = container.resolve(Modules.STORE);
 
   const assetsDir = path.join(process.cwd(), "assets");
+
   const uploadAsset = async (relativePath: string) => {
     const filePath = path.join(assetsDir, relativePath);
     const [{ url }] = (
@@ -48,6 +49,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
         },
       })
     ).result;
+
     return url;
   };
 
@@ -83,9 +85,11 @@ export default async function seedDemoData({ container }: ExecArgs) {
   logger.info("Store + Sales Channel");
   await createDefaultsWorkflow(container).run();
   const [store] = await storeService.listStores();
+
   if (!store) throw new Error("No store exists");
 
   const [salesChannel] = await salesChannelService.listSalesChannels({});
+
   if (!salesChannel) throw new Error("No sales channel exists");
 
   await updateStoresWorkflow(container).run({
@@ -282,6 +286,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   });
 
   const publishableApiKey = publishableApiKeys[0];
+
   if (!publishableApiKey) {
     throw new Error(
       "No publishable API key found to link to the sales channel",

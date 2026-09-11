@@ -72,6 +72,7 @@ export default function CartLineItem({
     if (nextQuantity === quantity) return
 
     const previousQuantity = quantity
+
     setQuantity(nextQuantity)
     setIsUpdating(true)
 

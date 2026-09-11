@@ -1,7 +1,5 @@
 import stylistic from "@stylistic/eslint-plugin";
-import tsPlugin from "@typescript-eslint/eslint-plugin";
-import tsParser from "@typescript-eslint/parser";
-import prettier from "eslint-config-prettier";
+import tseslint from "typescript-eslint";
 
 const paddingLines = [
   "error",
@@ -12,16 +10,12 @@ const paddingLines = [
   { blankLine: "always", prev: "*", next: "multiline-block-like" },
 ];
 
-export default [
-  { ignores: [".medusa/", "node_modules/", "static/"] },
-  ...tsPlugin.configs["flat/recommended"].map((c) => ({
-    ...c,
-    files: ["**/*.ts", "**/*.tsx"],
-    languageOptions: { ...c.languageOptions, parser: tsParser },
-  })),
+export default tseslint.config(
+  { files: ["e2e/**/*.ts", "playwright.config.ts"] },
+  { ignores: ["api/", "front/", "node_modules/", "test-results/", "playwright-report/"] },
+  ...tseslint.configs.recommended,
   {
     plugins: { "@stylistic": stylistic },
     rules: { "@stylistic/padding-line-between-statements": paddingLines },
   },
-  prettier,
-];
+);

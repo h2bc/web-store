@@ -27,7 +27,7 @@
 
 ## Hooks in `.githooks/`
 
-- `pre-commit`: ESLint and the Prettier check on the staged files of each app.
+- `pre-commit`: ESLint and the Prettier check on the staged files of each app, ESLint on staged e2e files.
 - `commit-msg`: refuses a lowercase or prefixed subject and any trailer.
 - `pre-push`: refuses a push to `main` and any force push.
 

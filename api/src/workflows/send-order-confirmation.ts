@@ -72,6 +72,7 @@ export const sendOrderConfirmationWorkflow = createWorkflow(
             idempotency_key: `order-placed-${order.id}`,
           },
         ]);
+
         return sendNotificationsStep(input);
       },
     );

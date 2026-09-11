@@ -63,6 +63,7 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
         "Option `api_key` is required in the provider's options.",
       );
     }
+
     if (!options.from) {
       throw new MedusaError(
         MedusaError.Types.INVALID_DATA,
@@ -75,6 +76,7 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
     if (this.options.html_templates?.[template]) {
       return this.options.html_templates[template].content;
     }
+
     const allowedTemplates = Object.keys(templates);
 
     if (!allowedTemplates.includes(template)) {
@@ -88,6 +90,7 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
     if (this.options.html_templates?.[template]?.subject) {
       return this.options.html_templates[template].subject;
     }
+
     switch (template) {
       case Templates.ORDER_PLACED:
         return "Order Confirmation";
@@ -109,6 +112,7 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
       this.logger.error(
         `Couldn't find an email template for ${notification.template}. The valid options are ${Object.values(Templates)}`,
       );
+
       return {};
     }
 
@@ -119,6 +123,7 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
     };
 
     let emailOptions: CreateEmailOptions;
+
     if (typeof template === "string") {
       emailOptions = {
         ...commonOptions,
@@ -142,6 +147,7 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
       } else {
         this.logger.error("Failed to send email: unknown error");
       }
+
       return {};
     }
 

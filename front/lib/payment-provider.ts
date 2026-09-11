@@ -11,6 +11,7 @@ function stripeSessions(cart: HttpTypes.StoreCart) {
 export function getClientSecret(cart: HttpTypes.StoreCart): string | null {
   const session = stripeSessions(cart).find((s) => s.status === 'pending')
   const secret = session?.data?.client_secret
+
   return typeof secret === 'string' ? secret : null
 }
 

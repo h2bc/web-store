@@ -30,6 +30,7 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
     setPaymentError(null)
 
     let stripeError: { message?: string } | undefined
+
     try {
       const result = await stripe.confirmPayment({
         elements,
@@ -52,6 +53,7 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
           },
         },
       })
+
       stripeError = result.error
     } catch (error) {
       stripeError = {
@@ -64,6 +66,7 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
         stripeError.message ?? 'Your payment could not be completed.'
       )
       setIsPlacing(false)
+
       return
     }
 
@@ -71,11 +74,13 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
 
     if (!orderId) {
       const clientSecret = getClientSecret(cart)
+
       router.replace(
         clientSecret
           ? `/checkout/return?payment_intent_client_secret=${encodeURIComponent(clientSecret)}`
           : '/checkout/return'
       )
+
       return
     }
 

@@ -38,6 +38,7 @@ export default function AddressStep({ cart, countryCodes }: AddressStepProps) {
     if (error) {
       toast.error(error)
       setIsSubmitting(false)
+
       return
     }
 

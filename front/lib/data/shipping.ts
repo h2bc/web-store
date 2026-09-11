@@ -39,6 +39,7 @@ export async function listCartShippingOptions(): Promise<ShippingOptionsResult> 
     }
   } catch (error) {
     console.error('Failed to fetch shipping options:', error)
+
     return { options: [], error: 'Failed to load delivery options.' }
   }
 }

@@ -17,6 +17,7 @@ export function selectDisplayVariant(
   variants: ProductVariant[]
 ): ProductVariant | null {
   const available = variants.filter(isVariantAvailable)
+
   return (available.length ? available : variants)
     .filter((v) => v.currency)
     .reduce<ProductVariant | null>(

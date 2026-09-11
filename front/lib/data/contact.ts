@@ -15,6 +15,7 @@ export async function submitContactMessage(
 
     if (!validated.success) {
       const errors = validated.error.flatten().fieldErrors
+
       return {
         success: false,
         message: 'Please fix the errors and try again.',
@@ -46,6 +47,7 @@ export async function submitContactMessage(
     }
   } catch (error) {
     console.error('Contact form error:', error)
+
     return {
       success: false,
       message: 'Something went wrong. Please try again later.',

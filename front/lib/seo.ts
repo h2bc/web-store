@@ -91,6 +91,7 @@ export function productJsonLd(
 
 export function organizationJsonLd(): WithContext<Organization> {
   const origin = siteUrl()
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
