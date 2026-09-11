@@ -8,7 +8,7 @@
 
 ## Page loaded
 
-<!-- The storefront page opened to see the change, with the screenshot under .tmp/ attached, or None. -->
+<!-- The storefront page opened to see the change, or None. -->
 
 ## Risk: 🟢 Low
 
