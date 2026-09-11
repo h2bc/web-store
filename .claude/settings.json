@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r '.tool_input.file_path'); case \"${f#$CLAUDE_PROJECT_DIR/}\" in api/*) pnpm --dir api exec prettier --write \"$f\";; front/*) pnpm --dir front exec prettier --write \"$f\";; esac"
+            "command": "f=$(jq -r '.tool_input.file_path'); case \"${f#$CLAUDE_PROJECT_DIR/}\" in api/*) pnpm --dir api exec prettier --write --ignore-unknown \"$f\";; front/*) pnpm --dir front exec prettier --write --ignore-unknown \"$f\";; esac"
           },
           {
             "type": "command",

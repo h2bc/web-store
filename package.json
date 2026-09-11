@@ -10,7 +10,7 @@
     "migrate": "pnpm --dir api predeploy",
     "lint": "pnpm lint:api && pnpm lint:front",
     "format": "pnpm format:api && pnpm format:front",
-    "format:check": "pnpm --dir api format:check && pnpm --dir front format:check",
+    "checkFormat": "pnpm --dir api format:check && pnpm --dir front format:check",
     "format:api": "pnpm --dir api format",
     "format:front": "pnpm --dir front format",
     "dev:api": "pnpm --dir api dev",
