@@ -7,6 +7,7 @@ import type { HttpTypes } from '@medusajs/types'
 import { Button } from '@/components/ui/button'
 import ErrorAlert from '@/components/feedback/error-alert'
 import { completeCart } from '@/lib/data/cart'
+import { getClientSecret } from '@/lib/payment-provider'
 
 interface PaymentStepProps {
   cart: HttpTypes.StoreCart
@@ -34,6 +35,7 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
         elements,
         redirect: 'if_required',
         confirmParams: {
+          return_url: `${window.location.origin}/checkout/return`,
           payment_method_data: {
             billing_details: {
               name: `${address?.first_name ?? ''} ${address?.last_name ?? ''}`.trim(),
@@ -65,11 +67,15 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
       return
     }
 
-    const { orderId, error: cartError } = await completeCart()
+    const orderId = await completeCart()
 
-    if (cartError || !orderId) {
-      setPaymentError(cartError ?? 'Could not place the order.')
-      setIsPlacing(false)
+    if (!orderId) {
+      const clientSecret = getClientSecret(cart)
+      router.replace(
+        clientSecret
+          ? `/checkout/return?payment_intent_client_secret=${encodeURIComponent(clientSecret)}`
+          : '/checkout/return'
+      )
       return
     }
 
@@ -86,9 +92,6 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
           wallets: { link: 'never' },
         }}
         onReady={() => setIsReady(true)}
-        onChange={(event) => {
-          if (event.complete) setPaymentError(null)
-        }}
       />
 
       {paymentError && <ErrorAlert message={paymentError} />}
