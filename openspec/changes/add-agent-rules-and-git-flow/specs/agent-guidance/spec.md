@@ -5,7 +5,7 @@ Defines which instructions an agent has in context when working on which part of
 ## ADDED Requirements
 
 ### Requirement: Rules are path-scoped and load with the files they govern
-Rules SHALL live as separate files under `.claude/rules/`. The API rule SHALL load when a file under `api/` is read or edited, the storefront rule when a file under `front/` is, and the git, gates and known-defects rules always. Each rule SHALL state invariants and where to look, not restate architecture narrative.
+Rules SHALL live as separate files under `.claude/rules/`. The API rule SHALL load when a file under `api/` is read or edited, the storefront rule when a file under `front/` is, and the git rule always. Each rule SHALL state invariants and where to look, not restate architecture narrative.
 
 #### Scenario: Editing the storefront
 - **WHEN** an agent edits a file under `front/components/`
@@ -13,7 +13,7 @@ Rules SHALL live as separate files under `.claude/rules/`. The API rule SHALL lo
 
 #### Scenario: Any session
 - **WHEN** a session starts with no file open
-- **THEN** the git, verification-gates and known-defects rules are in context
+- **THEN** the git rule is in context and neither area rule is
 
 ### Requirement: Each area rule carries its runtime failure list
 The storefront rule SHALL list: a client component importing from the server-only data layer; a data-layer function that throws instead of returning an error value; a read without a cache tag or a mutation without invalidation; session state held outside the httpOnly cookies; a new public page without a canonical URL or an explicit noindex rule. The API rule SHALL list: a customization outside modules, workflows, subscribers, routes and links; a subscriber that assumes the server process or an env var the worker may not have; catalog, pricing, region or shipping values hardcoded in code. A review of a change, local or in CI, SHALL check the diff against these lists.

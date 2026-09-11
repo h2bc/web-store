@@ -22,7 +22,7 @@
 ## 3. Continuous integration
 
 - [x] 3.1 In `.github/workflows/deploy.yml` replace the `check` and `e2e` jobs with one `check` job: the postgres service and env block from the old `e2e` job plus `DB_HOST`, `DB_USERNAME` and `DB_PASSWORD`, the pnpm and Node setup, dependency install, Playwright Chromium install, migrations, seed and credential export, then four steps Format (`pnpm format:check`), Lint (`pnpm lint`), Typecheck (`pnpm typecheck && pnpm typecheck:api && pnpm typecheck:front`) and Tests (`pnpm test:api && pnpm test:e2e`), and the Playwright report upload on failure; point `build-api` and `build-front` at `needs: [check]`; verify `pnpm lint`, `pnpm format:check`, `pnpm typecheck:api`, `pnpm typecheck:front` and `pnpm test:api` are green in the devcontainer first
-- [ ] 3.2 Push the branch and open the pull request; verify the `check` job is green and its Tests step log shows the API integration tests running
+- [x] 3.2 Push the branch and open the pull request; verify the `check` job is green and its Tests step log shows the API integration tests running
 
 ## 4. Config and README
 

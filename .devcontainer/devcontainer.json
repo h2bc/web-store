@@ -5,8 +5,7 @@
   "workspaceFolder": "/workspace",
   "mounts": [
     "type=bind,source=${localWorkspaceFolder},target=/workspace",
-    "type=bind,source=${localEnv:HOME}/.claude,target=/claude",
-    "type=bind,source=${localWorkspaceFolder}/../../Adventures.is,target=/adventures,readonly"
+    "type=bind,source=${localEnv:HOME}/.claude,target=/claude"
   ],
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {
