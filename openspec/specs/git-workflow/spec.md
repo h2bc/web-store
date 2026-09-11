@@ -82,12 +82,12 @@ The PR skill SHALL refuse on `main` and on a branch with unpushed commits. It SH
 - **WHEN** the only unticked tasks are under `## Outside this repo` or verify against the PR itself
 - **THEN** the PR opens and its body lists them as remaining work
 
-### Requirement: A pull request describes how it was verified
-A pull request body, written by the PR skill, SHALL follow the repository template: what and why, the changes, how to verify (the scripts that ran with results, the scripts that did not run, the `/opsx:verify` summary, the page loaded or the statement that none was), the risk and its undo step, and the steps outside this repository with how each was verified, or None.
+### Requirement: A pull request describes the change and its risk
+A pull request body, written by the PR skill, SHALL follow the repository template: what and why, the changes, the page loaded to see the change or None, the risk as a status circle, 🟢 low, 🟡 medium or 🔴 high, with its undo step, the steps outside this repository with how each was verified, or None, and the remaining work, or None. The `Check` job is the evidence that the scripts pass.
 
 #### Scenario: Storefront change
 - **WHEN** a PR touches `front/components/`
-- **THEN** its body names the scripts that ran, the verify summary, and the page that was loaded to check the change
+- **THEN** its body names the page that was loaded to check the change, with its screenshot, and nothing about which scripts ran
 
 #### Scenario: Deploy-repo step
 - **WHEN** a change needs an env var set in `h2bc/web-store-deploy`

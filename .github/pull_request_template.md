@@ -4,25 +4,15 @@
 
 ## Changes
 
-<!-- Bullets, one per logical change, in the order a reviewer should read them. -->
+<!-- Bold group labels such as Rules, Tests, Tooling, each with one-fact bullets, in the order a reviewer should read them. -->
 
-## How to verify
+## Page loaded
 
-**Scripts run:**
-<!-- One line per script with its result, on the pushed HEAD: `pnpm typecheck:api` green, ... -->
+<!-- The storefront page opened to see the change, with the screenshot under .tmp/ attached, or None. -->
 
-**Scripts not run:**
-<!-- Name each one and why, or None. -->
+## Risk: 🟢 Low
 
-**Change verification:**
-<!-- The /opsx:verify summary line, or None when there is no OpenSpec change. -->
-
-**Page loaded:**
-<!-- The storefront page opened to see the change, or None. -->
-
-## Risk
-
-<!-- Level (low / medium / high), what breaks if this is wrong, and the undo step. -->
+<!-- Level in the heading: 🟢 Low, 🟡 Medium or 🔴 High. Then bold labels Breaks, Undo and Open findings, each with one-fact bullets, or None. -->
 
 ## Outside this repo
 

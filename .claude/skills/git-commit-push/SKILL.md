@@ -38,7 +38,7 @@ One commit is one logical change that could be reviewed and reverted on its own.
 
 ## Report
 
-`git log -1 --format=%B` (the subject, no trailer) and `git status -sb` (branch up to date with origin). Name the scripts that ran and their results; they go into the PR body later.
+`git log -1 --format=%B` (the subject, no trailer) and `git status -sb` (branch up to date with origin). Name the scripts that ran and their results.
 
 ## Hand-off
 
