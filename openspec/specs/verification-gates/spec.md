@@ -40,7 +40,7 @@ After the agent writes or edits a file inside `api/` or `front/`, the file SHALL
 
 #### Scenario: Edit outside the apps
 - **WHEN** an edit touches `e2e/checkout.test.ts` or `README.md`
-- **THEN** neither hook runs a tool and the edit completes
+- **THEN** the hook runs no tool and the edit completes
 
 ### Requirement: Verification clauses in task lists name the scripts
 A task's verify clause SHALL name a root script (`pnpm lint`, `pnpm format`, `pnpm typecheck:api`, `pnpm typecheck:front`, `pnpm test:api`, `pnpm test:e2e`) or an observable behaviour, never a tool invoked directly. The last task of a change SHALL run lint, the format check, both app typechecks and the API tests.
