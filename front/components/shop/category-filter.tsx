@@ -22,6 +22,7 @@ export default function CategoryFilter({
               cat === 'ALL'
                 ? '/shop'
                 : `/shop?category=${encodeURIComponent(cat)}`
+
             return (
               <Link
                 key={cat}
@@ -49,6 +50,7 @@ export default function CategoryFilter({
                 cat === 'ALL'
                   ? '/shop'
                   : `/shop?category=${encodeURIComponent(cat)}`
+
               return (
                 <Link
                   key={cat}

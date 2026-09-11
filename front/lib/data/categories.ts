@@ -8,6 +8,7 @@ const CACHE_REVALIDATE_TIME = 3600
 const fetchCategoriesFromAPI = cached(
   async () => {
     const { product_categories } = await sdk.store.category.list()
+
     return product_categories.map((c) => c.name)
   },
   ['categories'],
@@ -24,6 +25,7 @@ export async function getCategories() {
     }
   } catch (error) {
     console.error('Failed to fetch categories:', error)
+
     return {
       categories: [],
       error: 'Failed to fetch categories',

@@ -85,6 +85,7 @@ export const getProducts = cache(async (): Promise<ProductsResult> => {
     }
   } catch (error) {
     console.error('Failed to fetch products:', error)
+
     return {
       products: [],
       error: 'Failed to fetch products',
@@ -130,8 +131,10 @@ const fetchProductDetails = async (
           .filter((item) => item.size) ?? []
 
       const sizeAvailabilityMap = new Map<string, boolean>()
+
       sizeVariants.forEach((item) => {
         const current = sizeAvailabilityMap.get(item.size!)
+
         sizeAvailabilityMap.set(
           item.size!,
           current === undefined ? item.available : current || item.available
@@ -164,9 +167,11 @@ const fetchProductDetails = async (
         })) ?? []
 
       const seo: ProductSeo = {}
+
       if (typeof product.metadata?.seo_title === 'string') {
         seo.title = product.metadata.seo_title.trim() || undefined
       }
+
       if (typeof product.metadata?.seo_description === 'string') {
         seo.description = product.metadata.seo_description.trim() || undefined
       }
@@ -208,6 +213,7 @@ export const getProductByHandle = cache(
       }
     } catch (error) {
       console.error('Failed to fetch product:', error)
+
       return {
         product: null,
         error: 'Failed to fetch product',
@@ -252,6 +258,7 @@ export async function getProductHandles(): Promise<ProductHandle[]> {
     return await fetchProductHandles()
   } catch (error) {
     console.error('Failed to fetch product handles:', error)
+
     return []
   }
 }

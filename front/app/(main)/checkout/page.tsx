@@ -29,6 +29,7 @@ export default async function CheckoutPage({
 }) {
   const params = await searchParams
   const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY ?? null
+
   if (!stripePublishableKey) {
     console.error('STRIPE_PUBLISHABLE_KEY is not set; checkout is disabled.')
   }

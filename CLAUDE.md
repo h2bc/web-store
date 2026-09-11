@@ -7,12 +7,15 @@ h2bc web store. Two independent pnpm projects, not a workspace.
 - `api/`: Medusa v2 backend, admin at `/app`.
 - `front/`: Next.js storefront.
 - `e2e/`: Playwright tests.
-- `docs/architecture.md`: how the system works. Read it before changing the data layer, caching, checkout or the backend config.
+- `docs/architecture.md`: how the system works, current facts only. Read it before changing the data layer, caching, checkout or the backend config.
 
 ## Rules
 
 - `.claude/rules/api.md` and `front.md`: each app's invariants, loaded when its files are touched.
 - `.claude/rules/git.md`: commits, branches, hooks and the delivery skills.
+- `.claude/rules/code.md`: reuse first and code style.
+- `.claude/rules/tests.md`: which suite a test belongs to, how it is named and what it asserts, loaded when a test file is touched.
+- `.claude/rules/writing.md`: how every prose file is written. A rule is invariants and where to look, under 50 lines.
 
 ## Scripts and dependencies
 
@@ -26,13 +29,6 @@ h2bc web store. Two independent pnpm projects, not a workspace.
 - `front/unit/`: Vitest.
 - `e2e/`: Playwright.
 - All test files are named `*.test.ts`.
-
-## Code style
-
-- No legacy compatibility. When behavior, APIs, configs or schemas change, update callers and tests to the new shape and delete the old path: no shims, aliases or dead code.
-- Small methods: short, single-purpose functions with descriptive names.
-- Functional patterns: immutable data, pure functions, `map`/`filter`/`reduce` over loops and mutation.
-- No comments. The only exceptions are markers such as TODO and a note about something genuinely non-obvious.
 
 ## Medusa
 

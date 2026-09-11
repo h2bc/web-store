@@ -11,9 +11,11 @@ type OrderResult = {
 export async function getOrder(id: string): Promise<OrderResult> {
   try {
     const { order } = await sdk.store.order.retrieve(id)
+
     return { order, error: null }
   } catch (error) {
     console.error('Failed to fetch order:', error)
+
     return { order: null, error: 'Failed to load your order.' }
   }
 }

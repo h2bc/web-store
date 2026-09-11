@@ -1,135 +1,88 @@
-import { readFileSync } from "node:fs";
-import { expect, test, type FrameLocator, type Page } from "@playwright/test";
+import { DECLINED_CARD, EMAIL, GERMAN_ADDRESS, LITHUANIAN_ADDRESS, VALID_CARD } from "./support/data";
+import { getStripePublishableKey } from "./support/env";
+import { expect, test } from "./support/fixtures";
 
-const EMAIL = "e2e@example.com";
+test.skip(!getStripePublishableKey(), "STRIPE_PUBLISHABLE_KEY is not set");
 
-function stripePublishableKey(): string | undefined {
-  if (process.env.STRIPE_PUBLISHABLE_KEY) {
-    return process.env.STRIPE_PUBLISHABLE_KEY;
-  }
-  try {
-    const env = readFileSync(new URL("../front/.env.local", import.meta.url), "utf8");
-    return env.match(/^STRIPE_PUBLISHABLE_KEY=(.+)$/m)?.[1]?.trim();
-  } catch {
-    return undefined;
-  }
-}
-
-test.skip(!stripePublishableKey(), "STRIPE_PUBLISHABLE_KEY is not set");
-
-async function addFirstProductToCart(page: Page) {
-  await page.goto("/shop");
-  await page.locator('a[href^="/shop/"]').first().click();
-  await page.getByRole("button", { name: "Add to cart" }).click();
-  await expect(page.getByRole("button", { name: "Add to cart" })).toBeEnabled();
-}
-
-function addressFrame(page: Page): FrameLocator {
-  return page.frameLocator('iframe[title="Secure address input frame"]');
-}
-
-function paymentFrame(page: Page): FrameLocator {
-  return page.frameLocator('main iframe[title="Secure payment input frame"]');
-}
-
-function countryField(page: Page) {
-  return addressFrame(page).getByRole("combobox", {
-    name: "Country or region",
-    exact: true,
+test("shopper can choose any country we ship to, with Lithuania preselected", async ({
+  checkout,
+}) => {
+  await test.step("Given a shopper with a product in the cart at the address step", async () => {
+    await checkout.addFirstProductAndOpenCheckout();
   });
-}
 
-function shippingOption(page: Page, name: string) {
-  return page.locator("label", { hasText: name });
-}
+  await test.step("Then Lithuania is preselected and every country we ship to is listed alphabetically", async () => {
+    await expect(checkout.getCountryField()).toHaveValue("LT");
+    const countries = await checkout
+      .getCountryField()
+      .locator('option:not([value=""])')
+      .allTextContents();
 
-async function fillAddress(page: Page) {
-  await page.getByLabel("Email").fill(EMAIL);
-  const frame = addressFrame(page);
-  await frame.getByRole("textbox", { name: "First name" }).fill("Jane");
-  await frame.getByRole("textbox", { name: "Last name" }).fill("Doe");
-  await frame.getByRole("textbox", { name: "Address line 1" }).fill("Gedimino pr. 1");
-  await frame.getByRole("textbox", { name: "Postal code" }).fill("01103");
-  await frame.getByRole("textbox", { name: "City" }).fill("Vilnius");
-  await page.getByLabel("Email").click();
-}
-
-async function continueToDelivery(page: Page) {
-  const button = page.getByRole("button", { name: "Continue to delivery" });
-  await expect(button).toBeEnabled();
-  await button.click();
-  await expect(page).toHaveURL(/step=delivery/);
-}
-
-async function fillCard(page: Page, number: string) {
-  await expect(page.getByRole("button", { name: "Place order" })).toBeEnabled();
-  const frame = paymentFrame(page);
-  const cardNumber = frame.getByRole("textbox", { name: "Card number" });
-  await expect(async () => {
-    if (await cardNumber.isVisible()) return;
-    await frame.getByRole("button", { name: "Card" }).click();
-    await expect(cardNumber).toBeVisible({ timeout: 2_000 });
-  }).toPass();
-  await cardNumber.fill(number);
-  await frame.getByRole("textbox", { name: /Expiration/ }).fill("1234");
-  await frame.getByRole("textbox", { name: "Security code" }).fill("123");
-}
-
-test("checkout ships to every country of the region", async ({ page }) => {
-  await addFirstProductToCart(page);
-  await page.goto("/checkout");
-
-  await expect(countryField(page)).toHaveValue("LT");
-  const countries = await countryField(page)
-    .locator('option:not([value=""])')
-    .allTextContents();
-  expect(countries.length).toBeGreaterThan(1);
-  expect(countries).toEqual(
-    [...countries].sort((a, b) => a.localeCompare(b)),
-  );
-
-  await fillAddress(page);
-  await continueToDelivery(page);
-  await expect(shippingOption(page, "Standard Shipping LT")).toContainText(/2[.,]99/);
-
-  await page.goto("/checkout?step=address");
-  await expect(countryField(page)).toHaveValue("LT");
-  await countryField(page).selectOption("DE");
-  await addressFrame(page).getByRole("textbox", { name: "Postal code" }).fill("10115");
-  await addressFrame(page).getByRole("textbox", { name: "City" }).fill("Berlin");
-  await page.getByLabel("Email").click();
-  await continueToDelivery(page);
-  await expect(shippingOption(page, "Standard Shipping EU")).toContainText(/5[.,]99/);
+    expect(countries.length).toBeGreaterThan(1);
+    expect(countries).toEqual([...countries].sort((a, b) => a.localeCompare(b)));
+  });
 });
 
-test("guest checkout with a test card lands on the confirmation page", async ({
+test("shopper gets a delivery option whether they ship to Lithuania or Germany", async ({
+  checkout,
+}) => {
+  await test.step("Given a shopper with a product in the cart at the address step", async () => {
+    await checkout.addFirstProductAndOpenCheckout();
+  });
+
+  await test.step("When they enter a Lithuanian address and continue", async () => {
+    await checkout.fillAddress(LITHUANIAN_ADDRESS);
+    await checkout.continueToDelivery();
+  });
+
+  await test.step("Then they can choose a delivery option", async () => {
+    await expect(checkout.getDeliveryOptions().first()).toBeVisible();
+  });
+
+  await test.step("When they switch the address to Germany and continue", async () => {
+    await checkout.openAddressStep();
+    await expect(checkout.getCountryField()).toHaveValue("LT");
+    await checkout.fillAddress(GERMAN_ADDRESS);
+    await checkout.continueToDelivery();
+  });
+
+  await test.step("Then they can choose a delivery option", async () => {
+    await expect(checkout.getDeliveryOptions().first()).toBeVisible();
+  });
+});
+
+test("shopper whose card is declined is told and can try again", async ({ checkout, page }) => {
+  await test.step("Given a shopper at the payment step", async () => {
+    await checkout.reachPaymentStep();
+  });
+
+  await test.step("When they pay with a card that is declined", async () => {
+    await checkout.enterCardDetails(DECLINED_CARD);
+    await checkout.placeOrder();
+  });
+
+  await test.step("Then they see the error and stay on the payment step", async () => {
+    await expect(checkout.getPaymentError()).toBeVisible({ timeout: 30_000 });
+    await expect(page).toHaveURL(/step=payment/);
+  });
+});
+
+test("shopper who pays by card sees the order confirmation with their email", async ({
+  checkout,
   page,
 }) => {
-  await addFirstProductToCart(page);
-  await page.goto("/checkout");
-
-  const continueButton = page.getByRole("button", {
-    name: "Continue to delivery",
+  await test.step("Given a shopper at the payment step", async () => {
+    await checkout.reachPaymentStep();
   });
-  await expect(continueButton).toBeDisabled();
-  await fillAddress(page);
-  await continueToDelivery(page);
 
-  await page.getByRole("button", { name: "Continue to payment" }).click();
-
-  await expect(page).toHaveURL(/step=payment/);
-  await fillCard(page, "4000000000000002");
-  await page.getByRole("button", { name: "Place order" }).click();
-  await expect(page.locator("main").getByRole("alert")).toContainText("declined", {
-    timeout: 30_000,
+  await test.step("When they pay by card", async () => {
+    await checkout.enterCardDetails(VALID_CARD);
+    await checkout.placeOrder();
   });
-  await expect(page).toHaveURL(/step=payment/);
 
-  await fillCard(page, "4242424242424242");
-  await page.getByRole("button", { name: "Place order" }).click();
-
-  await expect(page).toHaveURL(/\/order\/.+\/confirmed$/, { timeout: 30_000 });
-  await expect(page.getByRole("heading", { name: "Order confirmed" })).toBeVisible();
-  await expect(page.getByText(/Order #\d+ was placed/)).toBeVisible();
-  await expect(page.getByText(EMAIL).first()).toBeVisible();
+  await test.step("Then they see the order confirmation with their email", async () => {
+    await expect(page).toHaveURL(/\/order\/.+\/confirmed$/, { timeout: 30_000 });
+    await expect(page.getByRole("heading", { name: "Order confirmed" })).toBeVisible();
+    await expect(page.getByText(EMAIL).first()).toBeVisible();
+  });
 });

@@ -82,6 +82,7 @@ Server-first Next.js App Router.
 ## Deployment
 
 - `.github/workflows/deploy.yml` runs one `Check` job: format, lint, typecheck, API tests, e2e.
+- The three suites and how a test is written are in `.claude/rules/tests.md`.
 - It builds the two images from `api/Dockerfile` and `front/Dockerfile`, tagged `sha-<short sha>`, and triggers `deploy.yml` in `h2bc/web-store-deploy`.
 - The deploy repository owns everything runtime: compose or manifest files, env for both apps and both API containers, secrets, domains, Stripe and Resend configuration.
 - A change that needs a new env var is finished only when it is set there.

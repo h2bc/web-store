@@ -15,9 +15,11 @@ const SHOP_METADATA: Metadata = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const { error } = await getProducts()
+
   if (error) {
     return { ...SHOP_METADATA, robots: { index: false } }
   }
+
   return { ...SHOP_METADATA, alternates: { canonical: '/shop' } }
 }
 

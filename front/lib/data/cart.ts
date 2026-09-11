@@ -27,11 +27,13 @@ function sortCartItems(
     items: [...cart.items].sort((a, b) => {
       const productA = a.product_title ?? ''
       const productB = b.product_title ?? ''
+
       if (productA < productB) return -1
       if (productA > productB) return 1
 
       const variantA = a.variant_title ?? ''
       const variantB = b.variant_title ?? ''
+
       if (variantA < variantB) return -1
       if (variantA > variantB) return 1
 
@@ -61,6 +63,7 @@ export async function getCart(): Promise<CartResult> {
     }
   } catch (error) {
     console.error('Failed to fetch cart:', error)
+
     return {
       cart: null,
       error: 'Failed to load cart.',
@@ -80,6 +83,7 @@ async function initCart(): Promise<CartResult> {
     }
   } catch (error) {
     console.error('Failed to initialize cart:', error)
+
     return {
       cart: null,
       error: 'Failed to initialize cart.',
@@ -95,12 +99,14 @@ export async function addItemToCart(
 
   if (!cartId) {
     const { cart, error } = await initCart()
+
     if (error || !cart) {
       return {
         cart: null,
         error: error || 'Failed to initialize cart.',
       }
     }
+
     cartId = cart.id
   }
 
@@ -146,6 +152,7 @@ export async function removeItemFromCart(itemId: string): Promise<CartResult> {
     }
   } catch (error) {
     console.error('Failed to remove item from cart:', error)
+
     return {
       cart: null,
       error: 'Failed to remove item from cart.',
@@ -264,6 +271,7 @@ export async function completeCart(): Promise<string | null> {
 
   if (!cartId) {
     console.error('Failed to complete cart: no cart_id cookie')
+
     return null
   }
 
@@ -272,6 +280,7 @@ export async function completeCart(): Promise<string | null> {
 
     if (result.type !== 'order') {
       console.error('Failed to complete cart:', result.error)
+
       return null
     }
 
@@ -281,6 +290,7 @@ export async function completeCart(): Promise<string | null> {
     return result.order.id
   } catch (error) {
     console.error('Failed to complete cart:', error)
+
     return null
   }
 }

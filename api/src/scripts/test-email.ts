@@ -11,6 +11,7 @@ import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils";
  */
 export default async function testEmail({ container, args }: ExecArgs) {
   const [to, template = "order-placed"] = args;
+
   if (!to) throw new Error("Usage: test-email.ts <email> [template]");
 
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
@@ -45,8 +46,10 @@ export default async function testEmail({ container, args }: ExecArgs) {
         logger.info("No orders found, using mock order");
         data = mockOrder;
       }
+
       break;
     }
+
     case "user-invited":
       data = mockInvite;
       break;

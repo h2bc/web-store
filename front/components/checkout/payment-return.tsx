@@ -37,33 +37,44 @@ export default function PaymentReturn({
 
     const run = async () => {
       const stripe = await getStripe(publishableKey)
+
       if (!stripe) {
         fail('Could not load the payment provider.')
+
         return
       }
 
       const { paymentIntent, error } =
         await stripe.retrievePaymentIntent(clientSecret)
+
       if (error || !paymentIntent) {
         fail(error?.message ?? 'Could not verify the payment.')
+
         return
       }
 
       switch (paymentIntent.status) {
         case 'succeeded':
+
         case 'requires_capture': {
           const orderId = await completeCart()
+
           if (!orderId) {
             await releaseCart()
             setState({ kind: 'unconfirmed' })
+
             return
           }
+
           router.replace(`/order/${orderId}/confirmed`)
+
           return
         }
+
         case 'processing':
           await releaseCart()
           setState({ kind: 'processing' })
+
           return
         default:
           fail(

@@ -25,6 +25,7 @@ export default async function CheckoutReturnPage({
   }
 
   const { cart } = await getCart()
+
   if (!cart || !cartOwnsClientSecret(cart, clientSecret)) {
     redirect('/checkout')
   }

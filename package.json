@@ -8,7 +8,7 @@
     "install:api": "pnpm --dir api i --frozen",
     "install:front": "pnpm --dir front i --frozen",
     "migrate": "pnpm --dir api predeploy",
-    "lint": "pnpm lint:api && pnpm lint:front",
+    "lint": "pnpm lint:api && pnpm lint:front && pnpm lint:e2e",
     "format": "pnpm format:api && pnpm format:front",
     "format:api": "pnpm --dir api format",
     "format:front": "pnpm --dir front format",
@@ -16,6 +16,7 @@
     "dev:front": "pnpm --dir front dev",
     "lint:api": "pnpm --dir api lint",
     "lint:front": "pnpm --dir front lint",
+    "lint:e2e": "eslint",
     "typecheck": "tsc --noEmit",
     "typecheck:api": "pnpm --dir api typecheck",
     "typecheck:front": "pnpm --dir front typecheck",
@@ -25,7 +26,10 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^26.5.0",
-    "typescript": "^5.9.3"
+    "eslint": "^10.10.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.70.0"
   }
 }

@@ -73,11 +73,13 @@ export default function ProductDetails({
   const handleAddToCart = async () => {
     if (!selectedVariant?.id) {
       toast.error('No variant selected')
+
       return
     }
 
     setIsAdding(true)
     const { error } = await addItemToCart(selectedVariant.id, quantity)
+
     setIsAdding(false)
 
     if (error) {

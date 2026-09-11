@@ -48,6 +48,7 @@ export async function initiateStripeSession(): Promise<PaymentSessionResult> {
     return { clientSecret, error: null }
   } catch (error) {
     console.error('Failed to initiate payment session:', error)
+
     return {
       clientSecret: null,
       error: 'Could not start the payment. Please try again.',

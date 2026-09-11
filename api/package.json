@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@medusajs/test-utils": "2.13.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@swc/core": "1.15.11",
     "@swc/jest": "^0.2.39",
     "@types/jest": "^29.5.13",

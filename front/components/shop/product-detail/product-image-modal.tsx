@@ -39,6 +39,7 @@ export default function ProductImageModal({
   useEffect(() => {
     if (open && mobileScrollRef.current) {
       const el = mobileScrollRef.current
+
       el.scrollTo({ left: el.clientWidth * activeIndex, behavior: 'smooth' })
     }
   }, [open, activeIndex])
@@ -48,6 +49,7 @@ export default function ProductImageModal({
     (e: React.UIEvent<HTMLDivElement>) => {
       const el = e.currentTarget
       const idx = Math.round(el.scrollLeft / el.clientWidth)
+
       if (idx !== activeIndex && idx >= 0 && idx < images.length) {
         setActiveIndex(idx)
       }
@@ -89,6 +91,7 @@ export default function ProductImageModal({
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden'
+
       return () => {
         document.body.style.overflow = 'unset'
       }
@@ -99,6 +102,7 @@ export default function ProductImageModal({
   useEffect(() => {
     if (open) {
       document.addEventListener('keydown', handleKeyDown)
+
       return () => document.removeEventListener('keydown', handleKeyDown)
     }
   }, [open, handleKeyDown])
