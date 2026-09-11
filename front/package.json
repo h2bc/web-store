@@ -9,8 +9,7 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run --passWithNoTests",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format": "prettier --check ."
   },
   "dependencies": {
     "@google/model-viewer": "^4.1.0",

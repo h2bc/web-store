@@ -18,8 +18,7 @@
     "start": "medusa start",
     "dev": "medusa develop",
     "lint": "eslint .",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --forceExit",
     "predeploy": "medusa db:migrate"

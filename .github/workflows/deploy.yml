@@ -75,7 +75,7 @@ jobs:
           echo "MEDUSA_PUBLISHABLE_KEY=$(psql "$DATABASE_URL" -tAc "select token from api_key where type = 'publishable' limit 1")" >> "$GITHUB_ENV"
 
       - name: Format
-        run: pnpm checkFormat
+        run: pnpm format
 
       - name: Lint
         run: pnpm lint

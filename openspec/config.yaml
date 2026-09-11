@@ -27,4 +27,4 @@ rules:
     - Keep it short. State the change, the reason, and non-goals.
   tasks:
     - Split tasks by app (api/, front/); do api/ first when the storefront needs new endpoints.
-    - The last task of a change runs `pnpm lint`, `pnpm checkFormat`, `pnpm typecheck:api`, `pnpm typecheck:front` and `pnpm test:api`.
+    - The last task of a change runs `pnpm lint`, `pnpm format`, `pnpm typecheck:api`, `pnpm typecheck:front` and `pnpm test:api`.
