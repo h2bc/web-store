@@ -83,11 +83,7 @@ The PR skill SHALL refuse on `main` and on a branch with unpushed commits. It SH
 - **THEN** the PR opens and its body lists them as remaining work
 
 ### Requirement: A pull request describes the change and its risk
-A pull request body, written by the PR skill, SHALL follow the repository template: what and why, the changes, the page loaded to see the change or None, the risk as a status circle, 🟢 low, 🟡 medium or 🔴 high, with its undo step, the steps outside this repository with how each was verified, or None, and the remaining work, or None. The `Check` job is the evidence that the scripts pass.
-
-#### Scenario: Storefront change
-- **WHEN** a PR touches `front/components/`
-- **THEN** its body names the page that was loaded to check the change, with its screenshot, and nothing about which scripts ran
+A pull request body, written by the PR skill, SHALL follow the repository template: what and why, the changes, the risk as a status circle, 🟢 low, 🟡 medium or 🔴 high, with its undo step, the steps outside this repository with how each was verified, or None, and the remaining work, or None. The `Check` job is the evidence that the scripts pass.
 
 #### Scenario: Deploy-repo step
 - **WHEN** a change needs an env var set in `h2bc/web-store-deploy`
