@@ -1,4 +1,19 @@
-# h2bc web store
+<p align="center">
+  <img src="front/public/bw-logo.svg" alt="h2bc logo" width="120" />
+</p>
+
+<h1 align="center">
+  h2bc web store
+</h1>
+
+<p align="center">
+  <a href="https://instagram.com/_h2bc">
+    <img src="https://img.shields.io/badge/@_h2bc-555555?style=flat&logo=instagram&logoColor=white" alt="Instagram" />
+  </a>
+  <a href="https://youtube.com/@_h2bc">
+    <img src="https://img.shields.io/badge/@_h2bc-555555?style=flat&logo=youtube&logoColor=white" alt="YouTube" />
+  </a>
+</p>
 
 Two independent pnpm projects, each with its own README:
 
