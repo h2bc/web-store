@@ -7,27 +7,32 @@ context: |
   accessories to Lithuania and the EU. Catalog, prices, regions and shipping rates
   are configured in the Medusa admin, not in code.
 
-  ## Before writing an artifact
-  Read docs/architecture.md. It is the one description of the two apps, the
-  storefront data layer, caching, session, checkout, the optional services and
-  the deploy repository. The per-app invariants are in .claude/rules/api.md and
-  .claude/rules/front.md.
-
-  ## How we build
-  Prefer what already exists over custom code, in this order: a feature of
-  Medusa or Next.js, a component or helper already in the repo (shadcn/ui in
-  front/components/ui, existing workflows, steps and middlewares in api/), a
-  well-maintained library, and only then hand-written code. Prefer the plain
-  solution over the clever one; the brand is small and the code is maintained
-  by one developer with an agent.
-
 rules:
   proposal:
-    - Keep it short. State the change, the reason, and non-goals.
+    - Short. One bullet per change, saying what and why.
+    - Ask open questions only at the end, with the AskUserQuestion tool.
   design:
-    - For every decision that adds code, name the existing feature, repo component or library that was considered and why it is not enough. Custom code is the last option, not the default.
-    - A new dependency needs one sentence on why it beats what the repo already has.
+    - One paragraph per decision, naming the alternative considered
   tasks:
-    - Split tasks by app (api/, front/); do api/ first when the storefront needs new endpoints.
-    - A verify clause that names a commit, a push or a pull request describes the developer's step; apply stops before it and reports the tree as ready to review.
-    - The last task of a change runs `pnpm lint`, `pnpm format`, `pnpm typecheck:api`, `pnpm typecheck:front` and `pnpm test:api`.
+    - Split tasks by app. Do `api/` first when the storefront needs new endpoints.
+    - Each group starts with its test task, naming the test file and its level per `.claude/rules/tests.md`.
+    - A change that alters how the system works has a task updating `docs/architecture.md`.
+    - The last task runs `pnpm lint`, `pnpm format`, `pnpm typecheck:api`, `pnpm typecheck:front` and `pnpm test:api`.
+    - End with `## Review findings`, reading `None.` at plan time.
+    - When a step happens outside the repo, add `## Outside this repo` with where it happens and the observable result that proves it.
+    - Never edit a ticked task.
+
+operations:
+  apply:
+    guidance:
+      - Per task group, write the tests, run them, see them fail for the scenario's reason, implement, see them pass.
+      - After each group run `pnpm lint`, `pnpm typecheck:api`, `pnpm typecheck:front` and `pnpm test:api`. Tick only when all are green.
+      - A finding inside the task's scope re-does the task. One outside the change's scope goes under `## Review findings` in `tasks.md` with the task id.
+      - Run an e2e file only when both apps are up.
+      - A task under `front/app` or `front/components` ends with a Playwright MCP screenshot of the page saved under `.tmp/`, or the report says no page was loaded.
+      - Leave the tree unstaged. Never commit or push.
+  archive:
+    guidance:
+      - Run `/opsx:verify` first.
+      - A CRITICAL finding stops the archive until it is fixed or logged under `## Review findings` in `tasks.md`.
+      - List the verify warnings in the archive summary.
