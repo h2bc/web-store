@@ -1,2 +1,15 @@
 #!/bin/sh
-pnpm lint && pnpm format
+set -e
+
+staged() {
+  git -C "$1" diff --cached --name-only --diff-filter=ACMR --relative -z
+}
+
+check() {
+  [ -n "$(staged "$1" | tr -d '\0')" ] || return 0
+  staged "$1" | xargs -0 pnpm --dir "$1" exec eslint --no-warn-ignored
+  staged "$1" | xargs -0 pnpm --dir "$1" exec prettier --check --ignore-unknown
+}
+
+check api
+check front

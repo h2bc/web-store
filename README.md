@@ -17,6 +17,6 @@ pnpm dev:front
 pnpm migrate
 ```
 
-`pnpm lint` and `pnpm format` run ESLint and Prettier over both apps; the pre-commit hook runs both. CI also runs the typechecks, the API tests and the e2e suite.
+`pnpm lint` and `pnpm format` run ESLint and Prettier over both apps; the pre-commit hook runs both on the staged files only. CI also runs the typechecks, the API tests and the e2e suite.
 
 See each project's README for setup, env files and project-specific commands.

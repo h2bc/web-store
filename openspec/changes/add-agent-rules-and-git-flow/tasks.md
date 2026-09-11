@@ -47,3 +47,4 @@
 - The same review found the `commit-msg` hook's prefix check unreachable and its trailer grep case-sensitive; both fixed in the commit after eadf30a. It also flagged `lint` and `format` as unscoped root scripts against the CLAUDE.md convention; the exception list now names them.
 - Stage-1 findings left for the owner: the CI `Tests` step no longer runs `pnpm test:front`, and the two `PostToolUse` hooks run in parallel so eslint can race prettier's write.
 - The review after 8cdf736 found the `commit-msg` merge exemption keyed on a `Merge ` subject, which let any commit so titled skip every check; it now tests for `MERGE_HEAD`.
+- The same review found `pre-commit` gating on the whole working tree rather than the index; it now runs each app's ESLint and Prettier check on that app's staged files only, and `openspec/specs/verification-gates/spec.md` says the same.

@@ -27,7 +27,7 @@
 
 ## Hooks in `.githooks/`
 
-- `pre-commit`: `pnpm lint && pnpm format`.
+- `pre-commit`: ESLint and the Prettier check on the staged files of each app.
 - `commit-msg`: refuses a lowercase or prefixed subject and any trailer.
 - `pre-push`: refuses a push to `main` and any force push.
 
