@@ -1,12 +1,21 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./support/fixtures";
 
-test("storefront renders", async ({ page }) => {
-  const res = await page.goto("/");
-  expect(res?.ok()).toBe(true);
-  await expect(page.locator("body")).toBeVisible();
+test("home page loads", async ({ page }) => {
+  await test.step("When a shopper opens the home page", async () => {
+    const res = await page.goto("/");
+
+    expect(res?.ok()).toBe(true);
+  });
+
+  await test.step("Then the page is shown", async () => {
+    await expect(page.locator("body")).toBeVisible();
+  });
 });
 
-test("api is healthy", async ({ request }) => {
-  const res = await request.get("http://localhost:9000/health");
-  expect(res.ok()).toBe(true);
+test("backend answers its health check", async ({ request }) => {
+  await test.step("When the health check is requested", async () => {
+    const res = await request.get("http://localhost:9000/health");
+
+    expect(res.ok()).toBe(true);
+  });
 });
