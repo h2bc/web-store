@@ -25,7 +25,7 @@ A git pre-commit hook SHALL run `pnpm lint && pnpm format` on every commit, from
 - **THEN** the hook refuses and no commit is created
 
 ### Requirement: Continuous integration runs every check as a named step
-CI SHALL check a push or pull request with four steps, in order: Format (`pnpm format`), Lint (`pnpm lint`), Typecheck (the root, api and storefront typecheck scripts) and Tests (`pnpm test:api && pnpm test:e2e`). The API integration tests SHALL run against a database service. The image build jobs SHALL depend on this job.
+CI SHALL check a push or pull request with four steps, in order: Format (`pnpm format`), Lint (`pnpm lint`), Typecheck (the root, api and storefront typecheck scripts) and Tests (`pnpm test:api && pnpm test:front && pnpm test:e2e`). The API integration tests SHALL run against a database service. The image build jobs SHALL depend on this job.
 
 #### Scenario: Pull request opened
 - **WHEN** a pull request is opened against `main`

@@ -84,7 +84,7 @@ jobs:
         run: pnpm typecheck && pnpm typecheck:api && pnpm typecheck:front
 
       - name: Tests
-        run: pnpm test:api && pnpm test:e2e
+        run: pnpm test:api && pnpm test:front && pnpm test:e2e
 
       - name: Upload Playwright report
         if: failure()
