@@ -1,8 +1,7 @@
 import { PRIVATE_PREFIXES, PUBLIC_PATHS } from "./support/data";
-import { INDEXABLE, SITE_URL } from "./support/env";
 import { expect, test } from "./support/fixtures";
 
-test("search engines get one canonical address for every public page", async ({ seo }) => {
+test("search engines get one canonical address for every public page", async ({ seo, baseURL }) => {
   for (const path of PUBLIC_PATHS) {
     await test.step(`When a search engine opens ${path}`, async () => {
       await seo.open(path);
@@ -12,23 +11,21 @@ test("search engines get one canonical address for every public page", async ({ 
       await expect(seo.getCanonical(), path).toHaveCount(1);
       await expect(seo.getCanonical(), path).toHaveAttribute(
         "href",
-        `${SITE_URL}${path === "/" ? "" : path}`,
+        `${baseURL}${path === "/" ? "" : path}`,
       );
     });
   }
 });
 
-test("search engines find a product page in the sitemap and read its price", async ({ seo }) => {
+test("search engines find a product page in the sitemap and read its price", async ({ seo, baseURL }) => {
   const path = await seo.getFirstProductPath();
 
-  test.skip(path === null, "shop has no products");
-
   await test.step("When a search engine opens a product page", async () => {
-    await seo.open(path!);
+    await seo.open(path);
   });
 
   await test.step("Then the page names its canonical address and a priced product", async () => {
-    await expect(seo.getCanonical()).toHaveAttribute("href", `${SITE_URL}${path}`);
+    await expect(seo.getCanonical()).toHaveAttribute("href", `${baseURL}${path}`);
     expect(await seo.getProductJsonLd()).toMatchObject({
       "@type": "Product",
       offers: { price: expect.any(Number), priceCurrency: expect.any(String) },
@@ -36,16 +33,13 @@ test("search engines find a product page in the sitemap and read its price", asy
   });
 
   await test.step("Then the sitemap lists the page", async () => {
-    expect(await seo.getSitemap()).toContain(`<loc>${SITE_URL}${path}</loc>`);
+    expect(await seo.getSitemap()).toContain(`<loc>${baseURL}${path}</loc>`);
   });
 });
 
 test("a missing product returns 404 instead of an error page search engines could index", async ({
-  seo,
   request,
 }) => {
-  test.skip((await seo.getFirstProductPath()) === null, "shop has no products");
-
   await test.step("When a search engine requests a product that does not exist", async () => {
     const res = await request.get("/shop/does-not-exist");
 
@@ -53,7 +47,7 @@ test("a missing product returns 404 instead of an error page search engines coul
   });
 });
 
-test("cart, checkout and order pages stay out of search engines", async ({ seo }) => {
+test("cart, checkout and order pages stay out of search engines", async ({ seo, baseURL }) => {
   await test.step("When a search engine opens the cart", async () => {
     await seo.open("/cart");
   });
@@ -66,25 +60,25 @@ test("cart, checkout and order pages stay out of search engines", async ({ seo }
     const sitemap = await seo.getSitemap();
 
     for (const prefix of PRIVATE_PREFIXES) {
-      expect(sitemap).not.toContain(`<loc>${SITE_URL}${prefix}`);
+      expect(sitemap).not.toContain(`<loc>${baseURL}${prefix}`);
     }
   });
 });
 
-test("the store is visible to search engines only when SEO_INDEXABLE is on", async ({ seo }) => {
+test("the store is visible to search engines only when SEO_INDEXABLE is on", async ({ seo, baseURL }) => {
   const robots = await seo.getRobotsTxt();
 
   await test.step("When a search engine opens the shop", async () => {
     await seo.open("/shop");
   });
 
-  if (INDEXABLE) {
+  if (process.env.SEO_INDEXABLE === "true") {
     await test.step("Then robots.txt hides only the private pages and points at the sitemap", async () => {
       for (const prefix of PRIVATE_PREFIXES) {
         expect(robots).toContain(`Disallow: ${prefix}`);
       }
 
-      expect(robots).toContain(`Sitemap: ${SITE_URL}/sitemap.xml`);
+      expect(robots).toContain(`Sitemap: ${baseURL}/sitemap.xml`);
       await expect(seo.getRobotsMeta()).toHaveCount(0);
     });
   } else {

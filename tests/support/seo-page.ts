@@ -1,4 +1,4 @@
-import type { APIRequestContext, Page } from "@playwright/test";
+import { expect, type APIRequestContext, type Page } from "@playwright/test";
 
 export class SeoPage {
   constructor(
@@ -28,14 +28,14 @@ export class SeoPage {
     return (await this.request.get("/robots.txt")).text();
   }
 
-  async getFirstProductPath(): Promise<string | null> {
+  async getFirstProductPath(): Promise<string> {
     await this.page.goto("/shop");
 
-    return this.page
-      .getByRole("link", { name: /^View / })
-      .first()
-      .getAttribute("href", { timeout: 5_000 })
-      .catch(() => null);
+    const link = this.page.getByRole("link", { name: /^View / }).first();
+
+    await expect(link, "shop has no products").toBeVisible();
+
+    return (await link.getAttribute("href"))!;
   }
 
   async open(path: string) {

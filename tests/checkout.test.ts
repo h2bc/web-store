@@ -1,8 +1,5 @@
 import { DECLINED_CARD, EMAIL, GERMAN_ADDRESS, LITHUANIAN_ADDRESS, VALID_CARD } from "./support/data";
-import { getStripePublishableKey } from "./support/env";
 import { expect, test } from "./support/fixtures";
-
-test.skip(!getStripePublishableKey(), "STRIPE_PUBLISHABLE_KEY is not set");
 
 test("shopper can choose any country we ship to, with Lithuania preselected", async ({
   checkout,

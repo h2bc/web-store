@@ -13,4 +13,4 @@ check() {
 
 check api
 check front
-staged . | grep -z -E '^(e2e/.*\.ts|playwright\.config\.ts)$' | xargs -0 -r pnpm exec eslint
+staged . | grep -z -E '^(tests/.*\.ts)$' | xargs -0 -r pnpm exec eslint

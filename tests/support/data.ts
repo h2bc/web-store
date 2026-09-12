@@ -1,3 +1,6 @@
+export const SITE_URL = "http://localhost:3000";
+export const API_URL = "http://localhost:9000";
+
 export const EMAIL = "e2e@example.com";
 export const DECLINED_CARD = "4000000000000002";
 export const VALID_CARD = "4242424242424242";
