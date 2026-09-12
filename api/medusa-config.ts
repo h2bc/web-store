@@ -110,7 +110,7 @@ module.exports = defineConfig({
   },
   admin: {
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
-    backendUrl: process.env.MEDUSA_BACKEND_URL,
+    backendUrl: "/",
   },
   modules: [
     { resolve: "./src/modules/content-page" },
