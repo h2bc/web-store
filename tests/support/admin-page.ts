@@ -26,6 +26,10 @@ export class AdminPage {
     return this.page.getByText(text);
   }
 
+  getTitleRow() {
+    return this.page.getByText("Title", { exact: true }).locator("..");
+  }
+
   async login() {
     await this.page.goto(`${ADMIN_URL}/login`);
     await this.page.locator('input[name="email"]').fill(TEST_ADMIN.email);
@@ -52,20 +56,36 @@ export class AdminPage {
   }
 
   async editPageBody(body: string) {
+    await this.editField("Body", body);
+  }
+
+  async editPageTitle(title: string) {
+    await this.editField("Title", title);
+  }
+
+  async getBodyDraft(): Promise<string> {
+    return this.getDraft("Body");
+  }
+
+  async getTitleDraft(): Promise<string> {
+    return this.getDraft("Title");
+  }
+
+  private async editField(label: string, value: string) {
     await this.openEditor();
-    await this.getDialog().getByLabel("Body").fill(body);
+    await this.getDialog().getByLabel(label).fill(value);
     await this.getDialog().getByRole("button", { name: "Save" }).click();
     await expect(this.getDialog()).toBeHidden();
   }
 
-  async getBodyDraft(): Promise<string> {
+  private async getDraft(label: string): Promise<string> {
     await this.openEditor();
 
-    const body = await this.getDialog().getByLabel("Body").inputValue();
+    const value = await this.getDialog().getByLabel(label).inputValue();
 
     await this.getDialog().getByRole("button", { name: "Cancel" }).click();
 
-    return body;
+    return value;
   }
 
   private async openEditor() {

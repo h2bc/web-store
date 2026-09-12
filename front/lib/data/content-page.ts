@@ -8,6 +8,7 @@ const CACHE_REVALIDATE_TIME = 60
 
 type StoreContentPage = {
   slug: string
+  title: string | null
   description: string
   body: string
   updated_at: string
@@ -21,6 +22,7 @@ type ContentPageResult = {
 function toContentPage(item: StoreContentPage): ContentPage {
   return {
     slug: item.slug,
+    title: item.title,
     description: item.description,
     body: item.body,
     updatedAt: item.updated_at,

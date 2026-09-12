@@ -11,15 +11,22 @@ import { ContentPageSlug } from "../modules/content-page/types";
 
 export type SaveContentPageInput = {
   slug: ContentPageSlug;
+  title?: string;
   description: string;
   body: string;
 };
 
 type Previous = {
   id: string;
+  title: string | null;
   description: string;
   body: string;
 };
+
+const toRow = ({ title, ...rest }: SaveContentPageInput) => ({
+  ...rest,
+  title: title || null,
+});
 
 type SaveContentPageCompensation = { id: string; previous: Previous | null };
 
@@ -32,9 +39,10 @@ const saveContentPageStep = createStep(
       { slug: input.slug },
       { take: 1 },
     );
+    const row = toRow(input);
     const saved = existing
-      ? await contentPage.updateContentPages({ id: existing.id, ...input })
-      : await contentPage.createContentPages(input);
+      ? await contentPage.updateContentPages({ id: existing.id, ...row })
+      : await contentPage.createContentPages(row);
 
     return new StepResponse(saved, {
       id: saved.id,
@@ -48,10 +56,11 @@ const saveContentPageStep = createStep(
       container.resolve<ContentPageModuleService>(CONTENT_PAGE_MODULE);
 
     if (data.previous) {
-      const { description, body } = data.previous;
+      const { title, description, body } = data.previous;
 
       await contentPage.updateContentPages({
         id: data.id,
+        title,
         description,
         body,
       });

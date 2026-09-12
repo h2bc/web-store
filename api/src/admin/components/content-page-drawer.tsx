@@ -1,4 +1,4 @@
-import { Button, Drawer, Heading, Label, Textarea } from "@medusajs/ui";
+import { Button, Drawer, Heading, Input, Label, Textarea } from "@medusajs/ui";
 import { useEffect, useState } from "react";
 
 import { ContentPageInput } from "../lib/content-page";
@@ -44,10 +44,20 @@ export function ContentPageDrawer({
               <Heading>Edit {label}</Heading>
             </Drawer.Title>
             <Drawer.Description className="sr-only">
-              Change the meta description and markdown body.
+              Change the title, the meta description and the markdown body.
             </Drawer.Description>
           </Drawer.Header>
           <Drawer.Body className="flex flex-col gap-y-8 overflow-y-auto">
+            <div className="flex flex-col gap-y-2">
+              <Label htmlFor="content-title" size="small" weight="plus">
+                Title
+              </Label>
+              <Input
+                id="content-title"
+                value={form.title}
+                onChange={(event) => setField("title", event.target.value)}
+              />
+            </div>
             <div className="flex flex-col gap-y-2">
               <Label htmlFor="content-description" size="small" weight="plus">
                 Meta description

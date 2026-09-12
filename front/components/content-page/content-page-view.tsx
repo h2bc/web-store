@@ -22,9 +22,11 @@ export default async function ContentPageView({ route }: ContentPageViewProps) {
   return (
     <div className="flex justify-center pt-15">
       <div className="max-w-4xl w-full flex flex-col">
-        <Heading level={1} font="blackletter" className="mb-8">
-          {route.label}
-        </Heading>
+        {contentPage?.title && (
+          <Heading level={1} font="blackletter" className="mb-8">
+            {contentPage.title}
+          </Heading>
+        )}
         {contentPage ? (
           <div className="prose max-w-none">
             <ReactMarkdown>{contentPage.body}</ReactMarkdown>

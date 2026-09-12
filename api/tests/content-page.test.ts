@@ -1,7 +1,7 @@
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils";
 
 import { setupHeaders } from "./support/auth";
-import { ABOUT, ABOUT_UPDATED } from "./support/data";
+import { ABOUT, ABOUT_UNTITLED, ABOUT_UPDATED } from "./support/data";
 import { getErrorResponse } from "./support/http";
 import seedContentPages from "../src/scripts/seed/content-pages";
 
@@ -19,6 +19,7 @@ medusaIntegrationTestRunner({
 
         expect(response.status).toBe(200);
         expect(response.data.content_page.slug).toBe("privacy");
+        expect(typeof response.data.content_page.title).toBe("string");
         expect(typeof response.data.content_page.description).toBe("string");
         expect(response.data.content_page.body).toContain("## ");
       });
@@ -47,6 +48,16 @@ medusaIntegrationTestRunner({
         const response = await api.get("/store/about", auth.store);
 
         expect(response.data.content_page).toMatchObject(ABOUT_UPDATED);
+      });
+
+      it("shows no title when the owner clears it", async () => {
+        await api.post("/admin/about", ABOUT, auth.admin);
+
+        await api.post("/admin/about", ABOUT_UNTITLED, auth.admin);
+        const response = await api.get("/store/about", auth.store);
+
+        expect(response.data.content_page.title).toBeNull();
+        expect(response.data.content_page.body).toBe(ABOUT.body);
       });
 
       it("refuses an empty body and names the field", async () => {

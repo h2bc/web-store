@@ -1,4 +1,5 @@
 export const ABOUT = {
+  title: "About us",
   description: "Who we are",
   body: "## Us\n\nStreetwear.",
 };
@@ -7,6 +8,8 @@ export const ABOUT_UPDATED = {
   ...ABOUT,
   body: "## Us\n\nStill streetwear.",
 };
+
+export const ABOUT_UNTITLED = { ...ABOUT, title: "" };
 
 export type Video = { url: string; title: string };
 
