@@ -9,13 +9,6 @@ import {
   ContentPageSlug,
 } from "../../modules/content-page/types";
 
-const TITLES: Record<ContentPageSlug, string> = {
-  privacy: "Privacy Policy",
-  terms: "Terms & Conditions",
-  "shipping-returns": "Shipping & Returns",
-  about: "About",
-};
-
 function getSection() {
   return `## ${faker.lorem.words(3)}\n\n${faker.lorem.paragraphs(2, "\n\n")}`;
 }
@@ -23,7 +16,6 @@ function getSection() {
 function getContentPage(slug: ContentPageSlug) {
   return {
     slug,
-    title: TITLES[slug],
     description: faker.lorem.sentence(),
     body: Array.from({ length: 3 }, getSection).join("\n\n"),
   };

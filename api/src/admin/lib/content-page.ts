@@ -7,7 +7,6 @@ export type ContentPageSlug =
   | "about";
 
 export type ContentPageInput = {
-  title: string;
   description: string;
   body: string;
 };

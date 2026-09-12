@@ -65,7 +65,7 @@ export function contentPageMetadata(
   if (!contentPage) return { title: route.label, robots: { index: false } }
 
   return {
-    title: contentPage.title,
+    title: route.label,
     description: contentPage.description,
     alternates: { canonical: route.path },
   }

@@ -1,7 +1,7 @@
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils";
 
 import { setupHeaders } from "./support/auth";
-import { ABOUT } from "./support/data";
+import { ABOUT, ABOUT_UPDATED } from "./support/data";
 import { getErrorResponse } from "./support/http";
 import seedContentPages from "../src/scripts/seed/content-pages";
 
@@ -18,10 +18,8 @@ medusaIntegrationTestRunner({
         const response = await api.get("/store/privacy", auth.store);
 
         expect(response.status).toBe(200);
-        expect(response.data.content_page).toMatchObject({
-          slug: "privacy",
-          title: "Privacy Policy",
-        });
+        expect(response.data.content_page.slug).toBe("privacy");
+        expect(typeof response.data.content_page.description).toBe("string");
         expect(response.data.content_page.body).toContain("## ");
       });
 
@@ -45,14 +43,10 @@ medusaIntegrationTestRunner({
       it("replaces the text when the owner saves it again", async () => {
         await api.post("/admin/about", ABOUT, auth.admin);
 
-        await api.post(
-          "/admin/about",
-          { ...ABOUT, title: "About us" },
-          auth.admin,
-        );
+        await api.post("/admin/about", ABOUT_UPDATED, auth.admin);
         const response = await api.get("/store/about", auth.store);
 
-        expect(response.data.content_page.title).toBe("About us");
+        expect(response.data.content_page).toMatchObject(ABOUT_UPDATED);
       });
 
       it("refuses an empty body and names the field", async () => {

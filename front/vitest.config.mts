@@ -4,5 +4,9 @@ import path from 'node:path'
 export default defineConfig({
   esbuild: { jsx: 'automatic' },
   resolve: { alias: { '@': path.resolve(__dirname) } },
-  test: { include: ['tests/**/*.test.ts'] },
+  test: {
+    include: ['tests/**/*.test.ts'],
+    environment: 'jsdom',
+    globals: true,
+  },
 })
