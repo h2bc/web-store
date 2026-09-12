@@ -22,7 +22,7 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 ### Admin-owned data
 
 - Catalog, prices, regions, shipping options and payment providers are configured in the admin, never in code.
-- The text of the content pages and the gallery list too. The seed only fills lorem ipsum; a screen without a row answers 404.
+- The text of the content pages and the gallery list too. The seed only fills lorem ipsum; for a screen without a row the API answers 404 and the storefront shows an empty state.
 - The storefront queries one country, `DEFAULT_COUNTRY_CODE` in `front/lib/store.ts`. The admin holds the region behind it.
 
 ### Optional services
