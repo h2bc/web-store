@@ -22,15 +22,6 @@
           "nullable": false,
           "mappedType": "text"
         },
-        "title": {
-          "name": "title",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "text"
-        },
         "description": {
           "name": "description",
           "type": "text",

@@ -1,6 +1,6 @@
 import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
-export class Migration20260912150000 extends Migration {
+export class Migration20260912140419 extends Migration {
   override async up(): Promise<void> {
     this.addSql(
       `alter table if exists "content_page" drop column if exists "title";`,
