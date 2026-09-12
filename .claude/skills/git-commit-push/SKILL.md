@@ -36,9 +36,15 @@ One commit is one logical change that could be reviewed and reverted on its own.
 10. If the branch's own upstream moved (`git log HEAD..@{u}` non-empty), merge it the same way.
 11. `git push -u origin <branch>` on the first push, `git push` after. Never `--force`. The `pre-push` hook refuses `main` and force pushes.
 
+## Resolve review threads
+
+12. `gh pr view --json number` for the branch. No pull request means skip this section.
+13. List the unresolved threads with `gh api graphql` on `pullRequest.reviewThreads`: `id`, `path`, `isResolved` and the first comment body.
+14. For each thread the pushed commit addresses, reply in one sentence with what changed and where, then resolve it: `addPullRequestReviewThreadReply` and `resolveReviewThread`. A thread the commit did not touch stays open.
+
 ## Report
 
-`git log -1 --format=%B` (the subject, no trailer) and `git status -sb` (branch up to date with origin). Name the scripts that ran and their results.
+`git log -1 --format=%B` (the subject, no trailer) and `git status -sb` (branch up to date with origin). Name the scripts that ran and their results, and the threads resolved.
 
 ## Hand-off
 

@@ -33,6 +33,6 @@
 
 ## Skills
 
-- `/git-commit-push`: checks, branch, stage by path, secret scan, message, merge `main` in, push. Never commit by hand.
+- `/git-commit-push`: checks, branch, stage by path, secret scan, message, merge `main` in, push, resolve the review threads the commit addresses. Never commit by hand.
 - `/git-open-pr`: merge `main` in, `/opsx:verify`, then open or refresh the pull request from the template.
 - `/git-merge-pr`: squash merge, only after the owner explicitly accepted in the conversation.
