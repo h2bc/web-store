@@ -26,7 +26,6 @@
     "CLAUDE_CONFIG_DIR": "/claude"
   },
   "postCreateCommand": "pnpm i --frozen && pnpm install:api && pnpm install:front && pnpm migrate",
-  "forwardPorts": [9000, 3000],
   "runServices": ["db", "redis"],
   "shutdownAction": "stopCompose",
   "customizations": {
