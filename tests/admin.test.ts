@@ -74,3 +74,29 @@ test("the owner rewrites the About page and puts it back", async ({ admin }) => 
     expect(await admin.getBodyDraft()).toBe(original!);
   });
 });
+
+test("the owner clears the About title and puts it back", async ({ admin }) => {
+  let original: string;
+
+  await test.step("Given the About screen with a title", async () => {
+    await admin.open("about");
+    original = await admin.getTitleDraft();
+    expect(original, "the About page has no title, reseed the content pages").not.toBe("");
+  });
+
+  await test.step("When they save an empty title", async () => {
+    await admin.editPageTitle("");
+  });
+
+  await test.step("Then the Title row shows a dash", async () => {
+    await expect(admin.getTitleRow()).toContainText("-");
+  });
+
+  await test.step("When they save the original title again", async () => {
+    await admin.editPageTitle(original!);
+  });
+
+  await test.step("Then the Title row shows it", async () => {
+    await expect(admin.getTitleRow()).toContainText(original!);
+  });
+});

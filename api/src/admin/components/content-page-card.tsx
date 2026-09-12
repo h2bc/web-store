@@ -22,7 +22,7 @@ import { Markdown } from "./markdown";
 
 type ContentCardProps = { slug: ContentPageSlug; label: string };
 
-const EMPTY: ContentPageInput = { description: "", body: "" };
+const EMPTY: ContentPageInput = { title: "", description: "", body: "" };
 
 function Row({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -51,7 +51,11 @@ export function ContentPageCard({ slug, label }: ContentCardProps) {
   const input = useMemo(
     () =>
       contentPage
-        ? { description: contentPage.description, body: contentPage.body }
+        ? {
+            title: contentPage.title ?? "",
+            description: contentPage.description,
+            body: contentPage.body,
+          }
         : EMPTY,
     [contentPage],
   );
@@ -100,6 +104,11 @@ export function ContentPageCard({ slug, label }: ContentCardProps) {
       </div>
       {contentPage ? (
         <>
+          <Row title="Title">
+            <Text size="small" leading="compact">
+              {contentPage.title || "-"}
+            </Text>
+          </Row>
           <Row title="Meta description">
             <Text size="small" leading="compact">
               {contentPage.description || "-"}

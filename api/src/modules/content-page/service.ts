@@ -5,6 +5,7 @@ import { ContentPageSlug } from "./types";
 
 export type ContentPageItem = {
   slug: ContentPageSlug;
+  title: string | null;
   description: string;
   body: string;
   updated_at: Date;
@@ -21,9 +22,9 @@ class ContentPageModuleService extends MedusaService({ ContentPage }) {
       );
     }
 
-    const { description, body, updated_at } = contentPage;
+    const { title, description, body, updated_at } = contentPage;
 
-    return { slug, description, body, updated_at };
+    return { slug, title, description, body, updated_at };
   }
 }
 

@@ -4,7 +4,7 @@ import ContentPageView from '@/components/content-page/content-page-view'
 import { getContentPage } from '@/lib/data/content-page'
 import { getContentPageRoute } from '@/lib/routes'
 import { contentPageMetadata } from '@/lib/seo'
-import { TERMS } from './support/data'
+import { TERMS, TERMS_UNTITLED } from './support/data'
 
 vi.mock('@/lib/data/content-page', () => ({ getContentPage: vi.fn() }))
 
@@ -20,7 +20,7 @@ describe('a content page without content', () => {
     })
   })
 
-  it('shows the route label as the heading instead of an error', async () => {
+  it('shows no heading and no error', async () => {
     vi.mocked(getContentPage).mockResolvedValue({
       contentPage: null,
       error: null,
@@ -28,9 +28,7 @@ describe('a content page without content', () => {
 
     render(await ContentPageView({ route: ROUTE }))
 
-    expect(
-      screen.getByRole('heading', { level: 1, name: ROUTE.label })
-    ).toBeDefined()
+    expect(screen.queryByRole('heading', { level: 1 })).toBeNull()
     expect(screen.queryByRole('alert')).toBeNull()
   })
 })
@@ -46,7 +44,7 @@ describe('a content page with content', () => {
     })
   })
 
-  it('shows the route label as the heading above the body', async () => {
+  it("shows the owner's title as the heading above the body", async () => {
     vi.mocked(getContentPage).mockResolvedValue({
       contentPage: TERMS,
       error: null,
@@ -55,8 +53,20 @@ describe('a content page with content', () => {
     render(await ContentPageView({ route: ROUTE }))
 
     expect(
-      screen.getByRole('heading', { level: 1, name: ROUTE.label })
+      screen.getByRole('heading', { level: 1, name: TERMS.title! })
     ).toBeDefined()
+    expect(screen.getByRole('heading', { level: 2 })).toBeDefined()
+  })
+
+  it('shows no heading when the owner left the title empty', async () => {
+    vi.mocked(getContentPage).mockResolvedValue({
+      contentPage: TERMS_UNTITLED,
+      error: null,
+    })
+
+    render(await ContentPageView({ route: ROUTE }))
+
+    expect(screen.queryByRole('heading', { level: 1 })).toBeNull()
     expect(screen.getByRole('heading', { level: 2 })).toBeDefined()
   })
 })

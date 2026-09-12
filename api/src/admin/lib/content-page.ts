@@ -7,12 +7,14 @@ export type ContentPageSlug =
   | "about";
 
 export type ContentPageInput = {
+  title: string;
   description: string;
   body: string;
 };
 
-export type ContentPage = ContentPageInput & {
+export type ContentPage = Omit<ContentPageInput, "title"> & {
   slug: ContentPageSlug;
+  title: string | null;
   updated_at: string;
 };
 
