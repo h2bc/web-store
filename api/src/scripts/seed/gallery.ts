@@ -14,7 +14,15 @@ export default async function seedGallery({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
   const gallery = container.resolve<GalleryModuleService>(GALLERY_MODULE);
 
-  logger.info("Gallery");
+  const [, count] = await gallery.listAndCountGalleryItems();
+
+  if (count > 0) {
+    logger.info("Gallery: exists");
+
+    return;
+  }
+
+  logger.info("Gallery: created");
   await gallery.createGalleryItems(
     VIDEOS.map((video, rank) => ({ ...video, rank })),
   );

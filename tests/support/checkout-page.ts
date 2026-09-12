@@ -50,6 +50,10 @@ export class CheckoutPage {
   async fillAddress(address: Address) {
     const frame = this.getStripeAddressFrame();
 
+    await expect(
+      this.page.getByLabel("Email"),
+      "checkout is disabled: STRIPE_PUBLISHABLE_KEY is not set",
+    ).toBeVisible();
     await this.page.getByLabel("Email").fill(EMAIL);
     await this.getCountryField().selectOption(address.country);
     await frame.getByRole("textbox", { name: "First name" }).fill("Jane");

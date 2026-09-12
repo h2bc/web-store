@@ -127,8 +127,6 @@ export function GalleryEditor() {
   };
 
   const reorder = async (next: Video[]) => {
-    setVideos(next);
-
     const error = await save(
       next.map(({ url, title }) => ({ url, title })),
       "Ranking saved",
