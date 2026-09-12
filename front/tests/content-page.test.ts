@@ -4,6 +4,7 @@ import ContentPageView from '@/components/content-page/content-page-view'
 import { getContentPage } from '@/lib/data/content-page'
 import { getContentPageRoute } from '@/lib/routes'
 import { contentPageMetadata } from '@/lib/seo'
+import { TERMS } from './support/data'
 
 vi.mock('@/lib/data/content-page', () => ({ getContentPage: vi.fn() }))
 
@@ -29,5 +30,29 @@ describe('a content page without content', () => {
 
     expect(markup).toMatch(/<h1[^>]*>Terms &amp; Conditions<\/h1>/)
     expect(markup).not.toContain('role="alert"')
+  })
+})
+
+describe('a content page with content', () => {
+  it('is titled after its route and described by the page', () => {
+    const metadata = contentPageMetadata(TERMS, ROUTE)
+
+    expect(metadata).toEqual({
+      title: ROUTE.label,
+      description: TERMS.description,
+      alternates: { canonical: ROUTE.path },
+    })
+  })
+
+  it('shows the route label as the heading above the body', async () => {
+    vi.mocked(getContentPage).mockResolvedValue({
+      contentPage: TERMS,
+      error: null,
+    })
+
+    const markup = renderToStaticMarkup(await ContentPageView({ route: ROUTE }))
+
+    expect(markup).toMatch(/<h1[^>]*>Terms &amp; Conditions<\/h1>/)
+    expect(markup).toContain('Every order is final.')
   })
 })

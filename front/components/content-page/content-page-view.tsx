@@ -23,7 +23,7 @@ export default async function ContentPageView({ route }: ContentPageViewProps) {
     <div className="flex justify-center pt-15">
       <div className="max-w-4xl w-full flex flex-col">
         <Heading level={1} font="blackletter" className="mb-8">
-          {contentPage?.title ?? route.label}
+          {route.label}
         </Heading>
         {contentPage ? (
           <div className="prose max-w-none">

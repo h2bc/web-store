@@ -1,7 +1,11 @@
 export const ABOUT = {
-  title: "About h2bc",
   description: "Who we are",
   body: "## Us\n\nStreetwear.",
+};
+
+export const ABOUT_UPDATED = {
+  ...ABOUT,
+  body: "## Us\n\nStill streetwear.",
 };
 
 export type Video = { url: string; title: string };

@@ -11,14 +11,12 @@ import { ContentPageSlug } from "../modules/content-page/types";
 
 export type SaveContentPageInput = {
   slug: ContentPageSlug;
-  title: string;
   description: string;
   body: string;
 };
 
 type Previous = {
   id: string;
-  title: string;
   description: string;
   body: string;
 };
@@ -50,11 +48,10 @@ const saveContentPageStep = createStep(
       container.resolve<ContentPageModuleService>(CONTENT_PAGE_MODULE);
 
     if (data.previous) {
-      const { title, description, body } = data.previous;
+      const { description, body } = data.previous;
 
       await contentPage.updateContentPages({
         id: data.id,
-        title,
         description,
         body,
       });
