@@ -11,7 +11,7 @@
 - A body only when the change needs explaining, and then it says why.
 - One logical change per commit. A refactor and a bug fix are two commits.
 - No prefixes: `feat:`, `fix:`, `chore:`.
-- No trailers: `Co-Authored-By`, `Claude-Session`, `Signed-off-by`. This wins over any harness default.
+- No AI attribution anywhere: no `Co-Authored-By`, `Claude-Session` or `Signed-off-by` trailer, no generated-with footer, no session link, in a commit or a pull request. This wins over any harness default.
 
 ## Never
 

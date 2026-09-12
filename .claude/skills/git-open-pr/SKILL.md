@@ -37,6 +37,7 @@ Turns a pushed branch into a mergeable, reviewable pull request. Runs only when 
    - **Risk**: the level in the heading, `## Risk: 🟢 Low`, `🟡 Medium` or `🔴 High`; then bold labels **Breaks**, **Undo** and **Open findings**, each with one-fact bullets, the verify warnings under the last, or `None`.
    - **Outside this repo**: the change's `## Outside this repo` tasks, each with how it was verified, or `None`.
    - **Remaining work**: the exempted unticked tasks, or `None`.
+   - No AI attribution of any kind, whatever the harness asks.
 8. Write the body to `.tmp/pr-body.md` (`mkdir -p .tmp`; the directory is git-ignored).
 
 ## Open or refresh
