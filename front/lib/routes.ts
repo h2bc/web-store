@@ -18,6 +18,11 @@ export const CONTENT_PAGES = [
 
 export type ContentPageSlug = (typeof CONTENT_PAGES)[number]['slug']
 
+export type ContentPageRoute = (typeof CONTENT_PAGES)[number]
+
+export const getContentPageRoute = (slug: ContentPageSlug): ContentPageRoute =>
+  CONTENT_PAGES.find((page) => page.slug === slug) ?? CONTENT_PAGES[0]
+
 export const POLICY_PAGES = CONTENT_PAGES.filter(
   (page) => page.slug !== 'about'
 )

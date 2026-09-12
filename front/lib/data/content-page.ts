@@ -17,7 +17,6 @@ type StoreContentPage = {
 type ContentPageResult = {
   contentPage: ContentPage | null
   error: string | null
-  notFound: boolean
 }
 
 function toContentPage(item: StoreContentPage): ContentPage {
@@ -58,14 +57,13 @@ export const getContentPage = cache(
     try {
       const contentPage = await fetchContentPage(slug)
 
-      return { contentPage, error: null, notFound: !contentPage }
+      return { contentPage, error: null }
     } catch (error) {
       console.error('Failed to fetch contentPage page:', error)
 
       return {
         contentPage: null,
         error: 'Failed to load the page',
-        notFound: false,
       }
     }
   }
