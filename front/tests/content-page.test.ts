@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server'
+import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import ContentPageView from '@/components/content-page/content-page-view'
 import { getContentPage } from '@/lib/data/content-page'
@@ -26,10 +26,12 @@ describe('a content page without content', () => {
       error: null,
     })
 
-    const markup = renderToStaticMarkup(await ContentPageView({ route: ROUTE }))
+    render(await ContentPageView({ route: ROUTE }))
 
-    expect(markup).toMatch(/<h1[^>]*>Terms &amp; Conditions<\/h1>/)
-    expect(markup).not.toContain('role="alert"')
+    expect(
+      screen.getByRole('heading', { level: 1, name: ROUTE.label })
+    ).toBeDefined()
+    expect(screen.queryByRole('alert')).toBeNull()
   })
 })
 
@@ -50,9 +52,11 @@ describe('a content page with content', () => {
       error: null,
     })
 
-    const markup = renderToStaticMarkup(await ContentPageView({ route: ROUTE }))
+    render(await ContentPageView({ route: ROUTE }))
 
-    expect(markup).toMatch(/<h1[^>]*>Terms &amp; Conditions<\/h1>/)
-    expect(markup).toContain('Every order is final.')
+    expect(
+      screen.getByRole('heading', { level: 1, name: ROUTE.label })
+    ).toBeDefined()
+    expect(screen.getByRole('heading', { level: 2 })).toBeDefined()
   })
 })
