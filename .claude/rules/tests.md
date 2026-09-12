@@ -1,38 +1,45 @@
 ---
 paths:
-  - "api/integration/**"
-  - "front/unit/**"
-  - "e2e/**"
+  - "api/tests/**"
+  - "front/tests/**"
+  - "tests/**"
 ---
 
 # Tests
 
-## Level
+## Suites
 
-- An API route or workflow: `api/integration/`, through the Medusa integration runner, like `api/integration/http/health.test.ts`.
-- Pure storefront logic such as schemas, formatting and data-layer helpers: `front/unit/`, with Vitest.
-- A user journey: `e2e/`, with Playwright, like `e2e/checkout.test.ts`. Only journeys go there.
+| Suite          | Level             | Tool                | Talks to                                          |
+| -------------- | ----------------- | ------------------- | ------------------------------------------------- |
+| `api/tests/`   | unit, integration | Jest, Medusa runner | the API on a throwaway database                   |
+| `front/tests/` | unit              | Vitest, SDK mocked  | nothing                                           |
+| `tests/`       | end to end        | Playwright          | the storefront and the admin, in the browser only |
 
 ## Files and names
 
+- One flat `tests/` folder next to each `package.json`. No subfolders by level or tool.
 - One file per route, module or journey, named after it, ending in `.test.ts`.
 - A test name or step title states the behaviour from the shopper's or the store owner's point of view, in their words.
 - One spec scenario maps to one test named after it.
-- A test file holds only tests. Support code lives in a `support/` folder next to the tests, plain helpers and data modules for Jest and Vitest.
+- A test file holds only tests. No helper functions, setup code or literals: they live in `support/` inside the suite's folder.
 
 ## Fixtures and page objects
 
 - A Playwright page object is a class per page or flow, like `CheckoutPage`, holding its locators as `get` methods and the shopper's actions as verbs.
-- `e2e/support/fixtures.ts` extends `test` with one fixture per page object, so a test asks for a fresh instance as a parameter; every Playwright test imports `test` and `expect` from it.
-- Test data such as addresses and cards is a module of constants in `e2e/support/data.ts`.
+- `tests/support/fixtures.ts` extends `test` with one fixture per page object, so a test asks for a fresh instance as a parameter; every Playwright test imports `test` and `expect` from it.
+- Test data such as addresses and cards is a module of constants in `support/data.ts`.
+- Setup that a suite repeats, like an admin login or a seeded row, is a fixture or a `support/` helper, never a `beforeEach` in the test file.
 
 ## Structure
 
-- A Jest or Vitest test follows Arrange-Act-Assert: three blocks separated by blank lines, no comment markers.
-- A Playwright test follows Given-When-Then: each part is a `test.step` titled with it, so the report reads like the scenario.
+- Every test is Given-When-Then, three parts in that order, no comment markers.
+- In Jest and Vitest the parts are blocks separated by blank lines.
+- In Playwright each part is a `test.step` titled with it, so the report reads like the scenario.
 
 ## Assertions
 
-- Assert what a caller or user observes: a status, a body shape, a visible text or element.
+- End to end asserts what the shopper or the owner sees: a visible text or element.
+- Integration asserts what the caller gets: a status and a body shape.
+- Unit asserts what the function returns.
 - Never assert exact copy, markup, internal calls or implementation order.
-- Mock an external service only behind its env key; a test that needs an unset key skips with a reason naming the key.
+- Never skip a test. A missing key, product or fixture fails the test with a message naming it.

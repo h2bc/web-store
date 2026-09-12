@@ -1,19 +1,29 @@
 import { defineConfig, devices } from "@playwright/test";
-
-const FRONT_URL = "http://localhost:3000";
-const API_URL = "http://localhost:9000";
+import { API_URL, SITE_URL } from "./tests/support/data";
 
 export default defineConfig({
-  testDir: "./e2e",
+  testDir: "./tests",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? "github" : "list",
   use: {
-    baseURL: FRONT_URL,
+    baseURL: SITE_URL,
     trace: "on-first-retry",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    {
+      name: "storefront",
+      testIgnore: /admin\.test\.ts/,
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "admin",
+      testMatch: /admin\.test\.ts/,
+      dependencies: ["storefront"],
+      use: { ...devices["Desktop Chrome"] },
+    },
+  ],
   webServer: [
     {
       command: "pnpm dev:api",
@@ -23,7 +33,7 @@ export default defineConfig({
     },
     {
       command: "pnpm dev:front",
-      url: FRONT_URL,
+      url: SITE_URL,
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
     },

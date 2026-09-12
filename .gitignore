@@ -1,6 +1,7 @@
 .env
 .env.*
 !.env.example
+!.env.test
 .claude/settings.local.json
 .DS_Store
 .pnpm-store/

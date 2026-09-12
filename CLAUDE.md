@@ -6,7 +6,7 @@ h2bc web store. Two independent pnpm projects, not a workspace.
 
 - `api/`: Medusa v2 backend, admin at `/app`.
 - `front/`: Next.js storefront.
-- `e2e/`: Playwright tests.
+- `tests/`: Playwright journeys through both apps.
 - `docs/architecture.md`: how the system works, current facts only. Read it before changing the data layer, caching, checkout or the backend config.
 
 ## Rules
@@ -25,9 +25,7 @@ h2bc web store. Two independent pnpm projects, not a workspace.
 
 ## Tests
 
-- `api/integration/`: Jest.
-- `front/unit/`: Vitest.
-- `e2e/`: Playwright.
+- Every project has a `tests/` folder next to its `package.json`: `api/tests/` is Jest, `front/tests/` is Vitest, root `tests/` is Playwright.
 - All test files are named `*.test.ts`.
 
 ## Medusa

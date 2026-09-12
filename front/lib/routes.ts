@@ -5,10 +5,29 @@ export const NAV_LINKS = [
   { href: '/contact', label: 'Contact' },
 ]
 
+export const CONTENT_PAGES = [
+  { slug: 'privacy', path: '/privacy', label: 'Privacy Policy' },
+  {
+    slug: 'shipping-returns',
+    path: '/shipping-returns',
+    label: 'Shipping & Returns',
+  },
+  { slug: 'terms', path: '/terms', label: 'Terms & Conditions' },
+  { slug: 'about', path: '/about', label: 'About' },
+] as const
+
+export type ContentPageSlug = (typeof CONTENT_PAGES)[number]['slug']
+
+export const POLICY_PAGES = CONTENT_PAGES.filter(
+  (page) => page.slug !== 'about'
+)
+
 export const PUBLIC_PATHS = [
-  '/',
-  ...NAV_LINKS.map((link) => link.href),
-  '/shipping-returns',
+  ...new Set([
+    '/',
+    ...NAV_LINKS.map((link) => link.href),
+    ...CONTENT_PAGES.map((page) => page.path),
+  ]),
 ]
 
 export function productPath(handle: string): string {

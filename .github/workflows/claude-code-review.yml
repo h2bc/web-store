@@ -37,7 +37,7 @@ jobs:
             /code-review:code-review --comment ${{ github.repository }}/pull/${{ github.event.pull_request.number }}
 
             Then give a verdict, also when the review was skipped:
-            - A blocking finding, or an earlier thread of yours still unresolved: `gh pr review ${{ github.event.pull_request.number }} --request-changes --body "<one line per open finding>"`
+            - A blocking finding, or an earlier finding of yours the diff does not address: `gh pr review ${{ github.event.pull_request.number }} --request-changes --body "<one line per open finding>"`
             - Otherwise: `gh pr review ${{ github.event.pull_request.number }} --approve --body "<one line>"`
           claude_args: |
             --append-system-prompt "Every comment you post follows .claude/rules/writing.md: one sentence per finding, what is wrong and where, no preamble, no summary."

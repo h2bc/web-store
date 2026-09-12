@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import type { Organization, Product, WithContext } from 'schema-dts'
 import type { ProductDetail } from '@/lib/types/product-detail'
+import type { ContentPage } from '@/lib/types/content-page'
 import { isVariantAvailable, selectDisplayVariant } from '@/lib/utils'
 import { productPath } from '@/lib/routes'
 import { INSTAGRAM_URL, YOUTUBE_URL } from '@/lib/social'
@@ -54,6 +55,19 @@ export function productMetadata(product: ProductDetail): Metadata {
       url: path,
       images: [productImage(product)],
     },
+  }
+}
+
+export function contentPageMetadata(
+  contentPage: ContentPage | null,
+  path: string
+): Metadata {
+  if (!contentPage) return { robots: { index: false } }
+
+  return {
+    title: contentPage.title,
+    description: contentPage.description,
+    alternates: { canonical: path },
   }
 }
 

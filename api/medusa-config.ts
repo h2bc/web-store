@@ -113,6 +113,8 @@ module.exports = defineConfig({
     backendUrl: process.env.MEDUSA_BACKEND_URL,
   },
   modules: [
+    { resolve: "./src/modules/content-page" },
+    { resolve: "./src/modules/gallery" },
     {
       resolve: "@medusajs/medusa/file",
       options: {

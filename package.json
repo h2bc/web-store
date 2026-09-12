@@ -1,7 +1,6 @@
 {
   "name": "h2bc-web-store",
   "private": true,
-  "type": "module",
   "packageManager": "pnpm@10.34.5",
   "scripts": {
     "prepare": "git config core.hooksPath .githooks",
