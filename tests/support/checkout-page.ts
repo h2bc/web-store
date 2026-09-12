@@ -31,6 +31,10 @@ export class CheckoutPage {
     return this.page.locator("main").getByRole("alert");
   }
 
+  getConsentLink(name: string) {
+    return this.page.locator("main").getByRole("link", { name });
+  }
+
   async addFirstProductAndOpenCheckout() {
     await this.page.goto("/shop");
     await this.page.getByRole("link", { name: /^View / }).first().click();

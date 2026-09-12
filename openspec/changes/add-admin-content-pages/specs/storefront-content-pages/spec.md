@@ -7,9 +7,13 @@ Defines the storefront's policy, about and gallery pages: where their content co
 ### Requirement: Content pages render admin-managed markdown
 The storefront SHALL serve `/privacy`, `/terms`, `/shipping-returns` and `/about`, each showing the title and markdown body of the content page with the matching slug, fetched from the store API through the data layer. The body SHALL be rendered as formatted text in the storefront's typography with the same renderer as product descriptions, and raw HTML in the body SHALL NOT be rendered as HTML. Each page SHALL use the content page's title as the document title and its description as the meta description, and SHALL declare its own canonical URL. Content SHALL reflect an admin save within the storefront's standard cache window.
 
-#### Scenario: Default page
-- **WHEN** a visitor opens `/privacy` on a store where the page was never saved
-- **THEN** the page shows the default privacy policy title as a heading and the default body as formatted text, and the document title is the page title followed by the site suffix
+#### Scenario: Seeded page
+- **WHEN** a visitor opens `/privacy` on a seeded store
+- **THEN** the page shows the seeded privacy policy title as a heading and the body as formatted text, and the document title is the page title followed by the site suffix
+
+#### Scenario: Page without content
+- **WHEN** a visitor opens `/terms` before the page was seeded or saved
+- **THEN** the response is 404
 
 #### Scenario: Edited page
 - **WHEN** the owner saved `/about` with a new body more than a minute ago

@@ -34,13 +34,14 @@ jobs:
       DB_HOST: localhost
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
-      DISABLE_MEDUSA_ADMIN: 'true'
       STORE_CORS: http://localhost:3000
       ADMIN_CORS: http://localhost:9000
       AUTH_CORS: http://localhost:3000,http://localhost:9000
       JWT_SECRET: ci
       COOKIE_SECRET: ci
       MEDUSA_BACKEND_URL: http://localhost:9000
+      STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
+      STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4

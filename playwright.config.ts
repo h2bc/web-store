@@ -11,7 +11,19 @@ export default defineConfig({
     baseURL: SITE_URL,
     trace: "on-first-retry",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    {
+      name: "storefront",
+      testIgnore: /admin\.test\.ts/,
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "admin",
+      testMatch: /admin\.test\.ts/,
+      dependencies: ["storefront"],
+      use: { ...devices["Desktop Chrome"] },
+    },
+  ],
   webServer: [
     {
       command: "pnpm dev:api",

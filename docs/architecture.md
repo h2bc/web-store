@@ -11,15 +11,18 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 ### Extension points
 
 - Stock Medusa v2. Customisation lives only under `api/src/`.
-- `modules/`: the Resend notification provider in `modules/resend/`.
-- `workflows/`: `send-order-confirmation.ts`.
+- `modules/`: `resend/`, `content-page/` (one row per fixed screen) and `gallery/` (the ordered video list).
+- `scripts/seed/`: one part per data set, run together by `scripts/seed.ts` or alone with `medusa exec`.
+- `workflows/`: `send-order-confirmation.ts`, `save-content-page.ts`, `save-gallery.ts`.
 - `subscribers/`: `order-placed.ts`, `invite.ts`, `password-reset.ts`.
-- `api/`: route files under `api/store/` and `api/admin/`.
+- `api/`: route files under `api/store/` and `api/admin/`. Body validation lives in `api/middlewares.ts`.
+- `admin/routes/`: admin screens, one top-level sidebar item per content page plus the gallery editor.
 - `links/` and `jobs/`: empty today.
 
 ### Admin-owned data
 
 - Catalog, prices, regions, shipping options and payment providers are configured in the admin, never in code.
+- The text of the content pages and the gallery list too. The seed only fills lorem ipsum; a screen without a row answers 404.
 - The storefront queries one country, `DEFAULT_COUNTRY_CODE` in `front/lib/store.ts`. The admin holds the region behind it.
 
 ### Optional services
@@ -48,7 +51,7 @@ Server-first Next.js App Router.
 ### Data layer
 
 - Components never call the backend. Every call goes through `front/lib/data/`, which wraps the Medusa JS SDK from `front/lib/medusa.ts`.
-- Reads are `import 'server-only'` (`products.ts`). Only server components import them.
+- Reads are `import 'server-only'` (`products.ts`, `content-pages.ts`, `gallery.ts`). Only server components import them.
 - Mutations are `'use server'` actions (`cart.ts`, `shipping.ts`, `payment.ts`, `orders.ts`, `categories.ts`, `contact.ts`). Client components call them as functions.
 - Every data-layer function returns a result object with an `error` field and never throws. `getProducts` returns `{ products: [], error }` on failure, `getCart` returns `{ cart: null, error }`.
 - Pages render the degraded state when the backend is unreachable.
@@ -57,6 +60,7 @@ Server-first Next.js App Router.
 
 - Reads are wrapped in `cached` from `front/lib/cache.ts`: Next's `unstable_cache` with a key, tags and a 60-second revalidate, `CACHE_REVALIDATE_TIME` in `products.ts`.
 - Catalog reads carry the `products` tag. Each product page adds `product-<handle>`. An admin change shows within a minute.
+- Content page reads carry `content-page-<slug>`, the gallery read carries `gallery`.
 - Cart mutations in `cart.ts` invalidate with `revalidatePath` on the checkout and the layout.
 - `DISABLE_CACHE=true` makes `cached` a pass-through for development.
 
@@ -75,7 +79,8 @@ Server-first Next.js App Router.
 ### SEO
 
 - `front/lib/seo.ts` holds the site constants. `SEO_INDEXABLE` decides whether the root layout emits `robots: { index: false }` for the whole site.
-- Public pages set `alternates.canonical`: `shop`, `about`, `gallery`.
+- Public pages set `alternates.canonical`: `shop`, `gallery`, `contact` and the content pages `about`, `privacy`, `terms`, `shipping-returns`.
+- A content page or the gallery sets `robots: { index: false }` and drops the canonical when its read fails, like the shop.
 - Cart, checkout, return and confirmation pages set `robots: { index: false }`.
 - `front/app/robots.ts` and `front/app/sitemap.ts` come from the same helpers.
 
