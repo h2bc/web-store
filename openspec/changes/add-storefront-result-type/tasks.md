@@ -17,7 +17,6 @@
 
 - [ ] 3.1 Update `.claude/rules/front.md`: under Data layer add one file per resource in `front/lib/data/`, one function per call named `get` for a read and the action for a mutation, every function returns `Result<T>` from `front/lib/types/result.ts`, callers check `error !== null` then `data === null`, errors are logged in the data layer and returned as a message; replace the review line about throwing with a function whose return type is not `Result<T>`; verify the file stays under 50 lines.
 - [ ] 3.2 Update `docs/architecture.md` data layer section to state the shared return type, the not-found convention and the `ok` and `fail` helpers, replacing the two example shapes; verify `grep -n "cart: null\|products: \[\]" docs/architecture.md` finds nothing.
-- [ ] 3.3 In `openspec/changes/add-contact-form-email/design.md` change the storefront cleanup line so the action returns `Result<string>` instead of `{ error }`; verify `grep -n "{ error }" openspec/changes/add-contact-form-email/design.md` finds nothing.
 
 ## 4. Verification
 
