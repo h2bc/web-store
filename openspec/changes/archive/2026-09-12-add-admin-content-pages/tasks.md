@@ -73,3 +73,9 @@
 ## 10. Outside this repo
 
 - [ ] 10.1 After this branch's PR merges and deploys, in the live admin add the three gallery videos and write the privacy, terms, shipping and about pages, each policy with the seller identity block; verify the four live pages answer 200.
+
+## Review findings
+
+- Task 10.1 stays open: the live pages and videos are entered in the deployed admin after this change ships, so the archive does not wait for it.
+- Verify found no critical issue. Warnings: `docs/architecture.md` names the data-layer file `content-pages.ts` while the file is `front/lib/data/content-page.ts`; the video drawer sends a non-YouTube link to the API and shows its 400 instead of a client-side field error, as design decision 5 chose; no automated test covers the unknown slug 404, drag to top, editing a video, edited page after the cache window, empty gallery, the outage alert render or the sitemap with the catalog unavailable.
+- Tasks 5.1, 6.1 and 8.3 name `api/tests/content.test.ts` and the `content-<slug>` cache tag; the suite landed as `content-page.test.ts` and `gallery.test.ts` and the tag as `content-page-<slug>`. Ticked tasks are history and stay as written.
