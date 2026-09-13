@@ -51,7 +51,7 @@ The store API SHALL expose `POST /store/contact` taking `name`, `email`, `topic`
 - **THEN** the response is 400 and names `message`
 
 ### Requirement: Contact endpoint resists spam
-A submission whose honeypot field is filled SHALL be accepted with status 200 and SHALL NOT record a notification. The endpoint SHALL limit each client address to 5 accepted submissions per 15 minutes and reject further ones with status 429. The honeypot field SHALL be invisible to visitors and excluded from browser autofill.
+A submission whose honeypot field is filled SHALL be accepted with status 200 and SHALL NOT record a notification. The endpoint SHALL limit each client address to 5 submissions per 15 minutes and reject further ones with status 429. The honeypot field SHALL be invisible to visitors and excluded from browser autofill.
 
 #### Scenario: Honeypot filled
 - **WHEN** a client posts a valid body with the honeypot field set

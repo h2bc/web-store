@@ -58,7 +58,9 @@ When no Resend API key is configured, the system SHALL still record each notific
 - **THEN** the order succeeds and the notification appears in the server log and in the stored notifications
 
 ### Requirement: Contact message email is sent to the shop inbox
-When a contact message is accepted, the system SHALL record one email using the `contact-message` template addressed to the configured contact inbox. The data SHALL contain the sender's `name`, `email`, `topic` and `message`, and a `reply_to` equal to the sender's email. The subject SHALL be the topic followed by ` from ` and the sender's name. When Resend is configured, the email SHALL carry the sender's address as its reply-to header so a reply from the inbox reaches the sender.
+When a contact message is accepted, the system SHALL record one email using the `contact-message` template addressed to the configured contact inbox. The data SHALL contain the sender's `name`, `email`, `topic` and `message`, and a `reply_to` equal to the sender's email. The subject SHALL be the topic followed by ` from ` and the sender's name.
+
+When Resend is configured, the email SHALL carry the sender's address as its reply-to header so a reply from the inbox reaches the sender.
 
 #### Scenario: Message accepted
 - **WHEN** a contact message from `Jonas <jonas@example.com>` with topic `Returns & Refunds` is accepted and the inbox is `contact@h2bcweb.com`
