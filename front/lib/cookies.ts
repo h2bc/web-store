@@ -5,7 +5,7 @@ import { cookies } from 'next/headers'
 export async function getCartId(): Promise<string | undefined> {
   const cookieStore = await cookies()
 
-  return cookieStore.get('cart_id')?.value
+  return cookieStore.get('cart_id')?.value || undefined
 }
 
 export async function setCartId(cartId: string) {

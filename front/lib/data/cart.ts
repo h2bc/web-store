@@ -17,6 +17,23 @@ type CartResult = {
   error: string | null
 }
 
+const NO_CART: CartResult = { cart: null, error: 'No cart found' }
+
+function isStaleCart(error: unknown): boolean {
+  if (!(error instanceof FetchError)) return false
+
+  return (
+    error.status === 404 ||
+    (error.status === 400 && error.message.includes('already completed'))
+  )
+}
+
+function getAddItemError(error: unknown): string {
+  return error instanceof FetchError && error.status === 400
+    ? error.message
+    : 'Failed to add item to cart.'
+}
+
 function sortCartItems(
   cart: HttpTypes.StoreCart | null
 ): HttpTypes.StoreCart | null {
@@ -45,12 +62,7 @@ function sortCartItems(
 export async function getCart(): Promise<CartResult> {
   const cartId = await getCartId()
 
-  if (!cartId) {
-    return {
-      cart: null,
-      error: 'No cart found',
-    }
-  }
+  if (!cartId) return NO_CART
 
   try {
     const { cart } = await sdk.store.cart.retrieve(cartId, {
@@ -62,6 +74,8 @@ export async function getCart(): Promise<CartResult> {
       error: null,
     }
   } catch (error) {
+    if (isStaleCart(error)) return NO_CART
+
     console.error('Failed to fetch cart:', error)
 
     return {
@@ -71,65 +85,35 @@ export async function getCart(): Promise<CartResult> {
   }
 }
 
-async function initCart(): Promise<CartResult> {
-  try {
-    const { cart } = await sdk.store.cart.create({})
+async function createCart(): Promise<string> {
+  const { cart } = await sdk.store.cart.create({})
 
-    await setCartId(cart.id)
+  await setCartId(cart.id)
 
-    return {
-      cart: sortCartItems(cart),
-      error: null,
-    }
-  } catch (error) {
-    console.error('Failed to initialize cart:', error)
-
-    return {
-      cart: null,
-      error: 'Failed to initialize cart.',
-    }
-  }
+  return cart.id
 }
 
 export async function addItemToCart(
   variantId: string,
   quantity: number = 1
 ): Promise<CartResult> {
-  let cartId = await getCartId()
-
-  if (!cartId) {
-    const { cart, error } = await initCart()
-
-    if (error || !cart) {
-      return {
-        cart: null,
-        error: error || 'Failed to initialize cart.',
-      }
-    }
-
-    cartId = cart.id
-  }
+  const cartId = await getCartId()
 
   try {
-    const { cart } = await sdk.store.cart.createLineItem(cartId, {
-      variant_id: variantId,
-      quantity,
-    })
+    const { cart } = await sdk.store.cart.createLineItem(
+      cartId ?? (await createCart()),
+      { variant_id: variantId, quantity }
+    )
 
-    return {
-      cart: sortCartItems(cart),
-      error: null,
-    }
+    return { cart: sortCartItems(cart), error: null }
   } catch (error) {
-    const message =
-      error instanceof FetchError && error.status === 400
-        ? error.message
-        : 'Failed to add item to cart.'
+    if (cartId && isStaleCart(error)) {
+      await removeCartId()
 
-    return {
-      cart: null,
-      error: message,
+      return addItemToCart(variantId, quantity)
     }
+
+    return { cart: null, error: getAddItemError(error) }
   }
 }
 

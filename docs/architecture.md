@@ -68,6 +68,7 @@ Server-first Next.js App Router.
 
 - The only session state is the cart id, in an httpOnly cookie managed by `front/lib/cookies.ts`.
 - A client component asks a server action, which reads the cookie. Nothing about the cart lives in client state.
+- A cart id the backend answers 404 or already completed for reads as the empty cart, without an error, and the next add to cart creates a new cart and replaces the cookie.
 
 ### Checkout
 
