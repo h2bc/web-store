@@ -2,6 +2,7 @@ import { test as base } from "@playwright/test";
 import { AdminPage } from "./admin-page";
 import { CartPage } from "./cart-page";
 import { CheckoutPage } from "./checkout-page";
+import { ContactPage } from "./contact-page";
 import { ContentPage } from "./content-page";
 import { getGalleryVideos, saveGalleryVideos } from "./gallery";
 import { SeoPage } from "./seo-page";
@@ -11,6 +12,7 @@ export const test = base.extend<{
   admin: AdminPage;
   cart: CartPage;
   checkout: CheckoutPage;
+  contact: ContactPage;
   content: ContentPage;
   emptyGallery: void;
   seo: SeoPage;
@@ -36,6 +38,9 @@ export const test = base.extend<{
   },
   checkout: async ({ page }, use) => {
     await use(new CheckoutPage(page));
+  },
+  contact: async ({ page }, use) => {
+    await use(new ContactPage(page));
   },
   content: async ({ page }, use) => {
     await use(new ContentPage(page));

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import Heading from '@/components/layout/heading'
 import CheckoutStepSection from '@/components/checkout/checkout-step-section'
 import CheckoutSummary from '@/components/checkout/checkout-summary'
 import AddressStep from '@/components/checkout/address-step'
@@ -84,10 +83,6 @@ export default async function CheckoutPage({
   return (
     <div className="flex justify-center pt-15">
       <div className="max-w-5xl w-full flex flex-col pb-12">
-        <Heading level={1} font="blackletter" className="mb-8">
-          Checkout
-        </Heading>
-
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_22rem] gap-8 items-start">
           {stripePublishableKey ? (
             <CheckoutElements

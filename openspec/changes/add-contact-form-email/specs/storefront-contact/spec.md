@@ -5,11 +5,11 @@ Defines the contact page: what it collects, how a message is validated and deliv
 ## ADDED Requirements
 
 ### Requirement: Contact page offers the form and alternative channels
-The contact page SHALL show the contact form and, beside it, a link to send a direct message to the shop's Instagram account and a mail link to the shop's public contact address. The page SHALL remain a public page with a canonical URL.
+The contact page SHALL show the contact form and, beside it, a link to send a direct message to the shop's Instagram account. The page SHALL remain a public page with a canonical URL.
 
 #### Scenario: Visitor prefers Instagram
 - **WHEN** a visitor opens `/contact`
-- **THEN** the page shows a link to the shop's Instagram profile and a `mailto:` link to the contact address alongside the form
+- **THEN** the page shows a link to the shop's Instagram profile alongside the form
 
 ### Requirement: Form collects a validated message
 The form SHALL collect a name, an email address, a topic chosen from a fixed list and a message. Validation SHALL run on submit and block submission while any field is invalid: the name SHALL be 1 to 100 characters, the email SHALL be a valid address of at most 254 characters, the message SHALL be 5 to 5000 characters. The submit control SHALL be disabled while a submission is in flight.
@@ -27,11 +27,11 @@ The form SHALL collect a name, an email address, a topic chosen from a fixed lis
 - **THEN** the second click does nothing
 
 ### Requirement: Submission delivers the message and reports the outcome
-Submitting a valid form SHALL send the message to the API. On success the form SHALL show a confirmation and clear its fields. On failure the form SHALL show the error and keep the visitor's entries.
+Submitting a valid form SHALL send the message to the API. On success the form SHALL be replaced by a confirmation, laid out like the checkout outcome screens, with a control that brings back an empty form. On failure the form SHALL show the error and keep the visitor's entries.
 
 #### Scenario: Message sent
 - **WHEN** the API accepts the message
-- **THEN** a confirmation is shown and the fields are empty
+- **THEN** the form is replaced by a confirmation, and choosing to send another shows an empty form
 
 #### Scenario: API unavailable
 - **WHEN** the API cannot be reached

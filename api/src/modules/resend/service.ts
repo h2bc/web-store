@@ -11,11 +11,13 @@ import { CreateEmailOptions, Resend } from "resend";
 import { orderPlacedEmail } from "./emails/order-placed";
 import { userInvitedEmail } from "./emails/user-invited";
 import { passwordResetEmail } from "./emails/password-reset";
+import { contactMessageEmail } from "./emails/contact-message";
 
 enum Templates {
   ORDER_PLACED = "order-placed",
   USER_INVITED = "user-invited",
   PASSWORD_RESET = "password-reset",
+  CONTACT_MESSAGE = "contact-message",
 }
 
 const templates: {
@@ -24,12 +26,14 @@ const templates: {
   [Templates.ORDER_PLACED]: orderPlacedEmail,
   [Templates.USER_INVITED]: userInvitedEmail,
   [Templates.PASSWORD_RESET]: passwordResetEmail,
+  [Templates.CONTACT_MESSAGE]: contactMessageEmail,
 };
 
 type ResendOptions = {
   api_key: string;
   from: string;
   logo_url?: string;
+  contact_email?: string;
   html_templates?: Record<
     string,
     {
@@ -86,7 +90,7 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
     return templates[template];
   }
 
-  getTemplateSubject(template: Templates) {
+  getTemplateSubject(template: Templates, data: Record<string, unknown>) {
     if (this.options.html_templates?.[template]?.subject) {
       return this.options.html_templates[template].subject;
     }
@@ -98,6 +102,8 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
         return "You're Invited!";
       case Templates.PASSWORD_RESET:
         return "Reset Your Password";
+      case Templates.CONTACT_MESSAGE:
+        return `${data.topic} from ${data.name}`;
       default:
         return "New Email";
     }
@@ -116,10 +122,20 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
       return {};
     }
 
+    const templateData = notification.data ?? {};
+    const replyTo =
+      typeof templateData.reply_to === "string"
+        ? { replyTo: templateData.reply_to }
+        : {};
+
     const commonOptions = {
       from: this.options.from,
       to: [notification.to],
-      subject: this.getTemplateSubject(notification.template as Templates),
+      subject: this.getTemplateSubject(
+        notification.template as Templates,
+        templateData,
+      ),
+      ...replyTo,
     };
 
     let emailOptions: CreateEmailOptions;
@@ -133,8 +149,9 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
       emailOptions = {
         ...commonOptions,
         react: template({
-          ...(notification.data ?? {}),
+          ...templateData,
           logo_url: this.options.logo_url,
+          contact_email: this.options.contact_email,
         }),
       };
     }

@@ -1,5 +1,6 @@
 import { FetchError } from '@medusajs/js-sdk'
 import type { HttpTypes } from '@medusajs/types'
+import type { ContactFormData } from '@/lib/schemas/contact'
 import type { ContentPage } from '@/lib/types/content-page'
 
 export const TERMS: ContentPage = {
@@ -11,6 +12,13 @@ export const TERMS: ContentPage = {
 }
 
 export const TERMS_UNTITLED: ContentPage = { ...TERMS, title: null }
+
+export const CONTACT_MESSAGE: ContactFormData = {
+  name: 'Jonas',
+  email: 'jonas@example.com',
+  topic: 'returns',
+  message: 'I would like to return my order.',
+}
 
 export const STALE_CART_ID = 'cart_stale'
 

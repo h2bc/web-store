@@ -12,17 +12,20 @@ type UserInvitedEmailProps = {
   invite_url: string;
   email?: string;
   logo_url?: string;
+  contact_email?: string;
 };
 
 function UserInvitedEmailComponent({
   invite_url,
   email,
   logo_url,
+  contact_email,
 }: UserInvitedEmailProps) {
   return (
     <EmailLayout
       preview="You've been invited to join the h2bc dashboard"
       logo_url={logo_url}
+      contact_email={contact_email}
     >
       <Container className="p-6">
         <Heading className="text-2xl font-bold text-center text-gray-800">

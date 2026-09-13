@@ -25,7 +25,7 @@ export default function CheckoutStepSection({
   return (
     <Card className={cn(!isActive && 'opacity-90')}>
       <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2">
           <span
             className={cn(
               'flex h-6 w-6 items-center justify-center rounded-full border text-xs',

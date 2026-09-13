@@ -41,6 +41,7 @@ jobs:
       JWT_SECRET: ci
       COOKIE_SECRET: ci
       MEDUSA_BACKEND_URL: http://localhost:9000
+      CONTACT_INBOX_EMAIL: contact@example.com
       STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
     steps:

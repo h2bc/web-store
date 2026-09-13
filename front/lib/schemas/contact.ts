@@ -10,28 +10,30 @@ export const contactTopics = {
 
 export type ContactTopic = keyof typeof contactTopics
 
+const topicKeys = Object.keys(contactTopics) as [
+  ContactTopic,
+  ...ContactTopic[],
+]
+
 export const contactFormSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Enter your name.')
+    .max(100, 'Name is too long.'),
   email: z
     .string()
     .email('Enter a valid email.')
     .max(254, 'Email is too long.'),
-  topic: z.enum(['order', 'returns', 'product', 'collab', 'other'], {
+  topic: z.enum(topicKeys, {
     errorMap: () => ({ message: 'Select a topic.' }),
   }),
   message: z
     .string()
+    .trim()
     .min(5, 'Message is too short.')
     .max(5000, 'Message is too long (max 5000 characters).'),
+  website: z.string().optional(),
 })
 
 export type ContactFormData = z.infer<typeof contactFormSchema>
-
-export interface ContactFormResponse {
-  success: boolean
-  message?: string
-  errors?: {
-    email?: string
-    topic?: string
-    message?: string
-  }
-}

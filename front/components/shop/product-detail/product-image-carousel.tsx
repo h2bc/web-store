@@ -46,17 +46,19 @@ export default function ProductImageCarousel({
           <>
             <Button
               variant="ghost"
+              size="icon"
               onClick={goPrev}
               aria-label="Previous image"
-              className="absolute left-1 top-1/2 -translate-y-1/2 z-10 rounded-full h-8 w-8 p-0 hover:bg-white"
+              className="h-8 w-8 absolute left-1 top-1/2 -translate-y-1/2 z-10 rounded-full"
             >
               <ChevronLeft />
             </Button>
             <Button
               variant="ghost"
+              size="icon"
               onClick={goNext}
               aria-label="Next image"
-              className="absolute right-1 top-1/2 -translate-y-1/2 z-10 rounded-full h-8 w-8 p-0 hover:bg-white"
+              className="h-8 w-8 absolute right-1 top-1/2 -translate-y-1/2 z-10 rounded-full"
             >
               <ChevronRight />
             </Button>

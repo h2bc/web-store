@@ -14,6 +14,7 @@ h2bc web store. Two independent pnpm projects, not a workspace.
 - `.claude/rules/api.md` and `front.md`: each app's invariants, loaded when its files are touched.
 - `.claude/rules/git.md`: commits, branches, hooks and the delivery skills.
 - `.claude/rules/code.md`: reuse first and code style.
+- `.claude/rules/design.md`: storefront design patterns, reuse and feedback, loaded when a page or component is touched.
 - `.claude/rules/tests.md`: which suite a test belongs to, how it is named and what it asserts, loaded when a test file is touched.
 - `.claude/rules/writing.md`: how every prose file is written. A rule is invariants and where to look, under 50 lines.
 

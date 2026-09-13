@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import EmptyState, { EmptyStateTitle } from '@/components/feedback/empty-state'
 import ErrorAlert from '@/components/feedback/error-alert'
 import { getGalleryVideos } from '@/lib/data/gallery'
 
@@ -30,7 +31,11 @@ export default async function GalleryPage() {
 
   if (videos.length === 0) {
     return (
-      <p className="text-center pt-15 text-muted-foreground">No videos yet</p>
+      <div className="flex-1 flex flex-col self-stretch items-center justify-center">
+        <EmptyState description="Check back soon for drops and behind the scenes.">
+          <EmptyStateTitle>No videos yet</EmptyStateTitle>
+        </EmptyState>
+      </div>
     )
   }
 

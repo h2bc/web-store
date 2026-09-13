@@ -3,29 +3,25 @@ import Heading from '@/components/layout/heading'
 import ContactForm from '@/components/contact/contact-form'
 
 export const metadata: Metadata = {
-  title: 'Contact',
+  title: 'Contact us',
   description: 'Get in touch with h2bc about orders, sizing or collaborations.',
   alternates: { canonical: '/contact' },
 }
 
-export default function ContactPage() {
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sent?: string }>
+}) {
+  const { sent } = await searchParams
+
   return (
     <div className="flex justify-center pt-15">
       <div className="max-w-4xl flex flex-col flex-1">
-        <div className="pb-10">
-          <Heading
-            level={1}
-            font="blackletter"
-            className="text-4xl lg:text-5xl"
-          >
-            Contact
-          </Heading>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Have a question or need assistance? Send us a message and we&apos;ll
-            get back to you as soon as possible.
-          </p>
-        </div>
-        <ContactForm />
+        <Heading level={1} font="blackletter" className="mb-8">
+          Contact us
+        </Heading>
+        <ContactForm initialSent={sent === '1'} />
       </div>
     </div>
   )

@@ -12,15 +12,21 @@ type PasswordResetEmailProps = {
   reset_url: string;
   email?: string;
   logo_url?: string;
+  contact_email?: string;
 };
 
 function PasswordResetEmailComponent({
   reset_url,
   email,
   logo_url,
+  contact_email,
 }: PasswordResetEmailProps) {
   return (
-    <EmailLayout preview="Reset your password" logo_url={logo_url}>
+    <EmailLayout
+      preview="Reset your password"
+      logo_url={logo_url}
+      contact_email={contact_email}
+    >
       <Container className="p-6">
         <Heading className="text-2xl font-bold text-center text-gray-800">
           Reset Your Password

@@ -1,5 +1,6 @@
 import ReactMarkdown from 'react-markdown'
 import Heading from '@/components/layout/heading'
+import EmptyState, { EmptyStateTitle } from '@/components/feedback/empty-state'
 import ErrorAlert from '@/components/feedback/error-alert'
 import { getContentPage } from '@/lib/data/content-page'
 import type { ContentPageRoute } from '@/lib/routes'
@@ -19,21 +20,27 @@ export default async function ContentPageView({ route }: ContentPageViewProps) {
     )
   }
 
+  if (!contentPage) {
+    return (
+      <div className="flex-1 flex flex-col self-stretch items-center justify-center">
+        <EmptyState description="This page is still being written.">
+          <EmptyStateTitle>No content yet</EmptyStateTitle>
+        </EmptyState>
+      </div>
+    )
+  }
+
   return (
     <div className="flex justify-center pt-15">
       <div className="max-w-4xl w-full flex flex-col">
-        {contentPage?.title && (
+        {contentPage.title && (
           <Heading level={1} font="blackletter" className="mb-8">
             {contentPage.title}
           </Heading>
         )}
-        {contentPage ? (
-          <div className="prose max-w-none">
-            <ReactMarkdown>{contentPage.body}</ReactMarkdown>
-          </div>
-        ) : (
-          <p className="text-muted-foreground">No content yet</p>
-        )}
+        <div className="prose max-w-none">
+          <ReactMarkdown>{contentPage.body}</ReactMarkdown>
+        </div>
       </div>
     </div>
   )
