@@ -4,9 +4,9 @@ The cart cookie lives a year, but the cart behind it can disappear or be complet
 
 ## What Changes
 
-- Adding to the cart with a cart id Medusa no longer accepts creates a new cart, replaces the cookie and retries the add once.
+- Adding to the cart reads the cart first; when the read fails or the cart is completed, a new cart is created and replaces the cookie before the add.
 - Reading the cart with such an id returns the empty cart, without an error and without a log line, so the header and the cart page render the empty state.
-- A cart id is stale when Medusa answers 404 or refuses the cart as already completed. Any other failure keeps its current error.
+- On a page read a cart id is stale when Medusa answers 404 or returns a completed cart. Any other failure keeps its current error.
 - The other cart mutations keep failing on a stale cart; the next page load renders the empty cart and the next add replaces it.
 - `docs/architecture.md` states the recovery in the session section.
 

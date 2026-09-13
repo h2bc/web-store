@@ -19,4 +19,8 @@
 
 ## Review findings
 
-None.
+- [x] R.1 Stale was decided on the add's 404, which a missing variant also raises; the add now reads the cart first and decides on that read.
+- [x] R.2 Unit tests asserted mock calls; they now assert the returned cart id and error only.
+- [x] R.3 The stale-read unit tests had more than three blocks; the baseline read now sits in the Given block.
+- [x] R.4 The design risks used arrows and decision 1 ran four sentences; both follow the writing rule now.
+- [x] R.5 The architecture bullet bundled the read and the add; it is two bullets now.

@@ -40,11 +40,11 @@ export const CART_NOT_FOUND = new FetchError(
   404
 )
 
-export const CART_COMPLETED = new FetchError(
-  `Cart ${STALE_CART_ID} is already completed.`,
-  'Bad Request',
-  400
-)
+export const COMPLETED_CART = {
+  id: STALE_CART_ID,
+  completed_at: '2026-09-01T00:00:00.000Z',
+  items: [],
+} as unknown as HttpTypes.StoreCart
 
 export const BACKEND_UNREACHABLE = new TypeError('fetch failed')
 

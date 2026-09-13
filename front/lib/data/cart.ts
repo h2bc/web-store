@@ -19,13 +19,8 @@ type CartResult = {
 
 const NO_CART: CartResult = { cart: null, error: 'No cart found' }
 
-function isStaleCart(error: unknown): boolean {
-  if (!(error instanceof FetchError)) return false
-
-  return (
-    error.status === 404 ||
-    (error.status === 400 && error.message.includes('already completed'))
-  )
+function isNotFound(error: unknown): boolean {
+  return error instanceof FetchError && error.status === 404
 }
 
 function getAddItemError(error: unknown): string {
@@ -69,12 +64,14 @@ export async function getCart(): Promise<CartResult> {
       fields: '+shipping_methods.name',
     })
 
+    if (cart.completed_at) return NO_CART
+
     return {
       cart: sortCartItems(cart),
       error: null,
     }
   } catch (error) {
-    if (isStaleCart(error)) return NO_CART
+    if (isNotFound(error)) return NO_CART
 
     console.error('Failed to fetch cart:', error)
 
@@ -93,26 +90,34 @@ async function createCart(): Promise<string> {
   return cart.id
 }
 
+async function getOpenCartId(): Promise<string> {
+  const cartId = await getCartId()
+
+  if (!cartId) return createCart()
+
+  try {
+    const { cart } = await sdk.store.cart.retrieve(cartId, {
+      fields: 'id,completed_at',
+    })
+
+    return cart.completed_at ? createCart() : cart.id
+  } catch {
+    return createCart()
+  }
+}
+
 export async function addItemToCart(
   variantId: string,
   quantity: number = 1
 ): Promise<CartResult> {
-  const cartId = await getCartId()
-
   try {
     const { cart } = await sdk.store.cart.createLineItem(
-      cartId ?? (await createCart()),
+      await getOpenCartId(),
       { variant_id: variantId, quantity }
     )
 
     return { cart: sortCartItems(cart), error: null }
   } catch (error) {
-    if (cartId && isStaleCart(error)) {
-      await removeCartId()
-
-      return addItemToCart(variantId, quantity)
-    }
-
     return { cart: null, error: getAddItemError(error) }
   }
 }
