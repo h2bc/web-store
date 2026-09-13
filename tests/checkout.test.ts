@@ -46,6 +46,16 @@ test("shopper gets a delivery option whether they ship to Lithuania or Germany",
   await test.step("Then they can choose a delivery option", async () => {
     await expect(checkout.getDeliveryOptions().first()).toBeVisible();
   });
+
+  await test.step("When they continue with the chosen delivery option", async () => {
+    const chosen = await checkout.getChosenDeliveryName().textContent();
+
+    await checkout.continueToPayment();
+
+    await test.step("Then the delivery step names it", async () => {
+      await expect(checkout.getDeliverySummary(chosen!.trim())).toBeVisible();
+    });
+  });
 });
 
 test("shopper whose card is declined is told and can try again", async ({ checkout, page }) => {

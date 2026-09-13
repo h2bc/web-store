@@ -22,6 +22,22 @@ export class AdminPage {
     return this.page.getByRole("row").last();
   }
 
+  getFirstRow() {
+    return this.page.getByRole("row").nth(1);
+  }
+
+  getRows() {
+    return this.page.getByRole("row");
+  }
+
+  getCreateButton() {
+    return this.page.getByRole("button", { name: "Create" });
+  }
+
+  getInvalidField(label: string) {
+    return this.getDialog().getByLabel(label).and(this.page.locator("[aria-invalid='true']"));
+  }
+
   getBodyText(text: string) {
     return this.page.getByText(text);
   }
@@ -49,29 +65,68 @@ export class AdminPage {
     await this.getDialog().getByRole("button", { name: "Save" }).click();
   }
 
+  async editVideoTitle(title: string, newTitle: string) {
+    await this.openRowMenu(title);
+    await this.page.getByRole("menuitem", { name: "Edit" }).click();
+    await this.getDialog().getByLabel("Title").fill(newTitle);
+    await this.getDialog().getByRole("button", { name: "Save" }).click();
+    await expect(this.getDialog()).toBeHidden();
+  }
+
+  async moveVideo(title: string, direction: "up" | "down") {
+    await this.page.getByRole("button", { name: "Edit ranking" }).click();
+
+    const handle = this.getDialog().getByRole("button", { name: `Drag ${title}` });
+
+    await handle.focus();
+
+    for (const key of ["Space", direction === "up" ? "ArrowUp" : "ArrowDown", "Space"]) {
+      await this.page.keyboard.press(key);
+      await this.page.waitForTimeout(300);
+    }
+
+    await this.page.keyboard.press("Escape");
+    await expect(this.getDialog()).toBeHidden();
+  }
+
   async deleteVideo(title: string) {
-    await this.page.getByRole("button", { name: `Actions for ${title}` }).click();
+    await this.openRowMenu(title);
     await this.page.getByRole("menuitem", { name: "Delete" }).click();
     await this.page.getByRole("button", { name: "Delete" }).click();
   }
 
   async editPageBody(body: string) {
-    await this.editField("Body", body);
+    await this.editPageField("Body", body);
+  }
+
+  async editPageDescription(description: string) {
+    await this.editPageField("Meta description", description);
   }
 
   async editPageTitle(title: string) {
-    await this.editField("Title", title);
+    await this.editPageField("Title", title);
+  }
+
+  async saveClearedBody(description: string) {
+    await this.openEditor();
+    await this.getDialog().getByLabel("Meta description").fill(description);
+    await this.getDialog().getByLabel("Body").fill("");
+    await this.getDialog().getByRole("button", { name: "Save" }).click();
   }
 
   async getBodyDraft(): Promise<string> {
     return this.getDraft("Body");
   }
 
+  async getDescriptionDraft(): Promise<string> {
+    return this.getDraft("Meta description");
+  }
+
   async getTitleDraft(): Promise<string> {
     return this.getDraft("Title");
   }
 
-  private async editField(label: string, value: string) {
+  private async editPageField(label: string, value: string) {
     await this.openEditor();
     await this.getDialog().getByLabel(label).fill(value);
     await this.getDialog().getByRole("button", { name: "Save" }).click();
@@ -88,8 +143,12 @@ export class AdminPage {
     return value;
   }
 
+  private async openRowMenu(title: string) {
+    await this.getRow(title).getByRole("button").click();
+  }
+
   private async openEditor() {
-    await this.page.getByRole("button", { name: "Actions" }).click();
+    await this.page.getByRole("main").getByRole("button").first().click();
     await this.page.getByRole("menuitem", { name: "Edit" }).click();
   }
 }

@@ -1,12 +1,16 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import { sdk } from "./sdk";
 
 export type Video = { id: string; url: string; title: string };
 
 export type VideoInput = { url: string; title: string };
 
+const QUERY_KEY = ["gallery"];
+
 const toInput = ({ url, title }: Video): VideoInput => ({ url, title });
 
-export async function loadGallery(): Promise<Video[]> {
+async function loadGallery(): Promise<Video[]> {
   const { videos } = await sdk.client.fetch<{ videos: Video[] }>(
     "/admin/gallery",
   );
@@ -14,7 +18,7 @@ export async function loadGallery(): Promise<Video[]> {
   return videos;
 }
 
-export async function saveGallery(videos: VideoInput[]): Promise<Video[]> {
+async function saveGallery(videos: VideoInput[]): Promise<Video[]> {
   const response = await sdk.client.fetch<{ videos: Video[] }>(
     "/admin/gallery",
     {
@@ -24,6 +28,19 @@ export async function saveGallery(videos: VideoInput[]): Promise<Video[]> {
   );
 
   return response.videos;
+}
+
+export function useGallery() {
+  return useQuery({ queryKey: QUERY_KEY, queryFn: loadGallery });
+}
+
+export function useSaveGallery() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: saveGallery,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
+  });
 }
 
 export function withVideo(

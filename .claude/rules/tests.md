@@ -41,5 +41,6 @@ paths:
 - End to end asserts what the shopper or the owner sees: a visible text or element.
 - Integration asserts what the caller gets: a status and a body shape.
 - Unit asserts what the function returns.
+- A smoke test asserts only that the app is up and answers. A feature or data check is a journey in its own file.
 - Never assert exact copy, markup, internal calls or implementation order.
 - Never skip a test. A missing key, product or fixture fails the test with a message naming it.

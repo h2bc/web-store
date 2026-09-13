@@ -1,3 +1,5 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import { sdk } from "./sdk";
 
 export type ContentPageSlug =
@@ -20,7 +22,9 @@ export type ContentPage = Omit<ContentPageInput, "title"> & {
 
 type ContentPageResponse = { content_page: ContentPage };
 
-export async function loadContentPage(
+const getQueryKey = (slug: ContentPageSlug) => ["content-page", slug];
+
+async function loadContentPage(
   slug: ContentPageSlug,
 ): Promise<ContentPage | null> {
   try {
@@ -37,7 +41,7 @@ export async function loadContentPage(
   }
 }
 
-export async function saveContentPage(
+async function saveContentPage(
   slug: ContentPageSlug,
   input: ContentPageInput,
 ): Promise<ContentPage> {
@@ -50,4 +54,21 @@ export async function saveContentPage(
   );
 
   return content_page;
+}
+
+export function useContentPage(slug: ContentPageSlug) {
+  return useQuery({
+    queryKey: getQueryKey(slug),
+    queryFn: () => loadContentPage(slug),
+  });
+}
+
+export function useSaveContentPage(slug: ContentPageSlug) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: ContentPageInput) => saveContentPage(slug, input),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: getQueryKey(slug) }),
+  });
 }

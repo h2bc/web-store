@@ -1,23 +1,28 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Drawer, Input } from "@medusajs/ui";
+import { Form, KeyboundForm } from "@medusajs/dashboard/components";
+import { Button, Drawer, Input, toast } from "@medusajs/ui";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Video, VideoInput } from "../lib/gallery";
-import { Form } from "./form";
+import { useSaveGallery, Video, VideoInput, withVideo } from "../lib/gallery";
 
 export type DrawerState = { video?: Video } | null;
 
 type VideoDrawerProps = {
   state: DrawerState;
-  saving: boolean;
+  videos: Video[];
   onClose: () => void;
-  onSave: (input: VideoInput, id?: string) => Promise<string | null>;
 };
 
+const YOUTUBE_LINK =
+  /^https:\/\/(www\.youtube\.com\/watch\?v=|www\.youtube\.com\/embed\/|youtu\.be\/)[\w-]{11}([?&].*)?$/;
+
 const VideoSchema = z.object({
-  url: z.string().min(1, "Paste a YouTube link"),
+  url: z
+    .string()
+    .min(1, "Paste a YouTube link")
+    .regex(YOUTUBE_LINK, "This is not a YouTube video link"),
   title: z.string().min(1, "Give the video a title").max(120),
 });
 
@@ -27,12 +32,8 @@ function toForm(video?: Video): VideoInput {
   return video ? { url: video.url, title: video.title } : EMPTY;
 }
 
-export function VideoDrawer({
-  state,
-  saving,
-  onClose,
-  onSave,
-}: VideoDrawerProps) {
+export function VideoDrawer({ state, videos, onClose }: VideoDrawerProps) {
+  const { mutate, isPending: saving } = useSaveGallery();
   const form = useForm<VideoInput>({
     defaultValues: EMPTY,
     resolver: zodResolver(VideoSchema),
@@ -42,17 +43,23 @@ export function VideoDrawer({
     if (state) form.reset(toForm(state.video));
   }, [state, form]);
 
-  const submit = form.handleSubmit(async (values) => {
-    const error = await onSave(values, state?.video?.id);
+  const submit = form.handleSubmit((values) => {
+    const id = state?.video?.id;
 
-    if (error) form.setError("url", { message: error });
+    mutate(withVideo(videos, values, id), {
+      onSuccess: () => {
+        toast.success(id ? "Video updated" : "Video created");
+        onClose();
+      },
+      onError: (error) => toast.error(error.message),
+    });
   });
 
   return (
     <Drawer open={state !== null} onOpenChange={(open) => !open && onClose()}>
       <Drawer.Content>
         <Form {...form}>
-          <form className="flex h-full flex-col" onSubmit={submit}>
+          <KeyboundForm className="flex h-full flex-col" onSubmit={submit}>
             <Drawer.Header>
               <Drawer.Title>
                 {state?.video ? "Edit video" : "Add video"}
@@ -104,7 +111,7 @@ export function VideoDrawer({
                 Save
               </Button>
             </Drawer.Footer>
-          </form>
+          </KeyboundForm>
         </Form>
       </Drawer.Content>
     </Drawer>
