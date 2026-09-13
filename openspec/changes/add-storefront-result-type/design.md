@@ -41,5 +41,5 @@ See proposal.md for why. What shapes the approach:
 
 - [A caller still checks `if (error)` and reads `data`] → the typecheck fails, which is the point. The rule names the comparison so the fix is known.
 - [The checkout ternary that skips the shipping read on other steps] → it returns `ok([])` for the other branch so the destructure narrows the same way.
-- [The pending contact change planned the action as `{ error }`] → one line in its design changes to `Result<string>`, task 3.3.
+- [The shipped contact action returns `{ error }`] → task 1.5 converts it with the rest of the data layer.
 - [A branch-wide rename touches twenty files at once] → no API or behaviour change, so a green typecheck plus the existing journeys is a full check.
