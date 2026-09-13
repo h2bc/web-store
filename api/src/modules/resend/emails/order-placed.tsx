@@ -25,12 +25,14 @@ type OrderPlacedEmailProps = {
     url: string;
   };
   logo_url?: string;
+  contact_email?: string;
 };
 
 function OrderPlacedEmailComponent({
   order,
   email_banner,
   logo_url,
+  contact_email,
 }: OrderPlacedEmailProps) {
   const shouldDisplayBanner = email_banner && "title" in email_banner;
 
@@ -50,6 +52,7 @@ function OrderPlacedEmailComponent({
     <EmailLayout
       preview={`Order #${order.display_id} has been confirmed. Thank you for your purchase!`}
       logo_url={logo_url}
+      contact_email={contact_email}
     >
       {/* Thank You Message */}
       <Container className="p-6">

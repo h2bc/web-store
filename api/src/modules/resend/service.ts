@@ -33,6 +33,7 @@ type ResendOptions = {
   api_key: string;
   from: string;
   logo_url?: string;
+  contact_email?: string;
   html_templates?: Record<
     string,
     {
@@ -150,6 +151,7 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
         react: template({
           ...templateData,
           logo_url: this.options.logo_url,
+          contact_email: this.options.contact_email,
         }),
       };
     }

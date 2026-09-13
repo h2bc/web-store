@@ -7,6 +7,7 @@ type ContactMessageEmailProps = {
   topic: string;
   message: string;
   logo_url?: string;
+  contact_email?: string;
 };
 
 function ContactMessageEmailComponent({
@@ -15,9 +16,15 @@ function ContactMessageEmailComponent({
   topic,
   message,
   logo_url,
+  contact_email,
 }: ContactMessageEmailProps) {
   return (
-    <EmailLayout preview={`${topic} from ${name}`} logo_url={logo_url}>
+    <EmailLayout
+      preview={`${topic} from ${name}`}
+      logo_url={logo_url}
+      contact_email={contact_email}
+      footer={`Sent from the contact form. Reply to this email to answer ${name}.`}
+    >
       <Container className="p-6">
         <Heading className="text-2xl font-bold text-center text-gray-800">
           {topic}
