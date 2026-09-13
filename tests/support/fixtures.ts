@@ -1,5 +1,6 @@
 import { test as base } from "@playwright/test";
 import { AdminPage } from "./admin-page";
+import { CartPage } from "./cart-page";
 import { CheckoutPage } from "./checkout-page";
 import { ContactPage } from "./contact-page";
 import { ContentPage } from "./content-page";
@@ -9,6 +10,7 @@ import { ShopPage } from "./shop-page";
 
 export const test = base.extend<{
   admin: AdminPage;
+  cart: CartPage;
   checkout: CheckoutPage;
   contact: ContactPage;
   content: ContentPage;
@@ -30,6 +32,9 @@ export const test = base.extend<{
     await saveGalleryVideos(page.request, []);
     await use();
     await saveGalleryVideos(page.request, videos);
+  },
+  cart: async ({ page }, use) => {
+    await use(new CartPage(page));
   },
   checkout: async ({ page }, use) => {
     await use(new CheckoutPage(page));

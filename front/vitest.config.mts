@@ -8,5 +8,6 @@ export default defineConfig({
     include: ['tests/**/*.test.ts'],
     environment: 'jsdom',
     globals: true,
+    mockReset: true,
   },
 })
