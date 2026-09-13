@@ -32,7 +32,7 @@
 ## 4. Storefront
 
 - [x] 4.1 In `front/lib/schemas/contact.ts` add `name` (1–100) and optional `website`, derive the topic enum from `Object.keys(contactTopics)`, delete `ContactFormResponse`; verify `pnpm typecheck:front` passes.
-- [x] 4.2 Add `CONTACT_EMAIL = 'contact@h2bcweb.com'` to `front/lib/social.ts`; verify `pnpm typecheck:front` passes.
+- [x] 4.2 Point the contact page at Instagram through `INSTAGRAM_URL` from `front/lib/social.ts`; the shop address is not shown on the page; verify `pnpm typecheck:front` passes.
 - [x] 4.3 Rewrite `front/lib/data/contact.ts` to post `{ name, email, topic: contactTopics[topic], message, website }` with `sdk.client.fetch('/store/contact', { method: 'POST', body })`, returning `{ error: null }` on success, the `FetchError` message on 400 and a generic message otherwise, then remove `xss` with `pnpm --dir front remove xss`; verify `pnpm typecheck:front` and `pnpm lint:front` pass and `xss` is gone from the lockfile.
 - [x] 4.4 Update `front/components/contact/contact-form.tsx`: add the Name field, the hidden honeypot input, read `isSubmitting` from `form.formState`, drop the local state and the field-error loop, toast the returned `error`, and on success reset the form and replace it with the checkout return layout, a `Card` with the outcome and a primary `Send another message` button beside it that brings the form back; verify `pnpm lint:front` passes and the page renders at `/contact`.
 - [x] 4.5 Update `front/app/(main)/contact/page.tsx` with a one-line intro linking to `INSTAGRAM_URL`; verify the Instagram link is present on `/contact` and the metadata still declares the canonical URL.
@@ -46,3 +46,7 @@
 ## 6. Outside this repo
 
 - [ ] 6.1 After this branch's PR merges, in `h2bc/web-store-deploy` set `CONTACT_INBOX_EMAIL=contact@h2bcweb.com` on the API server container and redeploy; verify a real submission on the live contact page arrives in the inbox with the sender as reply-to.
+
+## Review findings
+
+- Task 6.1 stays unticked at archive time: it can only run in the deploy repository after the pull request merges.
