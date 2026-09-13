@@ -63,4 +63,5 @@
 
 ## Review findings
 
-None.
+- The testing delta spec was written before the suites moved next to each package in PR 21 and before the skip rule was reversed; at archive time it was updated to `api/tests/`, `front/tests/`, `tests/`, the Given-When-Then blocks and fail-with-message, so the main spec matches `.claude/rules/tests.md`.
+- Verify warning: `operations.apply.guidance` in `openspec/config.yaml` says to run an e2e file only when both apps are up but no longer says to state when the file was not run, which task 2.2 and the spec require.

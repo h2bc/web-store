@@ -51,11 +51,11 @@ The home page SHALL contain a level-one heading naming the brand and SHALL embed
 - **THEN** the HTML contains exactly one `h1` and an `application/ld+json` script whose `@type` is `Organization` with two `sameAs` entries
 
 ### Requirement: Sitemap lists public pages and products
-The storefront SHALL serve `/sitemap.xml` containing the home, shop, gallery, about, contact and shipping-returns pages and one entry per product at `/shop/<handle>` with the product's last-modified date. Cart, checkout and order pages SHALL never appear. Product entries SHALL reflect catalog changes within the same cache window as the shop page.
+The storefront SHALL serve `/sitemap.xml` containing the home, shop, gallery, about, contact, shipping-returns, privacy and terms pages and one entry per product at `/shop/<handle>` with the product's last-modified date. Cart, checkout and order pages SHALL never appear. Product entries SHALL reflect catalog changes within the same cache window as the shop page.
 
 #### Scenario: Catalog available
 - **WHEN** `/sitemap.xml` is requested and the catalog has five products
-- **THEN** the response is XML with the six static entries and five product entries, all absolute URLs under the site URL
+- **THEN** the response is XML with the eight static entries and five product entries, all absolute URLs under the site URL
 
 #### Scenario: Catalog unavailable
 - **WHEN** the backend cannot be reached

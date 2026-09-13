@@ -10,13 +10,13 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 
 ### Extension points
 
-- Stock Medusa v2. Customisation lives only under `api/src/`.
+- Stock Medusa v2, every `@medusajs/*` package pinned to the same exact release. Customisation lives only under `api/src/`.
 - `modules/`: `resend/`, `content-page/` (one row per fixed screen) and `gallery/` (the ordered video list).
 - `scripts/seed/`: one part per data set, run together by `scripts/seed.ts` or alone with `medusa exec`.
 - `workflows/`: `send-order-confirmation.ts`, `save-content-page.ts`, `save-gallery.ts`.
 - `subscribers/`: `order-placed.ts`, `invite.ts`, `password-reset.ts`.
 - `api/`: route files under `api/store/` and `api/admin/`. Body validation lives in `api/middlewares.ts`.
-- `admin/routes/`: admin screens, one top-level sidebar item per content page plus the gallery editor.
+- `admin/routes/`: admin screens, one top-level sidebar item per content page plus the gallery editor. They are built from the components `@medusajs/dashboard` exports and load through TanStack Query; the drag ranking and the markdown preview are the only custom parts.
 - `links/` and `jobs/`: empty today.
 
 ### Admin-owned data

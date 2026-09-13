@@ -1,22 +1,18 @@
-import { EllipsisHorizontal, PencilSquare } from "@medusajs/icons";
 import {
-  Container,
-  DropdownMenu,
-  Heading,
-  IconButton,
-  Text,
-  toast,
-} from "@medusajs/ui";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+  ActionMenu,
+  NoRecords,
+  SectionRow,
+} from "@medusajs/dashboard/components";
+import { PencilSquare } from "@medusajs/icons";
+import { Container, Heading, Text } from "@medusajs/ui";
+import { useState } from "react";
 
 import {
   ContentPage,
   ContentPageInput,
   ContentPageSlug,
-  loadContentPage,
-  saveContentPage,
+  useContentPage,
 } from "../lib/content-page";
-import { getErrorMessage } from "../lib/sdk";
 import { ContentPageDrawer } from "./content-page-drawer";
 import { Markdown } from "./markdown";
 
@@ -24,57 +20,23 @@ type ContentCardProps = { slug: ContentPageSlug; label: string };
 
 const EMPTY: ContentPageInput = { title: "", description: "", body: "" };
 
-function Row({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <div className="text-ui-fg-subtle grid w-full grid-cols-2 items-start gap-4 px-6 py-4">
-      <Text size="small" weight="plus" leading="compact">
-        {title}
-      </Text>
-      <div className="text-pretty">{children}</div>
-    </div>
-  );
-}
+const getContentPageInput = ({
+  title,
+  description,
+  body,
+}: ContentPage): ContentPageInput => ({
+  title: title ?? "",
+  description,
+  body,
+});
 
 export function ContentPageCard({ slug, label }: ContentCardProps) {
-  const [contentPage, setContentPage] = useState<ContentPage | null>(null);
-  const [loaded, setLoaded] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const { data: contentPage, isPending, error } = useContentPage(slug);
 
-  useEffect(() => {
-    loadContentPage(slug)
-      .then(setContentPage)
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setLoaded(true));
-  }, [slug]);
+  if (error) throw error;
 
-  const input = useMemo(
-    () =>
-      contentPage
-        ? {
-            title: contentPage.title ?? "",
-            description: contentPage.description,
-            body: contentPage.body,
-          }
-        : EMPTY,
-    [contentPage],
-  );
-
-  const save = async (next: ContentPageInput) => {
-    setSaving(true);
-
-    try {
-      setContentPage(await saveContentPage(slug, next));
-      setEditing(false);
-      toast.success("Saved");
-    } catch (error) {
-      toast.error(getErrorMessage(error));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  if (!loaded) return null;
+  if (isPending) return null;
 
   return (
     <Container className="divide-y p-0">
@@ -85,54 +47,45 @@ export function ContentPageCard({ slug, label }: ContentCardProps) {
             Shown at /{slug} on the storefront.
           </Text>
         </div>
-        <DropdownMenu>
-          <DropdownMenu.Trigger asChild>
-            <IconButton variant="transparent" size="small" aria-label="Actions">
-              <EllipsisHorizontal />
-            </IconButton>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
-            <DropdownMenu.Item
-              className="gap-x-2"
-              onClick={() => setEditing(true)}
-            >
-              <PencilSquare className="text-ui-fg-subtle" />
-              Edit
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu>
+        <ActionMenu
+          groups={[
+            {
+              actions: [
+                {
+                  icon: <PencilSquare />,
+                  label: "Edit",
+                  onClick: () => setEditing(true),
+                },
+              ],
+            },
+          ]}
+        />
       </div>
       {contentPage ? (
         <>
-          <Row title="Title">
-            <Text size="small" leading="compact">
-              {contentPage.title || "-"}
-            </Text>
-          </Row>
-          <Row title="Meta description">
-            <Text size="small" leading="compact">
-              {contentPage.description || "-"}
-            </Text>
-          </Row>
-          <Row title="Body">
-            <Markdown>{contentPage.body}</Markdown>
-          </Row>
+          <SectionRow title="Title" value={contentPage.title || "-"} />
+          <SectionRow
+            title="Meta description"
+            value={contentPage.description || "-"}
+          />
+          <SectionRow
+            title="Body"
+            value={<Markdown>{contentPage.body}</Markdown>}
+          />
         </>
       ) : (
-        <div className="flex flex-col items-center gap-y-2 px-6 py-16">
-          <Text weight="plus">No content yet</Text>
-          <Text className="text-ui-fg-subtle" size="small">
-            Run the seed, or write it here with Edit.
-          </Text>
-        </div>
+        <NoRecords
+          className="h-auto py-16"
+          title="No content yet"
+          message="Run the seed, or write it here with Edit."
+        />
       )}
       <ContentPageDrawer
         open={editing}
+        slug={slug}
         label={label}
-        contentPage={input}
-        saving={saving}
+        contentPage={contentPage ? getContentPageInput(contentPage) : EMPTY}
         onClose={() => setEditing(false)}
-        onSave={save}
       />
     </Container>
   );

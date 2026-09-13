@@ -31,6 +31,16 @@ export class CheckoutPage {
     return this.page.locator("main").getByRole("alert");
   }
 
+  getChosenDeliveryName() {
+    return this.page
+      .locator("label", { has: this.page.getByRole("radio", { checked: true }) })
+      .locator("div > span");
+  }
+
+  getDeliverySummary(name: string) {
+    return this.page.locator("main").getByText(name, { exact: true });
+  }
+
   getConsentLink(name: string) {
     return this.page.locator("main").getByRole("link", { name });
   }
