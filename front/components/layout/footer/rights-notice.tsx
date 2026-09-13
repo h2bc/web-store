@@ -1,11 +1,5 @@
-import { Button } from '@/components/ui/button'
-
 export default function RightsNotice() {
   const year = new Date().getFullYear()
 
-  return (
-    <Button variant="ghost" disabled>
-      © {year} h2bc
-    </Button>
-  )
+  return <span className="text-muted-foreground">© {year} h2bc</span>
 }

@@ -15,7 +15,7 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet'
 import CartPreviewItem from './cart-preview-item'
-import CartEmptyState from '@/components/cart/cart-empty-state'
+import EmptyState, { EmptyStateTitle } from '@/components/feedback/empty-state'
 import ShippingInfoAlert from '@/components/cart/shipping-info-alert'
 import type { HttpTypes } from '@medusajs/types'
 
@@ -53,7 +53,12 @@ export default function CartPreview({ cart }: CartPreviewProps) {
 
   return (
     <>
-      <Button variant="ghost" onClick={handleCartClick} aria-label="Cart">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleCartClick}
+        aria-label="Cart"
+      >
         {itemCount && !isCheckout ? (
           <IconBadge badge={`${itemCount}`} badgeClassName="bg-pink-500">
             <ShoppingBag />
@@ -66,11 +71,9 @@ export default function CartPreview({ cart }: CartPreviewProps) {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent className="flex flex-col w-full sm:max-w-lg">
           <SheetHeader>
-            <SheetTitle>Shopping Cart</SheetTitle>
+            <SheetTitle>Your cart</SheetTitle>
             <SheetDescription>
-              {itemCount === 0
-                ? 'Your cart is empty'
-                : `${itemCount} ${itemCount === 1 ? 'item' : 'items'} in your cart`}
+              {itemCount} {itemCount === 1 ? 'item' : 'items'} in your cart
             </SheetDescription>
           </SheetHeader>
 
@@ -119,7 +122,12 @@ export default function CartPreview({ cart }: CartPreviewProps) {
             </>
           ) : (
             <div className="flex-1 flex items-center justify-center">
-              <CartEmptyState onNavigate={handleNavigateFromDrawer} />
+              <EmptyState
+                description="Looks like you have not added anything yet."
+                onNavigate={handleNavigateFromDrawer}
+              >
+                <EmptyStateTitle>Cart empty</EmptyStateTitle>
+              </EmptyState>
             </div>
           )}
         </SheetContent>

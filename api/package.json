@@ -33,6 +33,7 @@
     "@medusajs/medusa": "2.21.0",
     "@react-email/components": "1.0.12",
     "awilix": "^8.0.1",
+    "express-rate-limit": "^8.7.0",
     "pg": "^8.13.0",
     "resend": "^6.26.0"
   },

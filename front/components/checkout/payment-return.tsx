@@ -5,8 +5,14 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import ErrorAlert from '@/components/feedback/error-alert'
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { completeCart, releaseCart } from '@/lib/data/cart'
 import { getStripe } from '@/lib/stripe'
 
@@ -89,86 +95,79 @@ export default function PaymentReturn({
 
   if (state.kind === 'failed') {
     return (
-      <>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Payment failed</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm text-muted-foreground">
-            <ErrorAlert message={state.message} className="max-w-none" />
-            <p>
-              You have not been charged. You can try again or use a different
-              payment method.
-            </p>
-          </CardContent>
-        </Card>
-        <aside className="lg:sticky lg:top-24">
-          <Button asChild size="lg" className="w-full">
+      <Card>
+        <CardHeader>
+          <CardTitle>Payment failed</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 text-sm text-muted-foreground">
+          <ErrorAlert message={state.message} className="max-w-none" />
+          <p>
+            You have not been charged. You can try again or use a different
+            payment method.
+          </p>
+        </CardContent>
+        <CardFooter>
+          <Button asChild size="lg" className="w-full sm:w-auto">
             <Link href="/checkout?step=payment">Back to payment</Link>
           </Button>
-        </aside>
-      </>
+        </CardFooter>
+      </Card>
     )
   }
 
   if (state.kind === 'unconfirmed') {
     return (
-      <>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Order not confirmed yet</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1 text-sm text-muted-foreground">
-            <p>
-              Your payment was received, but we could not confirm your order.
-              Please do not pay again.
-            </p>
-            <p>
-              We will email your order confirmation once the payment is
-              processed. Get in touch if it does not arrive.
-            </p>
-          </CardContent>
-        </Card>
-        <aside className="lg:sticky lg:top-24">
-          <Button asChild size="lg" className="w-full">
+      <Card>
+        <CardHeader>
+          <CardTitle>Order not confirmed yet</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-1 text-sm text-muted-foreground">
+          <p>
+            Your payment was received, but we could not confirm your order.
+            Please do not pay again.
+          </p>
+          <p>
+            We will email your order confirmation once the payment is processed.
+            Get in touch if it does not arrive.
+          </p>
+        </CardContent>
+        <CardFooter>
+          <Button asChild size="lg" className="w-full sm:w-auto">
             <Link href="/contact">Contact us</Link>
           </Button>
-        </aside>
-      </>
+        </CardFooter>
+      </Card>
     )
   }
 
   if (state.kind === 'processing') {
     return (
-      <>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Payment pending</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1 text-sm text-muted-foreground">
-            <p>
-              Your payment is being processed. This can take a few days for bank
-              payments.
-            </p>
-            <p>
-              We will email your order confirmation as soon as the payment
-              clears.
-            </p>
-          </CardContent>
-        </Card>
-        <aside className="lg:sticky lg:top-24">
-          <Button asChild size="lg" className="w-full">
+      <Card>
+        <CardHeader>
+          <CardTitle>Payment pending</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-1 text-sm text-muted-foreground">
+          <p>
+            Your payment is being processed. This can take a few days for bank
+            payments.
+          </p>
+          <p>
+            We will email your order confirmation as soon as the payment clears.
+          </p>
+        </CardContent>
+        <CardFooter>
+          <Button asChild size="lg" className="w-full sm:w-auto">
             <Link href="/shop">Continue shopping</Link>
           </Button>
-        </aside>
-      </>
+        </CardFooter>
+      </Card>
     )
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2">
           <Loader2 className="h-4 w-4 animate-spin" />
           Confirming payment
         </CardTitle>

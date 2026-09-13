@@ -1,22 +1,19 @@
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import EmptyState from '@/components/feedback/empty-state'
 
-export default function NotFound() {
-  return (
-    <div className="flex-1 flex flex-col self-stretch items-center justify-center">
+const NotFound = () => (
+  <div className="flex-1 flex flex-col self-stretch items-center justify-center">
+    <EmptyState description="The page you are looking for does not exist.">
       <Image
         src="/404.gif"
-        alt="404 Not Found gif"
+        alt=""
         width={320}
         height={256}
-        preload
-        className="mb-8"
+        priority
         unoptimized
       />
-      <Button variant="link" className="uppercase text-md">
-        <Link href="/shop">{'<'} Go back home</Link>
-      </Button>
-    </div>
-  )
-}
+    </EmptyState>
+  </div>
+)
+
+export default NotFound

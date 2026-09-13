@@ -91,7 +91,7 @@ test("shopper who pays by card sees the order confirmation with their email", as
 
   await test.step("Then they see the order confirmation with their email", async () => {
     await expect(page).toHaveURL(/\/order\/.+\/confirmed$/, { timeout: 30_000 });
-    await expect(page.getByRole("heading", { name: "Order confirmed" })).toBeVisible();
+    await expect(page.getByText(/^Thank you/)).toBeVisible();
     await expect(page.getByText(EMAIL).first()).toBeVisible();
   });
 });

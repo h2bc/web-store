@@ -6,6 +6,15 @@ export const EMAIL = "e2e@example.com";
 export const DECLINED_CARD = "4000000000000002";
 export const VALID_CARD = "4242424242424242";
 
+export type ContactMessage = { name: string; email: string; topic: string; message: string };
+
+export const CONTACT_MESSAGE: ContactMessage = {
+  name: "Jonas",
+  email: EMAIL,
+  topic: "Returns & Refunds",
+  message: "I would like to return my order.",
+};
+
 export type Address = { country: string; line1: string; postalCode: string; city: string };
 
 export const LITHUANIAN_ADDRESS: Address = {

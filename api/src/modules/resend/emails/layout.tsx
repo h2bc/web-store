@@ -13,10 +13,25 @@ import {
 type EmailLayoutProps = {
   preview: string;
   logo_url?: string;
+  contact_email?: string;
+  footer?: string;
   children: React.ReactNode;
 };
 
-export function EmailLayout({ preview, logo_url, children }: EmailLayoutProps) {
+const getFooter = (footer?: string, contact_email?: string) =>
+  footer ??
+  (contact_email &&
+    `If you have any questions, contact us at ${contact_email}.`);
+
+export function EmailLayout({
+  preview,
+  logo_url,
+  contact_email,
+  footer,
+  children,
+}: EmailLayoutProps) {
+  const footerText = getFooter(footer, contact_email);
+
   return (
     <Tailwind>
       <Html className="font-sans bg-gray-100">
@@ -31,12 +46,13 @@ export function EmailLayout({ preview, logo_url, children }: EmailLayoutProps) {
 
           {children}
 
-          {/* Footer */}
-          <Section className="bg-gray-50 p-6 mt-10">
-            <Text className="text-center text-gray-500 text-sm">
-              If you have any questions, contact us at contact@h2bcweb.com.
-            </Text>
-          </Section>
+          {footerText && (
+            <Section className="bg-gray-50 p-6 mt-10">
+              <Text className="text-center text-gray-500 text-sm">
+                {footerText}
+              </Text>
+            </Section>
+          )}
         </Body>
       </Html>
     </Tailwind>

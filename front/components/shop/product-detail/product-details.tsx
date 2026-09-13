@@ -122,7 +122,6 @@ export default function ProductDetails({
       </div>
 
       <Button
-        variant="default"
         size="lg"
         className="w-full mt-6"
         disabled={!canAdd || isAdding}

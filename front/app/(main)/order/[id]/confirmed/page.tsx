@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Heading from '@/components/layout/heading'
 import ErrorAlert from '@/components/feedback/error-alert'
 import CheckoutSummary from '@/components/checkout/checkout-summary'
 import { Button } from '@/components/ui/button'
@@ -40,15 +39,11 @@ export default async function OrderConfirmedPage({
   return (
     <div className="flex justify-center pt-15">
       <div className="max-w-5xl w-full flex flex-col pb-12">
-        <Heading level={1} font="blackletter" className="mb-8">
-          Order confirmed
-        </Heading>
-
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_22rem] gap-8 items-start">
           <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">
+                <CardTitle>
                   Thank you
                   {address?.first_name ? `, ${address.first_name}` : ''}!
                 </CardTitle>
@@ -63,7 +58,7 @@ export default async function OrderConfirmedPage({
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Order details</CardTitle>
+                <CardTitle>Order details</CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
                 <div>

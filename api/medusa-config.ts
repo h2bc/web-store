@@ -86,6 +86,7 @@ const notificationProvider = resendApiKey
         api_key: resendApiKey,
         from: emailFrom(process.env.RESEND_FROM_EMAIL),
         logo_url: process.env.EMAIL_LOGO_URL,
+        contact_email: process.env.CONTACT_INBOX_EMAIL,
       },
     }
   : {

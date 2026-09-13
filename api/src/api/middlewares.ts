@@ -2,9 +2,18 @@ import {
   defineMiddlewares,
   validateAndTransformBody,
 } from "@medusajs/framework/http";
+import { rateLimit } from "express-rate-limit";
 
 import { AdminSaveGallery } from "./admin/gallery/validators";
+import { PostStoreContact } from "./store/contact/validators";
 import { AdminSaveContentPage } from "./utils/validators";
+
+const contactRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 export default defineMiddlewares({
   routes: [
@@ -17,6 +26,14 @@ export default defineMiddlewares({
       matcher: "/admin/gallery",
       method: "POST",
       middlewares: [validateAndTransformBody(AdminSaveGallery)],
+    },
+    {
+      matcher: "/store/contact",
+      method: "POST",
+      middlewares: [
+        contactRateLimit,
+        validateAndTransformBody(PostStoreContact),
+      ],
     },
   ],
 });

@@ -8,7 +8,7 @@ The contact page validates a message and then logs it to the server console; not
 - A `send-contact-message` workflow that records one `contact-message` notification addressed to the shop inbox, with the sender's address as reply-to.
 - The Resend provider gains the `contact-message` template, a subject built from the message's topic and sender name, and passes reply-to to Resend.
 - A new API env key, `CONTACT_INBOX_EMAIL`, set to `contact@h2bcweb.com` in the deploy repository.
-- The storefront form gains a single Name field and a hidden honeypot; the page gains a line pointing at Instagram DMs and the contact address. The server action relays to the API through the SDK and returns `{ error }` like the rest of the data layer. The `xss` dependency, the per-field error plumbing and the custom response type are removed; the topic enum is derived from the topic list.
+- The storefront form gains a single Name field and a hidden honeypot; the page gains a line pointing at Instagram DMs. The server action relays to the API through the SDK and returns `{ error }` like the rest of the data layer. The `xss` dependency, the per-field error plumbing and the custom response type are removed; the topic enum is derived from the topic list.
 - An API integration test for the route, a storefront unit test for the form schema, and an end-to-end test that submits the form.
 
 Non-goals:
@@ -30,5 +30,5 @@ Non-goals:
 
 - `api/src/api/store/contact/` (new route and validator), `api/src/api/middlewares.ts` (new), `api/src/workflows/send-contact-message.ts` (new), `api/src/modules/resend/service.ts`, `api/src/modules/resend/emails/contact-message.tsx` (new), `api/src/scripts/test-email.ts`, `api/.env.example`, `api/package.json` (adds `express-rate-limit`).
 - `front/lib/schemas/contact.ts`, `front/lib/data/contact.ts`, `front/lib/social.ts`, `front/components/contact/contact-form.tsx`, `front/app/(main)/contact/page.tsx`, `front/package.json` (removes `xss`).
-- `api/integration/http/contact.test.ts`, `front/unit/contact-schema.test.ts`, `e2e/contact.test.ts`, and the API env in the CI `Check` job.
+- `api/tests/contact.test.ts`, `front/tests/contact-schema.test.ts`, `tests/contact.test.ts`, and the API env in the CI `Check` job.
 - The deploy repository must set `CONTACT_INBOX_EMAIL` on the API server container.
