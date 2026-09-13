@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Owner receives an order-placed email
-When an order is placed and the order inbox is configured, the system SHALL send one email to the order inbox using the `order-placed-owner` template, next to the customer's confirmation. The data SHALL contain the same order as the customer email plus an `admin_url` pointing at the order in the admin dashboard, built from the configured backend URL. The subject SHALL name the order's display id and total. Delivering the same placed event more than once SHALL NOT produce a second email. Orders without an email address SHALL still produce the owner email.
+When an order is placed and the order inbox is configured, the system SHALL send one email to the order inbox using the `order-placed-owner` template, next to the customer's confirmation. The data SHALL contain the same order as the customer email plus an `admin_url` pointing at the order in the admin dashboard, built from the configured backend URL. The subject SHALL name the order's display id and total. Delivering the same placed event more than once SHALL NOT produce a second email.
 
 #### Scenario: Order placed with the inbox configured
 - **WHEN** an order with display id `1042` is placed, the order inbox is `orders@h2bcweb.com` and the backend URL is `https://api.example.com`
@@ -10,10 +10,6 @@ When an order is placed and the order inbox is configured, the system SHALL send
 #### Scenario: Event delivered twice
 - **WHEN** the placed event for the same order is handled a second time
 - **THEN** no additional owner notification is recorded
-
-#### Scenario: Guest order without email
-- **WHEN** an order without an email address is placed and the inbox is configured
-- **THEN** the owner notification is recorded and the customer notification is not
 
 ### Requirement: Order inbox is configured, not hardcoded
 The order inbox address SHALL come from the API's `ORDER_INBOX_EMAIL` configuration. When it is not set, placing an order SHALL record no owner email and SHALL NOT fail.
