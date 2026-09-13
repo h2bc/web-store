@@ -18,5 +18,14 @@ export const GERMAN_ADDRESS: Address = {
   city: "Berlin",
 };
 
+export type ContactMessage = { name: string; email: string; topic: string; message: string };
+
+export const CONTACT_MESSAGE: ContactMessage = {
+  name: "Jonas",
+  email: EMAIL,
+  topic: "Returns & Refunds",
+  message: "I would like to return my order.",
+};
+
 export const PUBLIC_PATHS = ["/", "/shop", "/gallery", "/about", "/contact", "/shipping-returns"];
 export const PRIVATE_PREFIXES = ["/cart", "/checkout", "/order"];

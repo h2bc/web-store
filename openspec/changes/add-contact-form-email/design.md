@@ -41,7 +41,7 @@ See proposal.md for why. What shapes the approach:
 
 **The workflow is minimal.** `sendContactMessageWorkflow` takes `{ to, name, email, topic, message }` and calls `sendNotificationsStep` with one notification. No idempotency key: two identical messages are two messages. `sendNotificationsStep` already compensates.
 
-**Storefront cleanup.** `xss` is removed: the message is never rendered as HTML in the storefront, and React escapes it in the email template. `ContactFormResponse` and the per-field `setError` loop go; the action returns `{ error }`. `isSubmitting` comes from `form.formState`. Success keeps the existing toast and reset. The topic zod enum is derived from the keys of `contactTopics`. The contact address is a public constant in `front/lib/social.ts` next to the Instagram handle.
+**Storefront cleanup.** `xss` is removed: the message is never rendered as HTML in the storefront, and React escapes it in the email template. `ContactFormResponse` and the per-field `setError` loop go; the action returns `{ error }`. `isSubmitting` comes from `form.formState`. Success replaces the form with the checkout return layout: a card with the outcome and a primary button beside it, here `Send another message`. The app shows no success toasts anywhere else. The topic zod enum is derived from the keys of `contactTopics`.
 
 ## Risks / Trade-offs
 

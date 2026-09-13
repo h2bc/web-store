@@ -6,7 +6,7 @@ import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils";
  *
  *   npx medusa exec ./src/scripts/test-email.ts you@example.com [template]
  *
- * Templates: order-placed (default), user-invited, password-reset.
+ * Templates: order-placed (default), user-invited, password-reset, contact-message.
  * `order-placed` uses the most recent real order, falling back to the mock below.
  */
 export default async function testEmail({ container, args }: ExecArgs) {
@@ -56,6 +56,9 @@ export default async function testEmail({ container, args }: ExecArgs) {
     case "password-reset":
       data = mockPasswordReset;
       break;
+    case "contact-message":
+      data = mockContactMessage;
+      break;
     default:
       throw new Error(`Unknown template "${template}"`);
   }
@@ -77,6 +80,14 @@ const mockInvite = {
 const mockPasswordReset = {
   reset_url: "https://your-app.com/reset-password?token=sample-reset-token-123",
   email: "user@example.com",
+};
+
+const mockContactMessage = {
+  name: "Jonas",
+  email: "jonas@example.com",
+  topic: "Returns & Refunds",
+  message: "Hi,\n\nI would like to return my order.\n\nThanks,\nJonas",
+  reply_to: "jonas@example.com",
 };
 
 const mockOrder = {
