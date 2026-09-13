@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Heading from '@/components/layout/heading'
 import CartLineItem from '@/components/cart/cart-line-item'
-import CartEmptyState from '@/components/cart/cart-empty-state'
+import EmptyState, { EmptyStateTitle } from '@/components/feedback/empty-state'
 import ShippingInfoAlert from '@/components/cart/shipping-info-alert'
 import ErrorAlert from '@/components/feedback/error-alert'
 import { Button } from '@/components/ui/button'
@@ -36,7 +36,9 @@ export default async function CartPage() {
   if (items.length === 0) {
     return (
       <div className="flex-1 flex flex-col self-stretch items-center justify-center">
-        <CartEmptyState />
+        <EmptyState description="Looks like you have not added anything yet.">
+          <EmptyStateTitle>Cart empty</EmptyStateTitle>
+        </EmptyState>
       </div>
     )
   }

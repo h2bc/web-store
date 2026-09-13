@@ -15,7 +15,7 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet'
 import CartPreviewItem from './cart-preview-item'
-import CartEmptyState from '@/components/cart/cart-empty-state'
+import EmptyState, { EmptyStateTitle } from '@/components/feedback/empty-state'
 import ShippingInfoAlert from '@/components/cart/shipping-info-alert'
 import type { HttpTypes } from '@medusajs/types'
 
@@ -122,7 +122,12 @@ export default function CartPreview({ cart }: CartPreviewProps) {
             </>
           ) : (
             <div className="flex-1 flex items-center justify-center">
-              <CartEmptyState onNavigate={handleNavigateFromDrawer} />
+              <EmptyState
+                description="Looks like you have not added anything yet."
+                onNavigate={handleNavigateFromDrawer}
+              >
+                <EmptyStateTitle>Cart empty</EmptyStateTitle>
+              </EmptyState>
             </div>
           )}
         </SheetContent>
