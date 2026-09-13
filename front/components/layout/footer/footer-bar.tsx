@@ -2,6 +2,7 @@
 
 import SocialIcons from './social-icons'
 import RightsNotice from './rights-notice'
+import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { POLICY_PAGES } from '@/lib/routes'
@@ -15,13 +16,14 @@ export default function FooterBar() {
         {/* Left: policy links (stacked small, inline large) */}
         <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-6">
           {POLICY_PAGES.map((page) => (
-            <Link
+            <Button
               key={page.path}
-              href={page.path}
-              className="uppercase text-xs font-medium underline-offset-4 hover:underline"
+              variant="link"
+              asChild
+              className="uppercase text-xs p-0 h-auto"
             >
-              {page.label}
-            </Link>
+              <Link href={page.path}>{page.label}</Link>
+            </Button>
           ))}
         </div>
         {/* Right group: rights notice + social icons */}
