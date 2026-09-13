@@ -16,18 +16,22 @@ export default function CartEmptyState({
   buttonClassName,
 }: CartEmptyStateProps) {
   return (
-    <div className={cn('text-center', className)}>
-      <span className="font-script text-foreground/90 text-5xl select-none">
+    <div className={cn('flex flex-col items-center text-center', className)}>
+      <span className="font-script text-foreground/90 text-5xl select-none mb-6">
         Cart empty
       </span>
-
-      <div className="mt-6">
-        <Button asChild variant="outline" className={buttonClassName}>
-          <Link href="/shop" onClick={() => onNavigate?.()}>
-            Continue shopping
-          </Link>
-        </Button>
-      </div>
+      <p className="text-sm text-muted-foreground">
+        Looks like you have not added anything yet.
+      </p>
+      <Button
+        asChild
+        size="lg"
+        className={cn('mt-6 w-full max-w-xs', buttonClassName)}
+      >
+        <Link href="/shop" onClick={() => onNavigate?.()}>
+          Continue shopping
+        </Link>
+      </Button>
     </div>
   )
 }

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Heading from '@/components/layout/heading'
-import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
@@ -58,11 +57,9 @@ export default function ShippingReturnsPage() {
             <li>Return shipping is paid by the customer.</li>
             <li>
               To start a return, please visit our{' '}
-              {
-                <Button variant="link" className="uppercase p-0">
-                  <Link href="/contact">contact</Link>
-                </Button>
-              }{' '}
+              <Link href="/contact" className="underline underline-offset-4">
+                contact
+              </Link>{' '}
               page. We&apos;ll provide the return address.
             </li>
             <li>

@@ -214,9 +214,10 @@ export default function ProductImageModal({
           </div>
           <Button
             variant="ghost"
+            size="icon"
             onClick={onClose}
             aria-label="Close gallery"
-            className="absolute top-2 right-2 z-20 rounded-full h-8 w-8 p-0"
+            className="h-8 w-8 absolute top-2 right-2 z-20 rounded-full"
           >
             <IoCloseSharp size={16} />
           </Button>
