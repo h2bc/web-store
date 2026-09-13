@@ -1,16 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { contactFormSchema, contactTopics } from '@/lib/schemas/contact'
-
-const validMessage = {
-  name: 'Jonas',
-  email: 'jonas@example.com',
-  topic: 'returns',
-  message: 'I would like to return my order.',
-}
+import { CONTACT_MESSAGE } from './support/data'
 
 describe('contact form schema', () => {
   it('accepts a complete message', () => {
-    const result = contactFormSchema.safeParse(validMessage)
+    const result = contactFormSchema.safeParse(CONTACT_MESSAGE)
 
     expect(result.success).toBe(true)
   })
@@ -19,10 +13,11 @@ describe('contact form schema', () => {
     const topics = Object.keys(contactTopics)
 
     const accepted = topics.map(
-      (topic) => contactFormSchema.safeParse({ ...validMessage, topic }).success
+      (topic) =>
+        contactFormSchema.safeParse({ ...CONTACT_MESSAGE, topic }).success
     )
     const rejected = contactFormSchema.safeParse({
-      ...validMessage,
+      ...CONTACT_MESSAGE,
       topic: 'spam',
     })
 
@@ -31,9 +26,9 @@ describe('contact form schema', () => {
   })
 
   it('rejects a name that is blank or longer than 100 characters', () => {
-    const blank = contactFormSchema.safeParse({ ...validMessage, name: ' ' })
+    const blank = contactFormSchema.safeParse({ ...CONTACT_MESSAGE, name: ' ' })
     const long = contactFormSchema.safeParse({
-      ...validMessage,
+      ...CONTACT_MESSAGE,
       name: 'a'.repeat(101),
     })
 
@@ -43,11 +38,11 @@ describe('contact form schema', () => {
 
   it('rejects an invalid email or one longer than 254 characters', () => {
     const invalid = contactFormSchema.safeParse({
-      ...validMessage,
+      ...CONTACT_MESSAGE,
       email: 'not-an-email',
     })
     const long = contactFormSchema.safeParse({
-      ...validMessage,
+      ...CONTACT_MESSAGE,
       email: `${'a'.repeat(250)}@example.com`,
     })
 
@@ -57,11 +52,11 @@ describe('contact form schema', () => {
 
   it('rejects a message shorter than 5 or longer than 5000 characters', () => {
     const short = contactFormSchema.safeParse({
-      ...validMessage,
+      ...CONTACT_MESSAGE,
       message: 'Hi',
     })
     const long = contactFormSchema.safeParse({
-      ...validMessage,
+      ...CONTACT_MESSAGE,
       message: 'a'.repeat(5001),
     })
 
@@ -71,7 +66,7 @@ describe('contact form schema', () => {
 
   it('leaves the honeypot optional', () => {
     const result = contactFormSchema.safeParse({
-      ...validMessage,
+      ...CONTACT_MESSAGE,
       website: undefined,
     })
 

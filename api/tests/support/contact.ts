@@ -32,6 +32,16 @@ export async function createPublishableKey(
   return key.token;
 }
 
+export async function createStoreClient(
+  container: MedusaContainer,
+  ip: string,
+): Promise<Record<string, string>> {
+  return {
+    "x-publishable-api-key": await createPublishableKey(container),
+    "x-forwarded-for": ip,
+  };
+}
+
 export function listContactNotifications(container: MedusaContainer) {
   return container
     .resolve(Modules.NOTIFICATION)
