@@ -12,7 +12,7 @@ export class CartPage {
   }
 
   getPreview() {
-    return this.page.getByRole("dialog", { name: "Shopping Cart" });
+    return this.page.getByRole("dialog", { name: "Your cart" });
   }
 
   getLineItem(name: string) {
