@@ -20,7 +20,7 @@ type ContentCardProps = { slug: ContentPageSlug; label: string };
 
 const EMPTY: ContentPageInput = { title: "", description: "", body: "" };
 
-const toInput = ({
+const getContentPageInput = ({
   title,
   description,
   body,
@@ -84,7 +84,7 @@ export function ContentPageCard({ slug, label }: ContentCardProps) {
         open={editing}
         slug={slug}
         label={label}
-        contentPage={contentPage ? toInput(contentPage) : EMPTY}
+        contentPage={contentPage ? getContentPageInput(contentPage) : EMPTY}
         onClose={() => setEditing(false)}
       />
     </Container>

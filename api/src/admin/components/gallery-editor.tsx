@@ -43,7 +43,7 @@ function getColumns(
   ];
 }
 
-const toInputs = (videos: Video[]): VideoInput[] =>
+const getVideoInputs = (videos: Video[]): VideoInput[] =>
   videos.map(({ url, title }) => ({ url, title }));
 
 export function GalleryEditor() {
@@ -72,7 +72,8 @@ export function GalleryEditor() {
     if (confirmed) save(withoutVideo(videos, video.id), "Video deleted");
   };
 
-  const reorder = (next: Video[]) => save(toInputs(next), "Ranking saved");
+  const reorder = (next: Video[]) =>
+    save(getVideoInputs(next), "Ranking saved");
 
   return (
     <>

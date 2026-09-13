@@ -47,14 +47,16 @@ test("shopper gets a delivery option whether they ship to Lithuania or Germany",
     await expect(checkout.getDeliveryOptions().first()).toBeVisible();
   });
 
-  await test.step("When they continue with the chosen delivery option", async () => {
-    const chosen = await checkout.getChosenDeliveryName().textContent();
+  const chosen = await test.step("When they continue with the chosen delivery option", async () => {
+    const name = await checkout.getChosenDeliveryName().textContent();
 
     await checkout.continueToPayment();
 
-    await test.step("Then the delivery step names it", async () => {
-      await expect(checkout.getDeliverySummary(chosen!.trim())).toBeVisible();
-    });
+    return name!.trim();
+  });
+
+  await test.step("Then the delivery step names it", async () => {
+    await expect(checkout.getDeliverySummary(chosen)).toBeVisible();
   });
 });
 
