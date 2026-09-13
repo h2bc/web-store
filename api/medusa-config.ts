@@ -102,17 +102,19 @@ module.exports = defineConfig({
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
       authCors: process.env.AUTH_CORS!,
-      jwtSecret: process.env.JWT_SECRET || "supersecret",
-      cookieSecret: process.env.COOKIE_SECRET || "supersecret",
+      jwtSecret: process.env.JWT_SECRET,
+      cookieSecret: process.env.COOKIE_SECRET,
     },
     // @ts-expect-error workerMode is missing from the project config type
     workerMode: process.env.MEDUSA_WORKER_MODE || "shared",
   },
   admin: {
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
-    backendUrl: process.env.MEDUSA_BACKEND_URL,
+    backendUrl: "/",
   },
   modules: [
+    { resolve: "./src/modules/content-page" },
+    { resolve: "./src/modules/gallery" },
     {
       resolve: "@medusajs/medusa/file",
       options: {

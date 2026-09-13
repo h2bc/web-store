@@ -1,29 +1,50 @@
 import type { Metadata } from 'next'
+import ErrorAlert from '@/components/feedback/error-alert'
+import { getGalleryVideos } from '@/lib/data/gallery'
 
-export const metadata: Metadata = {
+const GALLERY_METADATA: Metadata = {
   title: 'Gallery',
   description: 'Videos from h2bc: drops, lookbooks and behind the scenes.',
-  alternates: { canonical: '/gallery' },
 }
 
-const VIDEOS: { id: string; title: string }[] = [
-  { id: 'srRVUe4_wW4', title: 'verkei?' },
-  { id: 'C8Hkml0CRmo', title: 'meduza' },
-  { id: 'qI8fDbBXW2s', title: '2DRIP' },
-]
+export async function generateMetadata(): Promise<Metadata> {
+  const { error } = await getGalleryVideos()
 
-export default function GalleryPage() {
+  if (error) {
+    return { ...GALLERY_METADATA, robots: { index: false } }
+  }
+
+  return { ...GALLERY_METADATA, alternates: { canonical: '/gallery' } }
+}
+
+export default async function GalleryPage() {
+  const { videos, error } = await getGalleryVideos()
+
+  if (error) {
+    return (
+      <div className="flex justify-center pt-15">
+        <ErrorAlert message={error} />
+      </div>
+    )
+  }
+
+  if (videos.length === 0) {
+    return (
+      <p className="text-center pt-15 text-muted-foreground">No videos yet</p>
+    )
+  }
+
   return (
     <div className="space-y-16">
-      {VIDEOS.map((v) => (
+      {videos.map((video) => (
         <div
-          key={v.id}
+          key={video.id}
           className="relative w-full"
           style={{ aspectRatio: '16/9' }}
         >
           <iframe
-            src={`https://www.youtube.com/embed/${v.id}?rel=0&modestbranding=1&color=white`}
-            title={v.title}
+            src={video.url}
+            title={video.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
             className="w-full h-full"

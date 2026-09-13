@@ -51,8 +51,8 @@ const fetchProducts = cached(
       fields:
         'id,handle,title,' +
         'images,images.url,' +
-        'categories,categories.name,' +
-        '*variants, *variants.calculated_price, *variants.options, *variants.inventory_quantity',
+        '*categories,' +
+        '*variants, *variants.calculated_price, *variants.options, +variants.inventory_quantity',
     })
 
     return products.map((p: HttpTypes.StoreProduct): ProductItem => {
@@ -104,7 +104,7 @@ const fetchProductDetails = async (
         fields:
           'id,handle,title,subtitle,description,thumbnail,*categories,*options,metadata,' +
           'images,images.url,' +
-          '*variants, *variants.calculated_price, *variants.options, *variants.inventory_quantity',
+          '*variants, *variants.calculated_price, *variants.options, +variants.inventory_quantity',
       })
 
       if (!products || products.length === 0) {

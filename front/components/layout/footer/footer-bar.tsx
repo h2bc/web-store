@@ -4,12 +4,7 @@ import SocialIcons from './social-icons'
 import RightsNotice from './rights-notice'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
-const FOOTER_LINKS = [
-  { href: '/privacy', label: 'Privacy Policy' },
-  { href: '/shipping-returns', label: 'Shipping & Returns' },
-  { href: '/terms', label: 'Terms & Conditions' },
-]
+import { POLICY_PAGES } from '@/lib/routes'
 
 export default function FooterBar() {
   const isCheckout = usePathname().startsWith('/checkout')
@@ -19,13 +14,13 @@ export default function FooterBar() {
       <div className="flex flex-col items-center gap-6 md:flex-row md:items-center md:justify-between w-full">
         {/* Left: policy links (stacked small, inline large) */}
         <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-6">
-          {FOOTER_LINKS.map((link) => (
+          {POLICY_PAGES.map((page) => (
             <Link
-              key={link.href}
-              href={link.href}
+              key={page.path}
+              href={page.path}
               className="uppercase text-xs font-medium underline-offset-4 hover:underline"
             >
-              {link.label}
+              {page.label}
             </Link>
           ))}
         </div>

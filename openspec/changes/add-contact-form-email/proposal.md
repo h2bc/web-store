@@ -30,5 +30,5 @@ Non-goals:
 
 - `api/src/api/store/contact/` (new route and validator), `api/src/api/middlewares.ts` (new), `api/src/workflows/send-contact-message.ts` (new), `api/src/modules/resend/service.ts`, `api/src/modules/resend/emails/contact-message.tsx` (new), `api/src/scripts/test-email.ts`, `api/.env.example`, `api/package.json` (adds `express-rate-limit`).
 - `front/lib/schemas/contact.ts`, `front/lib/data/contact.ts`, `front/lib/social.ts`, `front/components/contact/contact-form.tsx`, `front/app/(main)/contact/page.tsx`, `front/package.json` (removes `xss`).
-- `api/integration/http/contact.test.ts`, `front/unit/contact-schema.test.ts`, `e2e/contact.test.ts`, and the API env in the CI `Check` job.
+- `api/tests/contact.test.ts`, `front/tests/contact-schema.test.ts`, `tests/contact.test.ts`, and the API env in the CI `Check` job.
 - The deploy repository must set `CONTACT_INBOX_EMAIL` on the API server container.

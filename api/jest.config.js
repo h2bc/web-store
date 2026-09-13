@@ -14,8 +14,9 @@ module.exports = {
     ],
   },
   testEnvironment: "node",
+  testTimeout: 60 * 1000,
   moduleFileExtensions: ["js", "ts", "json"],
   modulePathIgnorePatterns: ["dist/", "<rootDir>/.medusa/"],
-  setupFiles: ["./integration/setup.js"],
-  testMatch: ["**/integration/**/*.test.[jt]s"],
+  setupFiles: ["./tests/setup.js"],
+  testMatch: ["**/tests/**/*.test.[jt]s"],
 };

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import type { HttpTypes } from '@medusajs/types'
 import { Button } from '@/components/ui/button'
@@ -111,7 +112,15 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
       </Button>
 
       <p className="text-xs text-muted-foreground text-center">
-        Your card is charged only when the order is placed.
+        By placing your order you accept the{' '}
+        <Link href="/terms" target="_blank" className="underline">
+          Terms & Conditions
+        </Link>{' '}
+        and the{' '}
+        <Link href="/privacy" target="_blank" className="underline">
+          Privacy Policy
+        </Link>
+        . Your card is charged only when the order is placed.
       </p>
     </div>
   )

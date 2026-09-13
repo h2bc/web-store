@@ -26,8 +26,8 @@
 
 ## 3. API tests
 
-- [x] 3.1 Create `api/integration/http/contact.test.ts` with `medusaIntegrationTestRunner` and `env: { CONTACT_INBOX_EMAIL: 'inbox@example.com' }`, creating a publishable key through the api-key module for the store header, covering: valid body → 200 and one notification listed by the notification module with `to` the inbox and `data.reply_to` the sender; missing `message` → 400 naming the field; honeypot filled → 200 and no new notification; sixth request → 429; verify `pnpm test:api` passes.
-- [x] 3.2 Add a case to `api/integration/http/contact.test.ts` that clears `CONTACT_INBOX_EMAIL` for one post and asserts a 500 with no notification recorded; verify `pnpm test:api` passes.
+- [x] 3.1 Create `api/tests/contact.test.ts` with `medusaIntegrationTestRunner` and `env: { CONTACT_INBOX_EMAIL: 'inbox@example.com' }`, creating a publishable key through the api-key module for the store header, covering: valid body → 200 and one notification listed by the notification module with `to` the inbox and `data.reply_to` the sender; missing `message` → 400 naming the field; honeypot filled → 200 and no new notification; sixth request → 429; verify `pnpm test:api` passes.
+- [x] 3.2 Add a case to `api/tests/contact.test.ts` that clears `CONTACT_INBOX_EMAIL` for one post and asserts a 500 with no notification recorded; verify `pnpm test:api` passes.
 
 ## 4. Storefront
 
@@ -36,8 +36,8 @@
 - [x] 4.3 Rewrite `front/lib/data/contact.ts` to post `{ name, email, topic: contactTopics[topic], message, website }` with `sdk.client.fetch('/store/contact', { method: 'POST', body })`, returning `{ error: null }` on success, the `FetchError` message on 400 and a generic message otherwise, then remove `xss` with `pnpm --dir front remove xss`; verify `pnpm typecheck:front` and `pnpm lint:front` pass and `xss` is gone from the lockfile.
 - [x] 4.4 Update `front/components/contact/contact-form.tsx`: add the Name field, the hidden honeypot input, read `isSubmitting` from `form.formState`, drop the local state and the field-error loop, toast the returned `error`, and on success reset the form and replace it with the checkout return layout, a `Card` with the outcome and a primary `Send another message` button beside it that brings the form back; verify `pnpm lint:front` passes and the page renders at `/contact`.
 - [x] 4.5 Update `front/app/(main)/contact/page.tsx` with a one-line intro linking to `INSTAGRAM_URL`; verify the Instagram link is present on `/contact` and the metadata still declares the canonical URL.
-- [x] 4.6 Create `front/unit/contact-schema.test.ts` covering the limits and the derived topic enum; verify `pnpm test:front` passes.
-- [x] 4.7 Create `e2e/contact.test.ts` that fills and submits the form and expects the confirmation, then clicks `Send another message` and expects an empty form, and add `CONTACT_INBOX_EMAIL` to the `Check` job's API env in `.github/workflows/deploy.yml`; verify `pnpm exec playwright test e2e/contact.test.ts` passes locally.
+- [x] 4.6 Create `front/tests/contact-schema.test.ts` covering the limits and the derived topic enum; verify `pnpm test:front` passes.
+- [x] 4.7 Create `tests/contact.test.ts` that fills and submits the form and expects the confirmation, then clicks `Send another message` and expects an empty form, and add `CONTACT_INBOX_EMAIL` to the `Check` job's API env in `.github/workflows/deploy.yml`; verify `pnpm exec playwright test tests/contact.test.ts` passes locally.
 
 ## 5. Verification
 

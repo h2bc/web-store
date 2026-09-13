@@ -11,7 +11,7 @@ const paddingLines = [
 ];
 
 export default tseslint.config(
-  { files: ["e2e/**/*.ts", "playwright.config.ts"] },
+  { files: ["tests/**/*.ts", "playwright.config.ts"] },
   { ignores: ["api/", "front/", "node_modules/", "test-results/", "playwright-report/"] },
   ...tseslint.configs.recommended,
   {
