@@ -51,10 +51,3 @@ Outside production the policy SHALL also allow the local API as an image origin 
 #### Scenario: Product image in development
 - **WHEN** a developer opens a product page against the local API
 - **THEN** the product image renders
-
-### Requirement: Pages render per request without a route flag
-No route SHALL declare `dynamic = 'force-dynamic'`. A read of runtime configuration SHALL opt into per-request rendering with `connection()`, so the nonce and the runtime site URL are fresh on every response.
-
-#### Scenario: Site URL from the environment
-- **WHEN** the storefront runs with a site URL set in its environment
-- **THEN** the metadata, robots and sitemap use that URL
