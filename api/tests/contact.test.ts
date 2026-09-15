@@ -70,6 +70,54 @@ medusaIntegrationTestRunner({
         expect(after).toHaveLength(before.length);
       });
 
+      it("accepts a second visitor through the storefront after the first used up the limit", async () => {
+        const first = await createStoreClient(
+          getContainer(),
+          "203.0.113.6, 172.16.0.2",
+        );
+        const second = await createStoreClient(
+          getContainer(),
+          "203.0.113.7, 172.16.0.2",
+        );
+
+        await Promise.all(
+          Array.from({ length: 5 }, () =>
+            postContact(api, VALID_MESSAGE, first),
+          ),
+        );
+        const before = await listContactNotifications(getContainer());
+
+        const response = await postContact(api, VALID_MESSAGE, second);
+        const after = await listContactNotifications(getContainer());
+
+        expect(response.status).toEqual(200);
+        expect(after).toHaveLength(before.length + 1);
+      });
+
+      it("refuses a client who forges a new forwarded address after using up the limit", async () => {
+        const client = await createStoreClient(
+          getContainer(),
+          "198.51.100.1, 203.0.113.8",
+        );
+        const forged = await createStoreClient(
+          getContainer(),
+          "198.51.100.2, 203.0.113.8",
+        );
+
+        await Promise.all(
+          Array.from({ length: 5 }, () =>
+            postContact(api, VALID_MESSAGE, client),
+          ),
+        );
+        const before = await listContactNotifications(getContainer());
+
+        const response = await postContact(api, VALID_MESSAGE, forged);
+        const after = await listContactNotifications(getContainer());
+
+        expect(response.status).toEqual(429);
+        expect(after).toHaveLength(before.length);
+      });
+
       it("fails with a configuration error and records nothing when the inbox is not set", async () => {
         const client = await createStoreClient(getContainer(), "10.0.0.5");
         const before = await listContactNotifications(getContainer());

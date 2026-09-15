@@ -16,7 +16,11 @@ Every page response from the storefront SHALL carry `X-Frame-Options: DENY`, `X-
 - **THEN** the browser refuses to render it
 
 ### Requirement: Scripts run only with the request's nonce
-The content policy SHALL allow scripts only when they carry a nonce generated for that request, plus scripts they load themselves through `'strict-dynamic'`, and SHALL NOT contain `'unsafe-inline'` in `script-src`. The nonce SHALL differ on every response. Stripe's script origins SHALL be listed for browsers without `'strict-dynamic'` support.
+The content policy SHALL allow scripts only when they carry a nonce generated for that request, plus scripts they load themselves through `'strict-dynamic'`, and SHALL NOT contain `'unsafe-inline'` in `script-src`. The nonce SHALL differ on every response. Stripe's script origins SHALL be listed for browsers without `'strict-dynamic'` support. The policy SHALL allow WebAssembly to compile through `'wasm-unsafe-eval'`, and SHALL NOT contain `'unsafe-eval'` in production.
+
+#### Scenario: Landing page loads its WebAssembly
+- **WHEN** a visitor opens the landing page of a production build
+- **THEN** the console shows no policy violation for WebAssembly
 
 #### Scenario: Two responses
 - **WHEN** a browser requests the same page twice
@@ -27,7 +31,7 @@ The content policy SHALL allow scripts only when they carry a nonce generated fo
 - **THEN** the browser refuses to run it
 
 ### Requirement: Content policy allows only the origins the storefront uses
-The content policy SHALL allow frames from Stripe and YouTube, connections from the storefront and Stripe, images from the storefront and the product image host, and nothing from any other origin. It SHALL forbid framing by any site, plugins, and restrict form targets and the document base to the storefront. It SHALL keep working with the inline style attributes the component library sets.
+The content policy SHALL allow frames from Stripe and YouTube, connections from the storefront and Stripe, images from the storefront and the S3 file host configured for the storefront, and nothing from any other origin. It SHALL forbid framing by any site, plugins, and restrict form targets and the document base to the storefront. It SHALL keep working with the inline style attributes the component library sets.
 
 #### Scenario: Checkout loads Stripe
 - **WHEN** a shopper reaches the address or payment step

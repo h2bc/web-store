@@ -2,17 +2,25 @@ import {
   defineMiddlewares,
   validateAndTransformBody,
 } from "@medusajs/framework/http";
-import { rateLimit } from "express-rate-limit";
+import { ipKeyGenerator, rateLimit } from "express-rate-limit";
+import proxyaddr from "proxy-addr";
 
 import { AdminSaveGallery } from "./admin/gallery/validators";
 import { PostStoreContact } from "./store/contact/validators";
 import { AdminSaveContentPage } from "./utils/validators";
+
+const trustPrivateNetwork = proxyaddr.compile([
+  "loopback",
+  "linklocal",
+  "uniquelocal",
+]);
 
 const contactRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 5,
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: (req) => ipKeyGenerator(proxyaddr(req, trustPrivateNetwork)),
 });
 
 export default defineMiddlewares({
