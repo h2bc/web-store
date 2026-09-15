@@ -1,4 +1,5 @@
 import { expect, type Page } from "@playwright/test";
+import { CART_COOKIE } from "./data";
 
 export class CartPage {
   constructor(private readonly page: Page) {}
@@ -45,6 +46,16 @@ export class CartPage {
 
   getCheckoutLink() {
     return this.page.getByRole("link", { name: "Checkout" });
+  }
+
+  async addProductAndGetCartCookieHeader(name: string) {
+    const response = this.page.waitForResponse(async (candidate) =>
+      ((await candidate.allHeaders())["set-cookie"] ?? "").includes(`${CART_COOKIE}=`),
+    );
+
+    await this.addProduct(name);
+
+    return (await (await response).allHeaders())["set-cookie"];
   }
 
   async addProduct(name: string) {

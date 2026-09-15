@@ -29,6 +29,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  poweredByHeader: false,
   turbopack: { root: __dirname },
   images: imagesConfig,
   async headers() {

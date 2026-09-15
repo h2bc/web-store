@@ -63,3 +63,4 @@ export const NEW_DESCRIPTION = "Described in the admin.";
 export const MULTI_VARIANT_PRODUCT = "TRAINER SHORTS";
 export const PRICE_PATTERN = /\d+[.,]\d{2}/;
 export const STOCKED_PRODUCT = "STUDDED PU$$Y BELT";
+export const CART_COOKIE = "cart_id";

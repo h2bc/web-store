@@ -53,6 +53,21 @@ test("shopper raises the quantity and the summary follows", async ({ cart }) => 
   });
 });
 
+test("shopper's cart stays hidden from page scripts and other sites", async ({ cart }) => {
+  await test.step("Given a shopper with an empty cart", async () => {
+    await cart.open();
+  });
+
+  const header = await test.step("When they add a stocked product", () =>
+    cart.addProductAndGetCartCookieHeader(STOCKED_PRODUCT),
+  );
+
+  await test.step("Then the cart cookie is HttpOnly and SameSite Lax", async () => {
+    expect(header).toMatch(/HttpOnly/i);
+    expect(header).toMatch(/SameSite=Lax/i);
+  });
+});
+
 test("shopper removes the last item and sees the empty cart", async ({ cart }) => {
   await test.step("Given a shopper with a product in the cart", async () => {
     await cart.addProduct(STOCKED_PRODUCT);
