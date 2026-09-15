@@ -1,6 +1,7 @@
 'use server'
 
 import { cookies } from 'next/headers'
+import { getCartCookieOptions } from '@/lib/cart-cookie'
 
 export async function getCartId(): Promise<string | undefined> {
   const cookieStore = await cookies()
@@ -11,11 +12,7 @@ export async function getCartId(): Promise<string | undefined> {
 export async function setCartId(cartId: string) {
   const cookieStore = await cookies()
 
-  cookieStore.set('cart_id', cartId, {
-    maxAge: 60 * 60 * 24 * 365, // 1 year
-    path: '/',
-    httpOnly: true,
-  })
+  cookieStore.set('cart_id', cartId, getCartCookieOptions())
 }
 
 export async function removeCartId() {

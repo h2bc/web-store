@@ -49,6 +49,17 @@ The content policy SHALL allow frames from Stripe and YouTube, connections from 
 - **WHEN** a visitor opens a select or a toast appears
 - **THEN** it renders and the console shows no policy violation
 
+### Requirement: Responses hide the framework and protect the cart cookie
+Storefront responses SHALL NOT carry `X-Powered-By`. The cart cookie SHALL be `HttpOnly` and `SameSite=Lax` in every environment, and `Secure` in production.
+
+#### Scenario: Cart cookie stays private
+- **WHEN** the storefront sets the cart cookie
+- **THEN** it is `HttpOnly` and `SameSite=Lax`, and `Secure` in production
+
+#### Scenario: No framework name in responses
+- **WHEN** a browser requests any storefront page
+- **THEN** the response carries no `X-Powered-By` header
+
 ### Requirement: Local development keeps its dev-only origins
 Outside production the policy SHALL also allow the local API as an image origin and the script evaluation the dev server needs, so the same headers apply while developing.
 
