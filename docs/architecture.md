@@ -16,6 +16,7 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 - `workflows/`: `send-order-confirmation.ts`, `save-content-page.ts`, `save-gallery.ts`.
 - `subscribers/`: `order-placed.ts`, `invite.ts`, `password-reset.ts`.
 - `api/`: route files under `api/store/` and `api/admin/`. Body validation lives in `api/middlewares.ts`.
+- The contact rate limit keys on the first forwarded address outside the private network, because the storefront calls the API through the proxy.
 - `admin/routes/`: admin screens, one top-level sidebar item per content page plus the gallery editor. They are built from the components `@medusajs/dashboard` exports and load through TanStack Query; the drag ranking and the markdown preview are the only custom parts.
 - `links/` and `jobs/`: empty today.
 
@@ -47,6 +48,7 @@ Server-first Next.js App Router.
 
 - Pages under `front/app/(landing)` and `front/app/(main)`.
 - Components under `front/components/`, by area: `shop`, `cart`, `checkout`, `contact`, `layout`, `seo`, `ui`.
+- `front/proxy.ts` sets the security headers and the Content-Security-Policy, with a nonce per request, on every page.
 
 ### Data layer
 
