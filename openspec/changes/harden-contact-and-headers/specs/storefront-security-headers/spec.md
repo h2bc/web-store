@@ -52,11 +52,11 @@ The content policy SHALL allow frames from Stripe and YouTube, connections from 
 ### Requirement: Responses hide the framework and protect the cart cookie
 Storefront responses SHALL NOT carry `X-Powered-By`. The cart cookie SHALL be `HttpOnly` and `SameSite=Lax` in every environment, and `Secure` in production.
 
-#### Scenario: Cart cookie after adding a product
-- **WHEN** a shopper adds a product to the cart
-- **THEN** the cart cookie is `HttpOnly` and `SameSite=Lax`
+#### Scenario: Cart cookie stays private
+- **WHEN** the storefront sets the cart cookie
+- **THEN** it is `HttpOnly` and `SameSite=Lax`, and `Secure` in production
 
-#### Scenario: Framework header
+#### Scenario: No framework name in responses
 - **WHEN** a browser requests any storefront page
 - **THEN** the response carries no `X-Powered-By` header
 
