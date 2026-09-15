@@ -42,7 +42,7 @@ See proposal.md for why. What shapes the approach:
 
 **7. The proxy matcher skips `_next/static`, `_next/image`, the favicon and router prefetches.** That is the matcher from the Next.js guide; those responses carry no HTML.
 
-**8. The limiter's `keyGenerator` resolves the client with `proxy-addr`, trusting loopback and private ranges, through the library's `ipKeyGenerator`.** It is the algorithm behind Express `trust proxy`, which Medusa pins to 1. It reads the forwarded chain from the right and returns the first address outside our network, so a forged entry on the left is ignored. The helper normalises IPv6 so the library's key validation stays quiet. Alternative, the first forwarded entry, was rejected because it is whatever the first sender wrote. Alternative, an internal API URL for the storefront so the request skips Caddy, was rejected because the storefront has one backend URL and the browser-side redirect flows need the public one.
+**8. The limiter keys on the client address `proxy-addr` resolves, trusting loopback and private ranges.** It is the algorithm behind Express `trust proxy`, which Medusa pins to 1, and it ignores forged entries on the left of the forwarded chain. Alternatives, the first forwarded entry and an internal API URL that skips Caddy, were rejected: the first is whatever the sender wrote, and the storefront has one backend URL that the browser redirect flows also need.
 
 **9. Caddy gets `trusted_proxies private_ranges` on the API host only.** That is the smallest change that appends instead of overwriting, and only containers on the proxy network are private. Alternative, listing the storefront container's address, was rejected because compose assigns it.
 

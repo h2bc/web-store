@@ -2,6 +2,8 @@ export const PAGE_URL = 'http://localhost:3000/'
 
 export const S3_FILE_URL = 'https://files.example.com'
 
+export const FORGED_POLICY = "script-src 'nonce-forged'"
+
 export const STATIC_ASSET_URL = 'http://localhost:3000/_next/static/chunk.js'
 
 export const SECURITY_HEADERS = [

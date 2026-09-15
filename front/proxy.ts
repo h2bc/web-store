@@ -58,15 +58,12 @@ function getPolicy(nonce: string): string {
 export function proxy(request: NextRequest) {
   const nonce = getNonce()
   const policy = getPolicy(nonce)
+  const requestHeaders = new Headers(request.headers)
+
+  requestHeaders.set('Content-Security-Policy', policy)
 
   return NextResponse.next({
-    request: {
-      headers: new Headers([
-        ...request.headers,
-        ['x-nonce', nonce],
-        ['Content-Security-Policy', policy],
-      ]),
-    },
+    request: { headers: requestHeaders },
     headers: { 'Content-Security-Policy': policy, ...FIXED_HEADERS },
   })
 }

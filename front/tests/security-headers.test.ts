@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server'
 import { unstable_doesMiddlewareMatch } from 'next/experimental/testing/server'
 import { config, proxy } from '@/proxy'
 import {
+  FORGED_POLICY,
   FRAME_ORIGINS,
   getDirective,
   getNonce,
@@ -15,7 +16,7 @@ import {
 } from './support/security-headers'
 
 describe('security headers', () => {
-  it('puts every security header on a page response', () => {
+  it('protects every page with the security headers', () => {
     const request = new NextRequest(PAGE_URL)
 
     const response = proxy(request)
@@ -25,7 +26,7 @@ describe('security headers', () => {
     ).toEqual([])
   })
 
-  it('runs only scripts that carry the nonce, plus what Stripe loads', () => {
+  it("runs only the storefront's own scripts and Stripe", () => {
     const request = new NextRequest(PAGE_URL)
 
     const policy = proxy(request).headers.get('content-security-policy') ?? ''
@@ -42,7 +43,7 @@ describe('security headers', () => {
     expect(scriptSrc).not.toContain("'unsafe-inline'")
   })
 
-  it('gives two responses two different nonces', () => {
+  it('gives every page view its own script permission', () => {
     const request = new NextRequest(PAGE_URL)
 
     const first = proxy(request).headers.get('content-security-policy') ?? ''
@@ -51,15 +52,16 @@ describe('security headers', () => {
     expect(getNonce(first)).not.toEqual(getNonce(second))
   })
 
-  it('hands the nonce to the page render', () => {
-    const request = new NextRequest(PAGE_URL)
+  it('ignores a content policy the visitor sends with the request', () => {
+    const request = new NextRequest(PAGE_URL, {
+      headers: { 'content-security-policy': FORGED_POLICY },
+    })
 
     const response = proxy(request)
-    const policy = response.headers.get('content-security-policy') ?? ''
 
-    expect(response.headers.get('x-middleware-request-x-nonce')).toEqual(
-      getNonce(policy)
-    )
+    expect(
+      response.headers.get('x-middleware-request-content-security-policy')
+    ).toEqual(response.headers.get('content-security-policy'))
   })
 
   it('allows the Stripe and YouTube frames, the Stripe API and the S3 host', () => {
@@ -88,7 +90,7 @@ describe('security headers', () => {
     ).toEqual([])
   })
 
-  it('leaves static assets alone', () => {
+  it('serves images, fonts and scripts without the page headers', () => {
     const url = STATIC_ASSET_URL
 
     const matches = unstable_doesMiddlewareMatch({ config, url })
