@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:25-slim AS base
+FROM node:26.9.0-slim AS base
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm install -g pnpm@10

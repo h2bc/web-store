@@ -1,5 +1,5 @@
 
-FROM node:25-slim AS pnpm-base
+FROM node:26.9.0-slim AS pnpm-base
 RUN npm i -g pnpm@10
 
 FROM pnpm-base AS build-base
