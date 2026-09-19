@@ -5,8 +5,8 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 - `api/`: Medusa v2 backend, admin at `/app`, port 9000.
 - `front/`: Next.js storefront, port 3000.
 - `.devcontainer/docker-compose.yml`: node, pnpm, postgres and redis for local work.
-- Everything runs on Node 26.9.0. The CI workflow, both Dockerfiles, the devcontainer compose file and the devcontainer `node` feature each pin it.
-- `engines.node` is `^26.9.0` in all three `package.json` files, so an install on another Node line warns.
+- Everything runs on Node 26.9.0.
+- The CI workflow, both Dockerfiles, the devcontainer compose file and the devcontainer `node` feature each pin it.
 
 ## Backend
 

@@ -1,6 +1,12 @@
 ## Context
 
-Node is selected in five places. Four are files that say `25`: `.github/workflows/deploy.yml`, `api/Dockerfile`, `front/Dockerfile` and `.devcontainer/docker-compose.yml`. The fifth is the devcontainer `node` feature, which no file configures. Only `api/package.json` has `engines`, at `>=20`. The running devcontainer reports 24.21.0 although its image holds 25.9.0. The Playwright devcontainer feature depends on the `node` feature, which installs the current LTS through nvm and puts it first on the path. Docker is not available inside the devcontainer, and CI builds the images only on a push to `main`.
+- Four files select Node and all say `25`: `.github/workflows/deploy.yml`, `api/Dockerfile`, `front/Dockerfile` and `.devcontainer/docker-compose.yml`.
+- A fifth place selects it and no file configures it: the devcontainer `node` feature.
+- The Playwright devcontainer feature depends on that feature, which installs the current LTS through nvm and puts it first on the path.
+- The running devcontainer therefore reports 24.21.0 although its image holds 25.9.0.
+- Only `api/package.json` has `engines`, at `>=20`.
+- Docker is not available inside the devcontainer.
+- CI builds the images only on a push to `main`.
 
 ## Goals / Non-Goals
 
@@ -20,7 +26,7 @@ Node is selected in five places. Four are files that say `25`: `.github/workflow
 
 **The devcontainer `node` feature is declared and pinned.** `.devcontainer/devcontainer.json` lists the feature with version `26.9.0`, so nvm installs the same release the image holds. The alternative was dropping the Playwright feature that pulls it in, which means installing the browsers by hand.
 
-**`engines.node` is `^26.9.0`, as a warning only.** pnpm warns when the running Node is outside the range and installs anyway. The alternative was `engine-strict` in an `.npmrc` per project, which also checks every dependency's engines and can block an install for no real reason. CI, the images and the devcontainer are pinned, so the hard guard protects nothing.
+**`engines.node` is `^26.9.0`, not the exact release.** The range documents the supported line in each `package.json`. An exact engine would flag a developer on 26.9.1 outside the devcontainer.
 
 **`@types/node` follows the runtime major.** `api/` and `front/` move from `^20` to `^26`, as the root already is. The alternative was leaving them, which hides APIs removed since Node 20 from the typecheck.
 

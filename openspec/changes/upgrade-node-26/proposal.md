@@ -7,7 +7,7 @@ The repo names Node in five places and they disagree: CI, both Dockerfiles and t
 - CI sets up Node `26.9.0` instead of `25`, so the checks run on the release that ships.
 - `api/Dockerfile` and `front/Dockerfile` build from `node:26.9.0-slim` instead of `node:25-slim`, so production runs the checked release.
 - The devcontainer image becomes `node:26.9.0` instead of `node:25`, and its `node` feature is pinned to `26.9.0` instead of installing the LTS, so local work matches CI.
-- The root, `api/` and `front/` `package.json` files declare `engines.node` as `^26.9.0`, so an install on another Node warns.
+- The root, `api/` and `front/` `package.json` files declare `engines.node` as `^26.9.0`, so each project names the Node line it supports.
 - `@types/node` moves from `^20` to `^26` in `api/` and `front/`, matching the root, so the typecheck knows the runtime's API.
 - Both lockfiles are reinstalled on 26.9.0, so native modules are built for its ABI.
 - `docs/architecture.md` names the Node release and the places that pin it.
