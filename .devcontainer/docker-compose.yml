@@ -1,6 +1,6 @@
 services:
   app:
-    image: node:25
+    image: node:26.9.0
     init: true
     command: sleep infinity
     environment:
