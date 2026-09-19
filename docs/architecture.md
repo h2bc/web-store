@@ -13,8 +13,8 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 - Stock Medusa v2, every `@medusajs/*` package pinned to the same exact release. Customisation lives only under `api/src/`.
 - `modules/`: `resend/`, `content-page/` (one row per fixed screen) and `gallery/` (the ordered video list).
 - `scripts/seed/`: one part per data set, run together by `scripts/seed.ts` or alone with `medusa exec`.
-- `workflows/`: `send-order-confirmation.ts`, `save-content-page.ts`, `save-gallery.ts`.
-- `subscribers/`: `order-placed.ts`, `invite.ts`, `password-reset.ts`.
+- `workflows/`: `send-order-confirmation.ts` (customer email and owner email, each skipped when its recipient is missing), `send-shipment-notice.ts` (customer email with the shipped items and tracking), `send-cancellation-notice.ts` (customer email with the items and the refunded amount), `send-contact-message.ts`, `save-content-page.ts`, `save-gallery.ts`.
+- `subscribers/`: `order-placed.ts`, `shipment-created.ts`, `order-canceled.ts`, `invite.ts`, `password-reset.ts`.
 - `api/`: route files under `api/store/` and `api/admin/`. Body validation lives in `api/middlewares.ts`.
 - The contact rate limit keys on the first forwarded address outside the private network, because the storefront calls the API through the proxy.
 - `admin/routes/`: admin screens, one top-level sidebar item per content page plus the gallery editor. They are built from the components `@medusajs/dashboard` exports and load through TanStack Query; the drag ranking and the markdown preview are the only custom parts.
@@ -32,6 +32,7 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 
 - Stripe payments when `STRIPE_API_KEY` is set. Otherwise no payment module is registered.
 - Resend email when `RESEND_API_KEY` is set. Otherwise Medusa's local provider, which logs.
+- Owner order emails go to `ORDER_INBOX_EMAIL`. Unset, no owner email is recorded.
 - S3 file storage in production, local files otherwise.
 - Redis caching, event bus, workflow engine and locking in production only, on `REDIS_URL`, `EVENTS_REDIS_URL`, `WE_REDIS_URL` and `LOCKING_REDIS_URL`.
 - `api/.env.example` lists every key the config reads.

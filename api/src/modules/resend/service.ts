@@ -9,12 +9,20 @@ import {
 } from "@medusajs/framework/types";
 import { CreateEmailOptions, Resend } from "resend";
 import { orderPlacedEmail } from "./emails/order-placed";
+import { orderPlacedOwnerEmail } from "./emails/order-placed-owner";
+import { orderShippedEmail } from "./emails/order-shipped";
+import { orderCanceledEmail } from "./emails/order-canceled";
+import { getPriceFormatter } from "./emails/price";
 import { userInvitedEmail } from "./emails/user-invited";
 import { passwordResetEmail } from "./emails/password-reset";
 import { contactMessageEmail } from "./emails/contact-message";
+import { OrderDTO } from "@medusajs/framework/types";
 
 enum Templates {
   ORDER_PLACED = "order-placed",
+  ORDER_PLACED_OWNER = "order-placed-owner",
+  ORDER_SHIPPED = "order-shipped",
+  ORDER_CANCELED = "order-canceled",
   USER_INVITED = "user-invited",
   PASSWORD_RESET = "password-reset",
   CONTACT_MESSAGE = "contact-message",
@@ -24,6 +32,9 @@ const templates: {
   [key in Templates]?: (props: Record<string, unknown>) => React.ReactNode;
 } = {
   [Templates.ORDER_PLACED]: orderPlacedEmail,
+  [Templates.ORDER_PLACED_OWNER]: orderPlacedOwnerEmail,
+  [Templates.ORDER_SHIPPED]: orderShippedEmail,
+  [Templates.ORDER_CANCELED]: orderCanceledEmail,
   [Templates.USER_INVITED]: userInvitedEmail,
   [Templates.PASSWORD_RESET]: passwordResetEmail,
   [Templates.CONTACT_MESSAGE]: contactMessageEmail,
@@ -46,6 +57,9 @@ type ResendOptions = {
 type InjectedDependencies = {
   logger: Logger;
 };
+
+const getOrderSubject = (order: OrderDTO) =>
+  `New order #${order.display_id}, ${getPriceFormatter(order.currency_code)(order.total)}`;
 
 class ResendNotificationProviderService extends AbstractNotificationProviderService {
   static identifier = "notification-resend";
@@ -98,6 +112,12 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
     switch (template) {
       case Templates.ORDER_PLACED:
         return "Order Confirmation";
+      case Templates.ORDER_PLACED_OWNER:
+        return getOrderSubject(data.order as OrderDTO);
+      case Templates.ORDER_SHIPPED:
+        return `Your order #${(data.order as OrderDTO).display_id} is on its way`;
+      case Templates.ORDER_CANCELED:
+        return `Your order #${(data.order as OrderDTO).display_id} was cancelled`;
       case Templates.USER_INVITED:
         return "You're Invited!";
       case Templates.PASSWORD_RESET:
