@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Owner receives an order-placed email
-When an order is placed and the order inbox is configured, the system SHALL send one email to the order inbox using the `order-placed-owner` template, next to the customer's confirmation. The data SHALL contain the same order as the customer email plus an `admin_url` pointing at the order in the admin dashboard, built from the configured backend URL. The subject SHALL name the order's display id and total. Delivering the same placed event more than once SHALL NOT produce a second email. Orders without an email address SHALL still produce the owner email.
+When an order is placed and the order inbox is configured, the system SHALL send one email to the order inbox using the `order-placed-owner` template, next to the customer's confirmation. The data SHALL contain the same order as the customer email plus an `admin_url` pointing at the order in the admin dashboard, built from the configured backend URL. The subject SHALL name the order's display id and total. Delivering the same placed event more than once SHALL NOT produce a second email.
 
 #### Scenario: Order placed with the inbox configured
 - **WHEN** an order with display id `1042` is placed, the order inbox is `orders@h2bcweb.com` and the backend URL is `https://api.example.com`
@@ -10,10 +10,6 @@ When an order is placed and the order inbox is configured, the system SHALL send
 #### Scenario: Event delivered twice
 - **WHEN** the placed event for the same order is handled a second time
 - **THEN** no additional owner notification is recorded
-
-#### Scenario: Guest order without email
-- **WHEN** an order without an email address is placed and the inbox is configured
-- **THEN** the owner notification is recorded and the customer notification is not
 
 ### Requirement: Order inbox is configured, not hardcoded
 The order inbox address SHALL come from the API's `ORDER_INBOX_EMAIL` configuration. When it is not set, placing an order SHALL record no owner email and SHALL NOT fail.
@@ -39,4 +35,23 @@ When a shipment is created for an order's fulfilment, the system SHALL send one 
 
 #### Scenario: Event delivered twice
 - **WHEN** the shipment event for the same fulfilment is handled a second time
+- **THEN** no additional notification is recorded
+
+### Requirement: Customer is emailed when their order is cancelled
+When an order is cancelled, the system SHALL send one email to the order's email address using the `order-canceled` template. The data SHALL contain the order's display id, currency and items, and a `refunded_total` holding the amount refunded on the order's payments, zero when nothing was refunded. When the order has no email address, the system SHALL log a warning and send nothing. Delivering the same cancelled event more than once SHALL NOT produce a second email.
+
+#### Scenario: Paid order cancelled
+- **WHEN** the owner cancels order `1042` for `buyer@example.com` whose captured payment of `59.90 EUR` is refunded by the cancellation
+- **THEN** one `order-canceled` notification on the `email` channel is recorded for `buyer@example.com` whose `refunded_total` is `59.90`
+
+#### Scenario: Order cancelled before any payment was captured
+- **WHEN** the owner cancels an order with no captured payment
+- **THEN** one `order-canceled` notification is recorded whose `refunded_total` is `0`
+
+#### Scenario: Order without email
+- **WHEN** an order without an email address is cancelled
+- **THEN** no notification is recorded
+
+#### Scenario: Event delivered twice
+- **WHEN** the cancelled event for the same order is handled a second time
 - **THEN** no additional notification is recorded

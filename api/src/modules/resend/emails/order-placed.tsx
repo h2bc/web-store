@@ -9,11 +9,8 @@ import {
   Link,
 } from "@react-email/components";
 import { EmailLayout } from "./layout";
-import {
-  BigNumberValue,
-  CustomerDTO,
-  OrderDTO,
-} from "@medusajs/framework/types";
+import { CustomerDTO, OrderDTO } from "@medusajs/framework/types";
+import { getPriceFormatter } from "./price";
 
 type OrderPlacedEmailProps = {
   order: OrderDTO & {
@@ -36,17 +33,7 @@ function OrderPlacedEmailComponent({
 }: OrderPlacedEmailProps) {
   const shouldDisplayBanner = email_banner && "title" in email_banner;
 
-  const formatter = new Intl.NumberFormat([], {
-    style: "currency",
-    currencyDisplay: "narrowSymbol",
-    currency: order.currency_code,
-  });
-
-  const formatPrice = (price: BigNumberValue) => {
-    const amount = Number(price);
-
-    return Number.isFinite(amount) ? formatter.format(amount) : "";
-  };
+  const formatPrice = getPriceFormatter(order.currency_code);
 
   return (
     <EmailLayout

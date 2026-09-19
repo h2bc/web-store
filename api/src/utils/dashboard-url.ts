@@ -7,7 +7,7 @@ import {
 export function dashboardUrl(
   container: MedusaContainer,
   path: string,
-  params: Record<string, string>,
+  params: Record<string, string> = {},
 ) {
   const { admin } = container.resolve(ContainerRegistrationKeys.CONFIG_MODULE);
   const backendUrl = process.env.MEDUSA_BACKEND_URL;
@@ -19,5 +19,7 @@ export function dashboardUrl(
     );
   }
 
-  return `${backendUrl.replace(/\/$/, "")}${admin.path}${path}?${new URLSearchParams(params)}`;
+  const query = new URLSearchParams(params).toString();
+
+  return `${backendUrl.replace(/\/$/, "")}${admin.path}${path}${query ? `?${query}` : ""}`;
 }

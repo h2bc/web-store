@@ -1,13 +1,16 @@
 import { ExecArgs } from "@medusajs/framework/types";
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils";
+import { dashboardUrl } from "../utils/dashboard-url";
 
 /**
  * Send a real email through the configured notification provider.
  *
  *   npx medusa exec ./src/scripts/test-email.ts you@example.com [template]
  *
- * Templates: order-placed (default), user-invited, password-reset, contact-message.
- * `order-placed` uses the most recent real order, falling back to the mock below.
+ * Templates: order-placed (default), order-placed-owner, order-shipped,
+ * order-canceled, user-invited, password-reset, contact-message.
+ * The order-placed templates use the most recent real order, falling back to
+ * the mock below. `order-shipped` uses the mock order with one tracking label.
  */
 export default async function testEmail({ container, args }: ExecArgs) {
   const [to, template = "order-placed"] = args;
@@ -18,38 +21,59 @@ export default async function testEmail({ container, args }: ExecArgs) {
   const query = container.resolve(ContainerRegistrationKeys.QUERY);
   const notification = container.resolve(Modules.NOTIFICATION);
 
+  const getOrderData = async () => {
+    const { data: orders } = await query.graph({
+      entity: "order",
+      fields: [
+        "id",
+        "display_id",
+        "email",
+        "currency_code",
+        "total",
+        "item_total",
+        "tax_total",
+        "items.*",
+        "shipping_methods.*",
+        "shipping_address.*",
+        "customer.*",
+      ],
+      pagination: { take: 1, order: { created_at: "DESC" } },
+    });
+
+    if (orders[0]) {
+      logger.info(`Using order #${orders[0].display_id}`);
+
+      return { order: orders[0] };
+    }
+
+    logger.info("No orders found, using mock order");
+
+    return mockOrder;
+  };
+
   let data: Record<string, unknown>;
 
   switch (template) {
-    case "order-placed": {
-      const { data: orders } = await query.graph({
-        entity: "order",
-        fields: [
-          "id",
-          "display_id",
-          "currency_code",
-          "total",
-          "item_total",
-          "tax_total",
-          "items.*",
-          "shipping_methods.*",
-          "shipping_address.*",
-          "customer.*",
-        ],
-        pagination: { take: 1, order: { created_at: "DESC" } },
-      });
+    case "order-placed":
+      data = await getOrderData();
+      break;
 
-      if (orders[0]) {
-        logger.info(`Using order #${orders[0].display_id}`);
-        data = { order: orders[0] };
-      } else {
-        logger.info("No orders found, using mock order");
-        data = mockOrder;
-      }
+    case "order-placed-owner": {
+      const { order } = await getOrderData();
 
+      data = {
+        order,
+        admin_url: dashboardUrl(container, `/orders/${order.id}`),
+      };
       break;
     }
 
+    case "order-shipped":
+      data = mockShipment;
+      break;
+    case "order-canceled":
+      data = mockCancellation;
+      break;
     case "user-invited":
       data = mockInvite;
       break;
@@ -411,4 +435,21 @@ const mockOrder = {
       deleted_at: null,
     },
   },
+};
+
+const mockShipment = {
+  order: mockOrder.order,
+  items: [{ id: "fulit_01", title: "Medusa Sweatshirt L", quantity: 1 }],
+  tracking: [
+    {
+      id: "fulla_01",
+      tracking_number: "LT123456789",
+      tracking_url: "https://tracking.example.com/LT123456789",
+    },
+  ],
+};
+
+const mockCancellation = {
+  order: mockOrder.order,
+  refunded_total: mockOrder.order.total,
 };
