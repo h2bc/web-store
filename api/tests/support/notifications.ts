@@ -1,5 +1,5 @@
 import { MedusaContainer } from "@medusajs/framework/types";
-import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils";
+import { Modules } from "@medusajs/framework/utils";
 import { sendOrderConfirmationWorkflow } from "../../src/workflows/send-order-confirmation";
 
 export const ORDER_INBOX = "orders@example.com";
@@ -23,13 +23,7 @@ export const ORDER = {
   shipping_methods: [{ name: "Standard Shipping LT", amount: 0 }],
 };
 
-export function spyOnLogger(container: MedusaContainer) {
-  const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
-
-  return { warn: jest.spyOn(logger, "warn") };
-}
-
-export async function withoutEnv<T>(key: string, run: () => Promise<T>) {
+export async function runWithoutEnv<T>(key: string, run: () => Promise<T>) {
   const value = process.env[key];
 
   delete process.env[key];

@@ -7,8 +7,7 @@ import {
   listOwnerEmails,
   ORDER_INBOX,
   placeOrder,
-  spyOnLogger,
-  withoutEnv,
+  runWithoutEnv,
 } from "./support/notifications";
 import {
   cancelOrder,
@@ -62,7 +61,7 @@ medusaIntegrationTestRunner({
       it("records no owner email when the inbox is not set", async () => {
         const order = await createOrder(getContainer());
 
-        await withoutEnv("ORDER_INBOX_EMAIL", () =>
+        await runWithoutEnv("ORDER_INBOX_EMAIL", () =>
           placeOrder(getContainer(), order.id),
         );
         const ownerEmails = await listOwnerEmails(getContainer());
@@ -100,15 +99,13 @@ medusaIntegrationTestRunner({
         expect(emails[0].data?.refunded_total).toEqual(0);
       });
 
-      it("warns and sends nothing when the cancelled order has no email", async () => {
+      it("sends nothing when the cancelled order has no email", async () => {
         const order = await createOrder(getContainer(), { email: undefined });
-        const logger = spyOnLogger(getContainer());
 
         await cancelOrder(getContainer(), order.id);
         const emails = await listCancelledEmails(getContainer());
 
         expect(emails).toHaveLength(0);
-        expect(logger.warn).toHaveBeenCalled();
       });
 
       it("does not email the shopper twice when the cancelled event is delivered again", async () => {

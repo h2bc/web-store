@@ -13,7 +13,10 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 - Stock Medusa v2, every `@medusajs/*` package pinned to the same exact release. Customisation lives only under `api/src/`.
 - `modules/`: `resend/`, `content-page/` (one row per fixed screen) and `gallery/` (the ordered video list).
 - `scripts/seed/`: one part per data set, run together by `scripts/seed.ts` or alone with `medusa exec`.
-- `workflows/`: `send-order-confirmation.ts` (customer email and owner email, each skipped when its recipient is missing), `send-shipment-notice.ts` (customer email with the shipped items and tracking), `send-cancellation-notice.ts` (customer email with the items and the refunded amount), `send-contact-message.ts`, `save-content-page.ts`, `save-gallery.ts`.
+- `workflows/`: `send-order-confirmation.ts`, `send-shipment-notice.ts`, `send-cancellation-notice.ts`, `send-contact-message.ts`, `save-content-page.ts`, `save-gallery.ts`.
+- `send-order-confirmation.ts` records the customer email and the owner email, each skipped when its recipient is missing.
+- `send-shipment-notice.ts` records the customer email with the shipped items and tracking.
+- `send-cancellation-notice.ts` records the customer email with the items and the refunded amount.
 - `subscribers/`: `order-placed.ts`, `shipment-created.ts`, `order-canceled.ts`, `invite.ts`, `password-reset.ts`.
 - `api/`: route files under `api/store/` and `api/admin/`. Body validation lives in `api/middlewares.ts`.
 - The contact rate limit keys on the first forwarded address outside the private network, because the storefront calls the API through the proxy.

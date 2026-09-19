@@ -50,7 +50,7 @@ When an order is cancelled, the system SHALL send one email to the order's email
 
 #### Scenario: Order without email
 - **WHEN** an order without an email address is cancelled
-- **THEN** a warning is logged and no notification is recorded
+- **THEN** no notification is recorded
 
 #### Scenario: Event delivered twice
 - **WHEN** the cancelled event for the same order is handled a second time

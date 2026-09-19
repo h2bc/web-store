@@ -31,8 +31,10 @@ None.
 
 ## Impact
 
-- `api/src/workflows/send-order-confirmation.ts` (adds the owner email), `api/src/workflows/send-shipment-notice.ts` (new), `api/src/subscribers/shipment-created.ts` (new), `api/src/workflows/send-cancellation-notice.ts` (new), `api/src/subscribers/order-canceled.ts` (new).
-- `api/.env.example`.
-- `api/src/modules/resend/service.ts`, `api/src/modules/resend/emails/order-placed-owner.tsx` (new), `api/src/modules/resend/emails/order-shipped.tsx` (new), `api/src/modules/resend/emails/order-canceled.tsx` (new), `api/src/scripts/test-email.ts`.
-- `api/tests/order-notifications.test.ts` (new), `docs/architecture.md`.
+- `api/src/workflows/send-order-confirmation.ts` gains the owner email.
+- New workflows: `api/src/workflows/send-shipment-notice.ts` and `api/src/workflows/send-cancellation-notice.ts`.
+- New subscribers: `api/src/subscribers/shipment-created.ts` and `api/src/subscribers/order-canceled.ts`.
+- New templates under `api/src/modules/resend/emails/`: `order-placed-owner.tsx`, `order-shipped.tsx` and `order-canceled.tsx`.
+- Edited: `api/src/modules/resend/service.ts`, `api/src/scripts/test-email.ts`, `api/.env.example` and `docs/architecture.md`.
+- New test file: `api/tests/order-notifications.test.ts`.
 - The deploy repository must set the key on the API worker container, since subscribers run there.
