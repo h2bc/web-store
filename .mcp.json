@@ -7,6 +7,19 @@
     "playwright": {
       "command": "npx",
       "args": ["@playwright/mcp@latest", "--headless", "--browser", "chromium"]
+    },
+    "nextcloud": {
+      "command": "uvx",
+      "args": [
+        "--env-file",
+        ".devcontainer/.env",
+        "nextcloud-mcp-server",
+        "run",
+        "--transport",
+        "stdio",
+        "--enable-app",
+        "deck"
+      ]
     }
   }
 }
