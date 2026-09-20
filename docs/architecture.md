@@ -16,11 +16,14 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 - `api/package.json` overrides `fast-xml-parser` and `protobufjs` under `pnpm.overrides` for security advisories.
 - `modules/`: `resend/`, `content-page/` (one row per fixed screen) and `gallery/` (the ordered video list).
 - `scripts/seed/`: one part per data set, run together by `scripts/seed.ts` or alone with `medusa exec`.
-- `workflows/`: `send-order-confirmation.ts`, `send-shipment-notice.ts`, `send-cancellation-notice.ts`, `send-contact-message.ts`, `save-content-page.ts`, `save-gallery.ts`.
+- `workflows/`: `send-order-confirmation.ts`, `send-shipment-notice.ts`, `send-cancellation-notice.ts`, `send-contact-message.ts`, `save-content-page.ts`, `save-gallery.ts`, `track-order-event.ts`.
 - `send-order-confirmation.ts` records the customer email and the owner email, each skipped when its recipient is missing.
 - `send-shipment-notice.ts` records the customer email with the shipped items and tracking.
 - `send-cancellation-notice.ts` records the customer email with the items and the refunded amount.
-- `subscribers/`: `order-placed.ts`, `shipment-created.ts`, `order-canceled.ts`, `invite.ts`, `password-reset.ts`.
+- `track-order-event.ts` sends one order event to the Analytics Module. It logs a failure and never fails the caller.
+- An order whose `metadata.analytics_consent` is true is tracked under its lowercased email. Any other order is tracked under its id with no personal field and no person profile.
+- `subscribers/`: `order-placed.ts`, `shipment-created.ts`, `order-canceled.ts`, `payment-captured.ts`, `payment-refunded.ts`, `invite.ts`, `password-reset.ts`.
+- The order, shipment and payment subscribers run `track-order-event.ts`. The first three run it after their email workflow.
 - `api/`: route files under `api/store/` and `api/admin/`. Body validation lives in `api/middlewares.ts`.
 - The contact rate limit keys on the first forwarded address outside the private network, because the storefront calls the API through the proxy.
 - `admin/routes/`: admin screens, one top-level sidebar item per content page plus the gallery editor. They are built from the components `@medusajs/dashboard` exports and load through TanStack Query; the drag ranking and the markdown preview are the only custom parts.
@@ -39,6 +42,7 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 - Stripe payments when `STRIPE_API_KEY` is set. Otherwise no payment module is registered.
 - Resend email when `RESEND_API_KEY` is set. Otherwise Medusa's local provider, which logs.
 - Owner order emails go to `ORDER_INBOX_EMAIL`. Unset, no owner email is recorded.
+- PostHog order analytics when `POSTHOG_KEY` is set, on `POSTHOG_HOST`. Otherwise Medusa's local analytics provider, which logs.
 - S3 file storage in production, local files otherwise.
 - Redis caching, event bus, workflow engine and locking in production only, on `REDIS_URL`, `EVENTS_REDIS_URL`, `WE_REDIS_URL` and `LOCKING_REDIS_URL`.
 - `api/.env.example` lists every key the config reads.
@@ -77,6 +81,7 @@ Server-first Next.js App Router.
 
 - The only session state is the cart id, in an httpOnly cookie managed by `front/lib/cookies.ts`.
 - A client component asks a server action, which reads the cookie. Nothing about the cart lives in client state.
+- PostHog keeps its own cookie only for a visitor who accepted analytics. It holds no cart or checkout state.
 - A cart id the backend answers 404 for, or whose cart is completed, reads as the empty cart without an error.
 - Add to cart reads the cart first and creates a new cart, replacing the cookie, when that read fails or the cart is completed.
 
@@ -87,6 +92,17 @@ Server-first Next.js App Router.
 - The address form's default country comes from Cloudflare's `CF-IPCountry` request header through `getDefaultCountryCode` in `front/lib/store.ts`, and falls back to Lithuania.
 - Payment is Stripe Elements from `front/lib/stripe.ts`. Redirect methods return to `checkout/return`.
 - `order/[id]/confirmed` is the only page that shows an order.
+
+### Analytics
+
+- PostHog is on when `POSTHOG_KEY` is set. Without it there is no banner and no tracking.
+- The root layout passes the key to `AnalyticsProvider` in `front/components/analytics/`, which starts PostHog, shows the consent banner and provides `useAnalyticsConsent` to the footer link.
+- `front/lib/analytics.ts` holds the PostHog config, the consent helpers and one `track` function per shop event. Components never import `posthog-js`.
+- PostHog runs in `cookieless_mode: 'on_reject'`. It holds every event until the visitor chooses, then tracks with cookies after Accept and anonymously without storage after Decline.
+- The browser reaches PostHog only through `/ingest`, two rewrites in `front/next.config.ts` to the EU cloud. `front/proxy.ts` skips that path.
+- The address step saves the choice as `metadata.analytics_consent` on the cart and identifies a shopper who accepted by email. The order inherits the metadata.
+- Order placed is a backend event only. Payment failed is a storefront event, from the payment step and the return page.
+- Playwright runs the storefront with a placeholder key, blocks `/ingest` and declines the banner in every journey but `tests/analytics.test.ts`.
 
 ### SEO
 

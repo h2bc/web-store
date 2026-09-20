@@ -74,3 +74,56 @@ export const UNSUPPORTED_COUNTRY = 'US'
 export const UNKNOWN_COUNTRY = 'XX'
 
 export const TOR_COUNTRY = 'T1'
+
+export const CHECKOUT_CART = {
+  id: CART_ID,
+  total: 59.9,
+  currency_code: 'eur',
+  shipping_address: { country_code: 'lt' },
+  shipping_methods: [{ name: 'Standard Shipping LT' }],
+  items: [
+    { id: 'item_beanie', quantity: 1 },
+    { id: 'item_tee_m', quantity: 2 },
+  ],
+} as unknown as HttpTypes.StoreCart
+
+export const CHECKOUT_CONTACT = {
+  email: ' Buyer@Example.com ',
+  address: {
+    name: 'Jonas Jonaitis',
+    firstName: 'Jonas',
+    lastName: 'Jonaitis',
+    phone: '',
+    address: {
+      line1: 'Gedimino pr. 1',
+      line2: null,
+      city: 'Vilnius',
+      state: '',
+      postal_code: '01103',
+      country: 'LT',
+    },
+  },
+}
+
+export const INGEST_PATH = '/ingest'
+
+export const INGEST_URL = 'http://localhost:3000/ingest/e/'
+
+export const POSTHOG_REWRITES = [
+  {
+    source: '/ingest/static/:path*',
+    destination: 'https://eu-assets.i.posthog.com/static/:path*',
+  },
+  {
+    source: '/ingest/:path*',
+    destination: 'https://eu.i.posthog.com/:path*',
+  },
+]
+
+export const FULL_TRACKING_OPTIONS = [
+  'autocapture',
+  'enable_heatmaps',
+  'capture_dead_clicks',
+  'capture_exceptions',
+  'enable_recording_console_log',
+]

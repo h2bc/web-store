@@ -44,6 +44,7 @@ function getPolicy(nonce: string): string {
     'font-src': ["'self'"],
     'connect-src': ["'self'", ...STRIPE.connections],
     'frame-src': [...STRIPE.frames, ...YOUTUBE.frames],
+    'worker-src': ["'self'", 'blob:'],
     'object-src': ["'none'"],
     'base-uri': ["'self'"],
     'form-action': ["'self'"],
@@ -71,7 +72,7 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     {
-      source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+      source: '/((?!api|ingest|_next/static|_next/image|favicon.ico).*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },

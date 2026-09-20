@@ -10,6 +10,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { setCheckoutContact } from '@/lib/data/cart'
+import {
+  hasAnalyticsConsent,
+  identifyShopper,
+  trackCheckoutStepCompleted,
+} from '@/lib/analytics'
 
 interface AddressStepProps {
   cart: HttpTypes.StoreCart
@@ -37,7 +42,11 @@ export default function AddressStep({
 
     setIsSubmitting(true)
 
-    const { error } = await setCheckoutContact({ email, address })
+    const { cart: savedCart, error } = await setCheckoutContact({
+      email,
+      address,
+      analyticsConsent: hasAnalyticsConsent(),
+    })
 
     if (error) {
       toast.error(error)
@@ -45,6 +54,13 @@ export default function AddressStep({
 
       return
     }
+
+    identifyShopper({
+      email,
+      name: address.name,
+      country: address.address.country.toLowerCase(),
+    })
+    if (savedCart) trackCheckoutStepCompleted('address', savedCart)
 
     router.push('/checkout?step=delivery')
   }

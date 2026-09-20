@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { cn } from '@/lib/utils'
 import { Toaster } from '@/components/ui/sonner'
+import AnalyticsProvider from '@/components/analytics/analytics-provider'
 import { unifraktur, edwardian } from './fonts'
 import {
   OPEN_GRAPH_DEFAULTS,
@@ -28,6 +29,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const posthogKey = process.env.POSTHOG_KEY
+
   return (
     <html lang="en">
       <body
@@ -40,7 +43,11 @@ export default function RootLayout({
         )}
       >
         <Toaster position="top-center" richColors />
-        {children}
+        {posthogKey ? (
+          <AnalyticsProvider apiKey={posthogKey}>{children}</AnalyticsProvider>
+        ) : (
+          children
+        )}
       </body>
     </html>
   )
