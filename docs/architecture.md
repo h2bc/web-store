@@ -13,7 +13,7 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 ### Extension points
 
 - Stock Medusa v2, every `@medusajs/*` package pinned to the same exact release. Customisation lives only under `api/src/`.
-- `api/package.json` overrides `fast-xml-parser` and `protobufjs` under `pnpm.overrides` for security advisories. Delete an override when Medusa resolves a fixed version by itself.
+- `api/package.json` overrides `fast-xml-parser` and `protobufjs` under `pnpm.overrides` for security advisories.
 - `modules/`: `resend/`, `content-page/` (one row per fixed screen) and `gallery/` (the ordered video list).
 - `scripts/seed/`: one part per data set, run together by `scripts/seed.ts` or alone with `medusa exec`.
 - `workflows/`: `send-order-confirmation.ts`, `send-shipment-notice.ts`, `send-cancellation-notice.ts`, `send-contact-message.ts`, `save-content-page.ts`, `save-gallery.ts`.
