@@ -102,7 +102,7 @@ const analyticsProvider = posthogKey
       id: "posthog",
       options: {
         posthogEventsKey: posthogKey,
-        posthogHost: process.env.POSTHOG_HOST,
+        posthogHost: "https://eu.i.posthog.com",
       },
     }
   : { resolve: "@medusajs/medusa/analytics-local", id: "local" };
