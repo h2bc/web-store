@@ -18,7 +18,11 @@
         "--transport",
         "stdio",
         "--enable-app",
-        "deck"
+        "deck",
+        "--enable-app",
+        "collectives",
+        "--enable-app",
+        "webdav"
       ]
     }
   }
