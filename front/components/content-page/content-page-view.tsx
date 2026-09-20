@@ -1,4 +1,5 @@
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import Heading from '@/components/layout/heading'
 import EmptyState, { EmptyStateTitle } from '@/components/feedback/empty-state'
 import ErrorAlert from '@/components/feedback/error-alert'
@@ -38,8 +39,10 @@ export default async function ContentPageView({ route }: ContentPageViewProps) {
             {contentPage.title}
           </Heading>
         )}
-        <div className="prose max-w-none">
-          <ReactMarkdown>{contentPage.body}</ReactMarkdown>
+        <div className="prose max-w-none overflow-x-auto">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {contentPage.body}
+          </ReactMarkdown>
         </div>
       </div>
     </div>
