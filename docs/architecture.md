@@ -42,7 +42,7 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 - Stripe payments when `STRIPE_API_KEY` is set. Otherwise no payment module is registered.
 - Resend email when `RESEND_API_KEY` is set. Otherwise Medusa's local provider, which logs.
 - Owner order emails go to `ORDER_INBOX_EMAIL`. Unset, no owner email is recorded.
-- PostHog order analytics when `POSTHOG_KEY` is set, on `POSTHOG_HOST`. Otherwise Medusa's local analytics provider, which logs.
+- PostHog order analytics when `POSTHOG_KEY` is set, on the EU host. Otherwise Medusa's local analytics provider, which logs.
 - S3 file storage in production, local files otherwise.
 - Redis caching, event bus, workflow engine and locking in production only, on `REDIS_URL`, `EVENTS_REDIS_URL`, `WE_REDIS_URL` and `LOCKING_REDIS_URL`.
 - `api/.env.example` lists every key the config reads.
