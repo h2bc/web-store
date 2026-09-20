@@ -83,6 +83,7 @@ Server-first Next.js App Router.
 
 - Guest-only. No accounts, no login, no order history.
 - `front/app/(main)/checkout/page.tsx` walks the steps in `front/lib/checkout-steps.ts`: email and address, shipping, payment.
+- The address form's default country comes from Cloudflare's `CF-IPCountry` request header through `getDefaultCountryCode` in `front/lib/store.ts`, and falls back to Lithuania.
 - Payment is Stripe Elements from `front/lib/stripe.ts`. Redirect methods return to `checkout/return`.
 - `order/[id]/confirmed` is the only page that shows an order.
 

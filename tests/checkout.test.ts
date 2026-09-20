@@ -1,4 +1,13 @@
-import { DECLINED_CARD, EMAIL, GERMAN_ADDRESS, LITHUANIAN_ADDRESS, VALID_CARD } from "./support/data";
+import {
+  DECLINED_CARD,
+  EMAIL,
+  GERMAN_ADDRESS,
+  LITHUANIAN_ADDRESS,
+  OTHER_SHIPPED_TO_COUNTRY,
+  SHIPPED_TO_COUNTRY,
+  UNSUPPORTED_COUNTRY,
+  VALID_CARD,
+} from "./support/data";
 import { expect, test } from "./support/fixtures";
 
 test("shopper can choose any country we ship to, with Lithuania preselected", async ({
@@ -17,6 +26,60 @@ test("shopper can choose any country we ship to, with Lithuania preselected", as
 
     expect(countries.length).toBeGreaterThan(1);
     expect(countries).toEqual([...countries].sort((a, b) => a.localeCompare(b)));
+  });
+});
+
+test("shopper from a country we ship to sees their own country preselected", async ({
+  checkout,
+  visitFrom,
+}) => {
+  await test.step("Given a shopper visiting from Germany", async () => {
+    await visitFrom(SHIPPED_TO_COUNTRY);
+  });
+
+  await test.step("When they open the address step with a product in the cart", async () => {
+    await checkout.addFirstProductAndOpenCheckout();
+  });
+
+  await test.step("Then Germany is preselected", async () => {
+    await expect(checkout.getCountryField()).toHaveValue(SHIPPED_TO_COUNTRY);
+  });
+});
+
+test("shopper from a country we do not ship to sees Lithuania preselected", async ({
+  checkout,
+  visitFrom,
+}) => {
+  await test.step("Given a shopper visiting from a country outside the region", async () => {
+    await visitFrom(UNSUPPORTED_COUNTRY);
+  });
+
+  await test.step("When they open the address step with a product in the cart", async () => {
+    await checkout.addFirstProductAndOpenCheckout();
+  });
+
+  await test.step("Then Lithuania is preselected", async () => {
+    await expect(checkout.getCountryField()).toHaveValue(LITHUANIAN_ADDRESS.country);
+  });
+});
+
+test("shopper who saved a German address keeps Germany when visiting from another country", async ({
+  checkout,
+  visitFrom,
+}) => {
+  await test.step("Given a shopper from Latvia who saved a German address", async () => {
+    await visitFrom(OTHER_SHIPPED_TO_COUNTRY);
+    await checkout.addFirstProductAndOpenCheckout();
+    await checkout.fillAddress(GERMAN_ADDRESS);
+    await checkout.continueToDelivery();
+  });
+
+  await test.step("When they return to the address step", async () => {
+    await checkout.openAddressStep();
+  });
+
+  await test.step("Then Germany is still selected", async () => {
+    await expect(checkout.getCountryField()).toHaveValue(GERMAN_ADDRESS.country);
   });
 });
 

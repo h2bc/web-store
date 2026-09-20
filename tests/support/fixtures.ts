@@ -7,6 +7,7 @@ import { ContentPage } from "./content-page";
 import { getGalleryVideos, saveGalleryVideos } from "./gallery";
 import { SeoPage } from "./seo-page";
 import { ShopPage } from "./shop-page";
+import { setVisitorCountry } from "./visitor";
 
 export const test = base.extend<{
   admin: AdminPage;
@@ -17,6 +18,7 @@ export const test = base.extend<{
   emptyGallery: void;
   seo: SeoPage;
   shop: ShopPage;
+  visitFrom: (country: string) => Promise<void>;
 }>({
   admin: async ({ page }, use) => {
     const admin = new AdminPage(page);
@@ -50,6 +52,9 @@ export const test = base.extend<{
   },
   shop: async ({ page }, use) => {
     await use(new ShopPage(page));
+  },
+  visitFrom: async ({ page }, use) => {
+    await use((country) => setVisitorCountry(page, country));
   },
 });
 
