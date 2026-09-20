@@ -31,6 +31,10 @@ export const GERMAN_ADDRESS: Address = {
   city: "Berlin",
 };
 
+export const SHIPPED_TO_COUNTRY = "DE";
+export const UNSUPPORTED_COUNTRY = "US";
+export const OTHER_SHIPPED_TO_COUNTRY = "LV";
+
 export const CONTENT_PAGES = [
   { path: "/privacy", label: "Privacy Policy" },
   { path: "/terms", label: "Terms & Conditions" },

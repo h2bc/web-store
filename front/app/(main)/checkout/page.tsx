@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import CheckoutStepSection from '@/components/checkout/checkout-step-section'
 import CheckoutSummary from '@/components/checkout/checkout-summary'
@@ -12,6 +13,7 @@ import { getCart } from '@/lib/data/cart'
 import { listCartShippingOptions } from '@/lib/data/shipping'
 import { getClientSecret } from '@/lib/payment-provider'
 import { CHECKOUT_STEPS, type CheckoutStep } from '@/lib/checkout-steps'
+import { getDefaultCountryCode } from '@/lib/store'
 
 export const metadata: Metadata = {
   title: 'Checkout',
@@ -69,6 +71,12 @@ export default async function CheckoutPage({
     c.iso_2 ? [c.iso_2.toUpperCase()] : []
   )
 
+  const requestHeaders = await headers()
+  const defaultCountryCode = getDefaultCountryCode(
+    requestHeaders.get('cf-ipcountry'),
+    countryCodes
+  )
+
   const { options, error: shippingError } =
     step === 'delivery'
       ? await listCartShippingOptions()
@@ -113,7 +121,11 @@ export default async function CheckoutPage({
                     </div>
                   }
                 >
-                  <AddressStep cart={cart} countryCodes={countryCodes} />
+                  <AddressStep
+                    cart={cart}
+                    countryCodes={countryCodes}
+                    defaultCountryCode={defaultCountryCode}
+                  />
                 </CheckoutStepSection>
 
                 <CheckoutStepSection

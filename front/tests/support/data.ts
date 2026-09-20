@@ -66,3 +66,11 @@ export const UNSORTED_CART = {
 } as unknown as HttpTypes.StoreCart
 
 export const SORTED_ITEM_IDS = ['item_beanie', 'item_tee_l', 'item_tee_m']
+
+export const REGION_COUNTRY_CODES = ['DE', 'LT', 'LV']
+
+export const UNSUPPORTED_COUNTRY = 'US'
+
+export const UNKNOWN_COUNTRY = 'XX'
+
+export const TOR_COUNTRY = 'T1'
