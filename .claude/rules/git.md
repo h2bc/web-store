@@ -23,6 +23,7 @@
 
 - `main` moves only by a squash-merged pull request whose `Check` job passed.
 - Work happens on a short-lived branch named after the OpenSpec change, deleted after the merge.
+- A change that started from a Deck card prefixes the card id: `<cardId>-<change-name>`.
 - The pull request title becomes the one commit on `main`.
 
 ## Hooks in `.githooks/`
