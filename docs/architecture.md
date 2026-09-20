@@ -18,7 +18,11 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 - `scripts/seed/`: one part per data set, run together by `scripts/seed.ts` or alone with `medusa exec`.
 - `workflows/`: `send-order-confirmation.ts`, `send-shipment-notice.ts`, `send-cancellation-notice.ts`, `send-contact-message.ts`, `save-content-page.ts`, `save-gallery.ts`, `track-order-event.ts`.
 - `send-order-confirmation.ts` records the customer email and the owner email, each skipped when its recipient is missing.
+- `send-fulfillment-notice.ts` records the customer email with the items being packed, on `order.fulfillment_created`.
 - `send-shipment-notice.ts` records the customer email with the shipped items and tracking.
+- `send-delivery-notice.ts` records the customer email with the delivered items, on `delivery.created`.
+- `send-order-edit-notice.ts` records the customer email with the items and total after the edit, on `order-edit.confirmed`.
+- The fulfilment, shipment, delivery and order edit emails are skipped when the admin's "Send notification" box is unticked.
 - `send-cancellation-notice.ts` records the customer email with the items and the refunded amount.
 - `track-order-event.ts` sends one order event to the Analytics Module. It logs a failure and never fails the caller.
 - An order whose `metadata.analytics_consent` is true is tracked under its lowercased email. Any other order is tracked under its id with no personal field and no person profile.

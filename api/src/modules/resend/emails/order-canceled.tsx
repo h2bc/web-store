@@ -2,12 +2,13 @@ import { Container, Heading, Text } from "@react-email/components";
 import { BigNumberValue } from "@medusajs/framework/types";
 import { EmailLayout } from "./layout";
 import { getPriceFormatter } from "./price";
+import { EmailItem, OrderItems } from "./order-parts";
 
 type OrderCanceledEmailProps = {
   order: {
     display_id: number;
     currency_code: string;
-    items: { id: string; title: string; quantity: number }[];
+    items: EmailItem[];
   };
   refunded_total: BigNumberValue;
   logo_url?: string;
@@ -41,14 +42,7 @@ function OrderCanceledEmailComponent({
       </Container>
 
       <Container className="px-6">
-        <Heading className="text-xl font-semibold text-gray-800 mb-4">
-          Cancelled items
-        </Heading>
-        {order.items.map((item) => (
-          <Text key={item.id} className="m-0 text-gray-800">
-            {Number(item.quantity)} × {item.title}
-          </Text>
-        ))}
+        <OrderItems heading="Cancelled items" items={order.items} />
       </Container>
     </EmailLayout>
   );
