@@ -17,15 +17,14 @@ import {
   OrderLine,
 } from "../utils/fulfilled-items";
 
-type SendShipmentNoticeInput = {
+type SendFulfillmentNoticeInput = {
   id: string;
   no_notification?: boolean;
 };
 
-type ShippedFulfillment = {
+type CreatedFulfillment = {
   id: string;
   items: FulfillmentItem[];
-  labels: unknown[];
   order: {
     id: string;
     display_id: number;
@@ -35,20 +34,20 @@ type ShippedFulfillment = {
   } | null;
 };
 
-const warnShipmentWithoutEmailStep = createStep(
-  "warn-shipment-without-email",
+const warnFulfillmentWithoutEmailStep = createStep(
+  "warn-fulfillment-without-email",
   async ({ id }: { id: string }, { container }) => {
     container
       .resolve(ContainerRegistrationKeys.LOGGER)
       .warn(
-        `Fulfillment ${id} belongs to an order without email, skipping the shipped email`,
+        `Fulfillment ${id} belongs to an order without email, skipping the fulfilment created email`,
       );
   },
 );
 
-export const sendShipmentNoticeWorkflow = createWorkflow(
-  "send-shipment-notice",
-  (input: SendShipmentNoticeInput) => {
+export const sendFulfillmentNoticeWorkflow = createWorkflow(
+  "send-fulfillment-notice",
+  (input: SendFulfillmentNoticeInput) => {
     const fulfillment = when(
       input,
       ({ no_notification }) => !no_notification,
@@ -57,7 +56,6 @@ export const sendShipmentNoticeWorkflow = createWorkflow(
         entity: "fulfillment",
         fields: [
           "id",
-          "labels.*",
           "items.*",
           "order.id",
           "order.display_id",
@@ -69,18 +67,18 @@ export const sendShipmentNoticeWorkflow = createWorkflow(
         options: { throwIfKeyNotFound: true },
       });
 
-      const shipped: WorkflowData<ShippedFulfillment> = transform(
+      const loaded: WorkflowData<CreatedFulfillment> = transform(
         { fulfillments },
-        ({ fulfillments }) => fulfillments[0] as unknown as ShippedFulfillment,
+        ({ fulfillments }) => fulfillments[0] as unknown as CreatedFulfillment,
       );
 
-      return shipped;
+      return loaded;
     });
 
     when(
       { fulfillment },
       ({ fulfillment }) => !!fulfillment && !fulfillment.order?.email,
-    ).then(() => warnShipmentWithoutEmailStep({ id: input.id }));
+    ).then(() => warnFulfillmentWithoutEmailStep({ id: input.id }));
 
     const notifications = when(
       { fulfillment },
@@ -90,16 +88,15 @@ export const sendShipmentNoticeWorkflow = createWorkflow(
         {
           to: fulfillment!.order!.email!,
           channel: "email",
-          template: "order-shipped",
+          template: "order-fulfillment-created",
           data: {
             order: fulfillment!.order,
             items: getFulfilledItems(
               fulfillment!.items,
               fulfillment!.order?.items,
             ),
-            tracking: fulfillment!.labels,
           },
-          idempotency_key: `order-shipped-${fulfillment!.id}`,
+          idempotency_key: `order-fulfillment-created-${fulfillment!.id}`,
         },
       ]);
 

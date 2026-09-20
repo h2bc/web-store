@@ -7,14 +7,14 @@ import {
 } from "@react-email/components";
 import { OrderAddressDTO } from "@medusajs/framework/types";
 import { EmailLayout } from "./layout";
-import { getAddressLines } from "./address";
+import { EmailItem, OrderAddress, OrderItems } from "./order-parts";
 
 type OrderShippedEmailProps = {
   order: {
     display_id: number;
     shipping_address?: OrderAddressDTO | null;
   };
-  items: { id: string; title: string; quantity: number }[];
+  items: EmailItem[];
   tracking: { id: string; tracking_number: string; tracking_url?: string }[];
   logo_url?: string;
   contact_email?: string;
@@ -43,14 +43,7 @@ function OrderShippedEmailComponent({
       </Container>
 
       <Container className="px-6">
-        <Heading className="text-xl font-semibold text-gray-800 mb-4">
-          Shipped items
-        </Heading>
-        {items.map((item) => (
-          <Text key={item.id} className="m-0 text-gray-800">
-            {Number(item.quantity)} × {item.title}
-          </Text>
-        ))}
+        <OrderItems heading="Shipped items" items={items} />
 
         {tracking.length > 0 && (
           <Section className="mt-8">
@@ -69,16 +62,10 @@ function OrderShippedEmailComponent({
           </Section>
         )}
 
-        <Section className="mt-8">
-          <Heading className="text-xl font-semibold text-gray-800 mb-4">
-            Delivering to
-          </Heading>
-          {getAddressLines(order.shipping_address).map((line) => (
-            <Text key={line} className="m-0 text-gray-800">
-              {line}
-            </Text>
-          ))}
-        </Section>
+        <OrderAddress
+          heading="Delivering to"
+          address={order.shipping_address}
+        />
       </Container>
     </EmailLayout>
   );

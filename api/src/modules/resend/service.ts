@@ -10,7 +10,10 @@ import {
 import { CreateEmailOptions, Resend } from "resend";
 import { orderPlacedEmail } from "./emails/order-placed";
 import { orderPlacedOwnerEmail } from "./emails/order-placed-owner";
+import { orderFulfillmentCreatedEmail } from "./emails/order-fulfillment-created";
 import { orderShippedEmail } from "./emails/order-shipped";
+import { orderDeliveredEmail } from "./emails/order-delivered";
+import { orderEditedEmail } from "./emails/order-edited";
 import { orderCanceledEmail } from "./emails/order-canceled";
 import { getPriceFormatter } from "./emails/price";
 import { userInvitedEmail } from "./emails/user-invited";
@@ -21,7 +24,10 @@ import { OrderDTO } from "@medusajs/framework/types";
 enum Templates {
   ORDER_PLACED = "order-placed",
   ORDER_PLACED_OWNER = "order-placed-owner",
+  ORDER_FULFILLMENT_CREATED = "order-fulfillment-created",
   ORDER_SHIPPED = "order-shipped",
+  ORDER_DELIVERED = "order-delivered",
+  ORDER_EDITED = "order-edited",
   ORDER_CANCELED = "order-canceled",
   USER_INVITED = "user-invited",
   PASSWORD_RESET = "password-reset",
@@ -33,7 +39,10 @@ const templates: {
 } = {
   [Templates.ORDER_PLACED]: orderPlacedEmail,
   [Templates.ORDER_PLACED_OWNER]: orderPlacedOwnerEmail,
+  [Templates.ORDER_FULFILLMENT_CREATED]: orderFulfillmentCreatedEmail,
   [Templates.ORDER_SHIPPED]: orderShippedEmail,
+  [Templates.ORDER_DELIVERED]: orderDeliveredEmail,
+  [Templates.ORDER_EDITED]: orderEditedEmail,
   [Templates.ORDER_CANCELED]: orderCanceledEmail,
   [Templates.USER_INVITED]: userInvitedEmail,
   [Templates.PASSWORD_RESET]: passwordResetEmail,
@@ -114,8 +123,14 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
         return "Order Confirmation";
       case Templates.ORDER_PLACED_OWNER:
         return getOrderSubject(data.order as OrderDTO);
+      case Templates.ORDER_FULFILLMENT_CREATED:
+        return `We are preparing your order #${(data.order as OrderDTO).display_id}`;
       case Templates.ORDER_SHIPPED:
         return `Your order #${(data.order as OrderDTO).display_id} is on its way`;
+      case Templates.ORDER_DELIVERED:
+        return `Your order #${(data.order as OrderDTO).display_id} was delivered`;
+      case Templates.ORDER_EDITED:
+        return `Your order #${(data.order as OrderDTO).display_id} was changed`;
       case Templates.ORDER_CANCELED:
         return `Your order #${(data.order as OrderDTO).display_id} was cancelled`;
       case Templates.USER_INVITED:

@@ -3,11 +3,12 @@ import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils";
 import {
   createOrderFulfillmentWorkflow,
   createOrderShipmentWorkflow,
+  markOrderFulfillmentAsDeliveredWorkflow,
   createShippingOptionsWorkflow,
   createShippingProfilesWorkflow,
   createStockLocationsWorkflow,
 } from "@medusajs/medusa/core-flows";
-import { createOrder, listNotifications, ORDER } from "./notifications";
+import { createOrder, ORDER } from "./notifications";
 
 export const TRACKING = {
   tracking_number: "LT123456789",
@@ -16,11 +17,6 @@ export const TRACKING = {
 };
 
 const MANUAL_PROVIDER = "manual_manual";
-const WAIT_MS = 5000;
-const SETTLE_MS = 1000;
-const POLL_MS = 100;
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function createShippingOption(container: MedusaContainer) {
   const link = container.resolve(ContainerRegistrationKeys.LINK);
@@ -96,16 +92,32 @@ export async function createShippableOrder(
 const getOrderItems = (order: OrderDTO) =>
   (order.items ?? []).map((item) => ({ id: item.id, quantity: item.quantity }));
 
-export async function shipOrder(
+type NotifyOptions = { no_notification?: boolean };
+
+export async function fulfillOrder(
   container: MedusaContainer,
   order: OrderDTO,
-  options: { labels?: (typeof TRACKING)[]; no_notification?: boolean } = {},
+  options: NotifyOptions = {},
 ) {
   const { result: fulfillment } = await createOrderFulfillmentWorkflow(
     container,
   ).run({
-    input: { order_id: order.id, items: getOrderItems(order) },
+    input: {
+      order_id: order.id,
+      items: getOrderItems(order),
+      no_notification: options.no_notification ?? false,
+    },
   });
+
+  return fulfillment;
+}
+
+export async function shipOrder(
+  container: MedusaContainer,
+  order: OrderDTO,
+  options: NotifyOptions & { labels?: (typeof TRACKING)[] } = {},
+) {
+  const fulfillment = await fulfillOrder(container, order);
 
   await createOrderShipmentWorkflow(container).run({
     input: {
@@ -120,39 +132,22 @@ export async function shipOrder(
   return fulfillment;
 }
 
-export function redeliverShipmentEvent(
+export async function deliverOrder(
   container: MedusaContainer,
-  fulfillmentId: string,
+  order: OrderDTO,
+  options: NotifyOptions = {},
 ) {
-  return container.resolve(Modules.EVENT_BUS).emit({
-    name: "shipment.created",
-    data: { id: fulfillmentId, no_notification: false },
+  const fulfillment = await fulfillOrder(container, order, {
+    no_notification: true,
   });
-}
 
-const listShippedEmails = (container: MedusaContainer) =>
-  listNotifications(container, { template: "order-shipped", channel: "email" });
+  await markOrderFulfillmentAsDeliveredWorkflow(container).run({
+    input: {
+      orderId: order.id,
+      fulfillmentId: fulfillment.id,
+      no_notification: options.no_notification ?? false,
+    },
+  });
 
-export async function waitForShippedEmails(
-  container: MedusaContainer,
-  count: number,
-  deadline = Date.now() + WAIT_MS,
-): ReturnType<typeof listShippedEmails> {
-  const emails = await listShippedEmails(container);
-
-  if (emails.length >= count || Date.now() > deadline) {
-    return emails;
-  }
-
-  await sleep(POLL_MS);
-
-  return waitForShippedEmails(container, count, deadline);
-}
-
-export async function listShippedEmailsAfterSettling(
-  container: MedusaContainer,
-) {
-  await sleep(SETTLE_MS);
-
-  return listShippedEmails(container);
+  return fulfillment;
 }
