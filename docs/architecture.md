@@ -18,7 +18,11 @@ Two independent pnpm projects in one repository. The root `package.json` only wr
 - `scripts/seed/`: one part per data set, run together by `scripts/seed.ts` or alone with `medusa exec`.
 - `workflows/`: `send-order-confirmation.ts`, `send-shipment-notice.ts`, `send-cancellation-notice.ts`, `send-contact-message.ts`, `save-content-page.ts`, `save-gallery.ts`.
 - `send-order-confirmation.ts` records the customer email and the owner email, each skipped when its recipient is missing.
+- `send-fulfillment-notice.ts` records the customer email with the items being packed, on `order.fulfillment_created`.
 - `send-shipment-notice.ts` records the customer email with the shipped items and tracking.
+- `send-delivery-notice.ts` records the customer email with the delivered items, on `delivery.created`.
+- `send-order-edit-notice.ts` records the customer email with the items and total after the edit, on `order-edit.confirmed`.
+- The fulfilment, shipment, delivery and order edit emails are skipped when the admin's "Send notification" box is unticked.
 - `send-cancellation-notice.ts` records the customer email with the items and the refunded amount.
 - `subscribers/`: `order-placed.ts`, `shipment-created.ts`, `order-canceled.ts`, `invite.ts`, `password-reset.ts`.
 - `api/`: route files under `api/store/` and `api/admin/`. Body validation lives in `api/middlewares.ts`.

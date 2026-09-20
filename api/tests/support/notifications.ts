@@ -5,6 +5,12 @@ import { sendOrderConfirmationWorkflow } from "../../src/workflows/send-order-co
 export const ORDER_INBOX = "orders@example.com";
 export const BACKEND_URL = "https://api.example.com";
 
+const WAIT_MS = 5000;
+const SETTLE_MS = 1000;
+const POLL_MS = 100;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const ORDER = {
   email: "buyer@example.com",
   currency_code: "eur",
@@ -82,4 +88,41 @@ export function listCustomerEmails(container: MedusaContainer) {
     template: "order-placed",
     channel: "email",
   });
+}
+
+export function redeliverEvent(
+  container: MedusaContainer,
+  name: string,
+  data: Record<string, unknown>,
+) {
+  return container.resolve(Modules.EVENT_BUS).emit({ name, data });
+}
+
+const listEmails = (container: MedusaContainer, template: string) =>
+  listNotifications(container, { template, channel: "email" });
+
+export async function waitForEmails(
+  container: MedusaContainer,
+  template: string,
+  count: number,
+  deadline = Date.now() + WAIT_MS,
+): ReturnType<typeof listEmails> {
+  const emails = await listEmails(container, template);
+
+  if (emails.length >= count || Date.now() > deadline) {
+    return emails;
+  }
+
+  await sleep(POLL_MS);
+
+  return waitForEmails(container, template, count, deadline);
+}
+
+export async function listEmailsAfterSettling(
+  container: MedusaContainer,
+  template: string,
+) {
+  await sleep(SETTLE_MS);
+
+  return listEmails(container, template);
 }

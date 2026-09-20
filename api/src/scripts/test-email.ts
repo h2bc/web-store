@@ -7,7 +7,8 @@ import { dashboardUrl } from "../utils/dashboard-url";
  *
  *   npx medusa exec ./src/scripts/test-email.ts you@example.com [template]
  *
- * Templates: order-placed (default), order-placed-owner, order-shipped,
+ * Templates: order-placed (default), order-placed-owner,
+ * order-fulfillment-created, order-shipped, order-delivered, order-edited,
  * order-canceled, user-invited, password-reset, contact-message.
  * The order-placed templates use the most recent real order, falling back to
  * the mock below. `order-shipped` uses the mock order with one tracking label.
@@ -68,8 +69,15 @@ export default async function testEmail({ container, args }: ExecArgs) {
       break;
     }
 
+    case "order-fulfillment-created":
+    case "order-delivered":
+      data = mockFulfillment;
+      break;
     case "order-shipped":
       data = mockShipment;
+      break;
+    case "order-edited":
+      data = mockOrder;
       break;
     case "order-canceled":
       data = mockCancellation;
@@ -437,9 +445,17 @@ const mockOrder = {
   },
 };
 
-const mockShipment = {
+const mockFulfillment = {
   order: mockOrder.order,
-  items: [{ id: "fulit_01", title: "Medusa Sweatshirt L", quantity: 1 }],
+  items: mockOrder.order.items.map((item) => ({
+    ...item,
+    id: "fulit_01",
+    quantity: 1,
+  })),
+};
+
+const mockShipment = {
+  ...mockFulfillment,
   tracking: [
     {
       id: "fulla_01",
