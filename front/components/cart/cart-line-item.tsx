@@ -10,6 +10,7 @@ import type { HttpTypes } from '@medusajs/types'
 import { Button } from '@/components/ui/button'
 import Stepper from '@/components/ui/stepper'
 import { removeItemFromCart, updateItemQuantity } from '@/lib/data/cart'
+import { trackRemovedFromCart } from '@/lib/analytics'
 import { formatPrice } from '@/lib/utils'
 import { productPath } from '@/lib/routes'
 
@@ -59,6 +60,7 @@ export default function CartLineItem({
     if (error) {
       toast.error(error)
     } else {
+      trackRemovedFromCart(item, currencyCode)
       startTransition(() => {
         router.refresh()
         onRemoveSuccess?.()

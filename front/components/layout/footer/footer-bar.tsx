@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { POLICY_PAGES } from '@/lib/routes'
+import { useAnalyticsConsent } from '@/components/analytics/analytics-provider'
 
 export default function FooterBar() {
   const isCheckout = usePathname().startsWith('/checkout')
+  const { isEnabled, openConsentBanner } = useAnalyticsConsent()
 
   return (
     <footer className="w-full px-4 sm:px-8 md:px-12 lg:px-18 pt-8 sm:pt-10 md:pt-12 pb-6 sm:pb-8 md:pb-10 lg:pb-10 text-sm">
@@ -20,11 +22,20 @@ export default function FooterBar() {
               key={page.path}
               variant="link"
               asChild
-              className="uppercase text-xs p-0 h-auto"
+              className="text-xs p-0 h-auto"
             >
               <Link href={page.path}>{page.label}</Link>
             </Button>
           ))}
+          {isEnabled && (
+            <Button
+              variant="link"
+              className="text-xs p-0 h-auto"
+              onClick={openConsentBanner}
+            >
+              Cookies
+            </Button>
+          )}
         </div>
         {/* Right group: rights notice + social icons */}
         <div className="flex items-center gap-4">

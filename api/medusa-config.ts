@@ -50,6 +50,7 @@ const prodOnlyModules = [
 
 const stripeApiKey = process.env.STRIPE_API_KEY;
 const resendApiKey = process.env.RESEND_API_KEY;
+const posthogKey = process.env.POSTHOG_KEY;
 
 const paymentModule = stripeApiKey
   ? [
@@ -94,6 +95,17 @@ const notificationProvider = resendApiKey
       id: "local",
       options: { channels: ["email"] },
     };
+
+const analyticsProvider = posthogKey
+  ? {
+      resolve: "@medusajs/medusa/analytics-posthog",
+      id: "posthog",
+      options: {
+        posthogEventsKey: posthogKey,
+        posthogHost: process.env.POSTHOG_HOST,
+      },
+    }
+  : { resolve: "@medusajs/medusa/analytics-local", id: "local" };
 
 module.exports = defineConfig({
   projectConfig: {
@@ -147,6 +159,10 @@ module.exports = defineConfig({
     {
       resolve: "@medusajs/medusa/notification",
       options: { providers: [notificationProvider] },
+    },
+    {
+      resolve: "@medusajs/medusa/analytics",
+      options: { providers: [analyticsProvider] },
     },
     ...paymentModule,
     ...(process.env.NODE_ENV === "production" ? prodOnlyModules : []),

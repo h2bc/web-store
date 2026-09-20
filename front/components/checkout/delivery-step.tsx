@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { setShippingMethod } from '@/lib/data/cart'
+import { trackCheckoutStepCompleted } from '@/lib/analytics'
 import type { ShippingOptionSummary } from '@/lib/data/shipping'
 import { formatPrice } from '@/lib/utils'
 
@@ -39,7 +40,7 @@ export default function DeliveryStep({
     if (!selected) return
 
     setIsSubmitting(true)
-    const { error } = await setShippingMethod(selected)
+    const { cart, error } = await setShippingMethod(selected)
 
     if (error) {
       toast.error(error)
@@ -47,6 +48,8 @@ export default function DeliveryStep({
 
       return
     }
+
+    if (cart) trackCheckoutStepCompleted('delivery', cart)
 
     router.push('/checkout?step=payment')
   }
