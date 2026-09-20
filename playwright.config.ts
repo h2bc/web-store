@@ -1,5 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-import { API_URL, SITE_URL } from "./tests/support/data";
+import { API_URL, E2E_POSTHOG_KEY, SITE_URL } from "./tests/support/data";
 
 export default defineConfig({
   testDir: "./tests",
@@ -34,6 +34,7 @@ export default defineConfig({
     {
       command: "pnpm dev:front",
       url: SITE_URL,
+      env: { POSTHOG_KEY: E2E_POSTHOG_KEY },
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
     },

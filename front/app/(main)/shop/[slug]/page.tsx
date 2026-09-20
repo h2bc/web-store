@@ -4,6 +4,7 @@ import JsonLd from '@/components/seo/json-ld'
 import { productJsonLd, productMetadata, siteUrl } from '@/lib/seo'
 import { productPath } from '@/lib/routes'
 import ProductImageCarousel from '@/components/shop/product-detail/product-image-carousel'
+import TrackProductViewed from '@/components/analytics/track-product-viewed'
 import ProductDetails from '@/components/shop/product-detail/product-details'
 import ProductDescription from '@/components/shop/product-detail/product-description'
 import Heading from '@/components/layout/heading'
@@ -64,6 +65,12 @@ export default async function ProductDetailPage({ params }: Props) {
       <JsonLd
         data={productJsonLd(product!, siteUrl() + productPath(product!.slug))}
       />
+      <TrackProductViewed
+        slug={product!.slug}
+        name={product!.name}
+        price={product!.variants[0]?.price}
+        currency={product!.variants[0]?.currency}
+      />
       {/* Left: Gallery */}
       <ProductImageCarousel images={product!.images} name={product!.name} />
 
@@ -72,6 +79,7 @@ export default async function ProductDetailPage({ params }: Props) {
         <Heading level={1}>{product!.name}</Heading>
 
         <ProductDetails
+          product={{ slug: product!.slug, name: product!.name }}
           sizes={product!.sizes}
           variants={product!.variants}
           options={product!.options}

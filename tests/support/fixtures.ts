@@ -2,17 +2,22 @@ import { test as base } from "@playwright/test";
 import { AdminPage } from "./admin-page";
 import { CartPage } from "./cart-page";
 import { CheckoutPage } from "./checkout-page";
+import { ConsentBanner } from "./consent-banner";
 import { ContactPage } from "./contact-page";
 import { ContentPage } from "./content-page";
 import { getGalleryVideos, saveGalleryVideos } from "./gallery";
 import { SeoPage } from "./seo-page";
 import { ShopPage } from "./shop-page";
-import { setVisitorCountry } from "./visitor";
+import { blockAnalyticsRequests, declineConsentWhenAsked, setVisitorCountry } from "./visitor";
 
 export const test = base.extend<{
   admin: AdminPage;
+  analyticsBlocked: void;
   cart: CartPage;
   checkout: CheckoutPage;
+  consent: ConsentBanner;
+  consentDeclined: void;
+  keepConsentBanner: boolean;
   contact: ContactPage;
   content: ContentPage;
   emptyGallery: void;
@@ -34,6 +39,25 @@ export const test = base.extend<{
     await saveGalleryVideos(page.request, []);
     await use();
     await saveGalleryVideos(page.request, videos);
+  },
+  analyticsBlocked: [
+    async ({ page }, use) => {
+      await blockAnalyticsRequests(page);
+      await use();
+    },
+    { auto: true },
+  ],
+  keepConsentBanner: [false, { option: true }],
+  consentDeclined: [
+    async ({ page, keepConsentBanner }, use) => {
+      if (!keepConsentBanner) await declineConsentWhenAsked(page);
+
+      await use();
+    },
+    { auto: true },
+  ],
+  consent: async ({ page }, use) => {
+    await use(new ConsentBanner(page));
   },
   cart: async ({ page }, use) => {
     await use(new CartPage(page));

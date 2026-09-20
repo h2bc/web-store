@@ -8,6 +8,7 @@ import type { HttpTypes } from '@medusajs/types'
 import { Button } from '@/components/ui/button'
 import ErrorAlert from '@/components/feedback/error-alert'
 import { completeCart } from '@/lib/data/cart'
+import { getCartEventProperties, trackPaymentFailed } from '@/lib/analytics'
 import { getClientSecret } from '@/lib/payment-provider'
 
 interface PaymentStepProps {
@@ -30,7 +31,7 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
     setIsPlacing(true)
     setPaymentError(null)
 
-    let stripeError: { message?: string } | undefined
+    let stripeError: { message?: string; code?: string } | undefined
 
     try {
       const result = await stripe.confirmPayment({
@@ -63,6 +64,7 @@ export default function PaymentStep({ cart }: PaymentStepProps) {
     }
 
     if (stripeError) {
+      trackPaymentFailed(stripeError.code, getCartEventProperties(cart))
       setPaymentError(
         stripeError.message ?? 'Your payment could not be completed.'
       )

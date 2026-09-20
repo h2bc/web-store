@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/card'
 import { completeCart, releaseCart } from '@/lib/data/cart'
 import { getStripe } from '@/lib/stripe'
+import { trackPaymentFailed } from '@/lib/analytics'
 
 interface PaymentReturnProps {
   publishableKey: string
@@ -83,6 +84,10 @@ export default function PaymentReturn({
 
           return
         default:
+          trackPaymentFailed(paymentIntent.last_payment_error?.code, {
+            cart_value: paymentIntent.amount / 100,
+            currency: paymentIntent.currency,
+          })
           fail(
             paymentIntent.last_payment_error?.message ??
               'Your payment was not completed.'

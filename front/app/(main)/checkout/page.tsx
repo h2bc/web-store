@@ -1,3 +1,4 @@
+import TrackCheckoutStarted from '@/components/analytics/track-checkout-started'
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -90,6 +91,17 @@ export default async function CheckoutPage({
 
   return (
     <div className="flex justify-center pt-15">
+      {!addressDone && (
+        <TrackCheckoutStarted
+          cartId={cart.id}
+          cartValue={cart.total}
+          currency={cart.currency_code}
+          itemCount={(cart.items ?? []).reduce(
+            (count, item) => count + item.quantity,
+            0
+          )}
+        />
+      )}
       <div className="max-w-5xl w-full flex flex-col pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_22rem] gap-8 items-start">
           {stripePublishableKey ? (

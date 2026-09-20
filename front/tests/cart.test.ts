@@ -1,11 +1,13 @@
 import { describe, expect, it, vi } from 'vitest'
 import { sdk } from '@/lib/medusa'
 import { getCartId } from '@/lib/cookies'
-import { addItemToCart, getCart } from '@/lib/data/cart'
+import { addItemToCart, getCart, setCheckoutContact } from '@/lib/data/cart'
 import {
   BACKEND_UNREACHABLE,
   CART_ID,
   CART_NOT_FOUND,
+  CHECKOUT_CART,
+  CHECKOUT_CONTACT,
   COMPLETED_CART,
   NEW_CART,
   NEW_CART_WITH_ITEM,
@@ -19,10 +21,17 @@ import {
 vi.mock('@/lib/medusa', () => ({
   sdk: {
     store: {
-      cart: { retrieve: vi.fn(), create: vi.fn(), createLineItem: vi.fn() },
+      cart: {
+        retrieve: vi.fn(),
+        create: vi.fn(),
+        createLineItem: vi.fn(),
+        update: vi.fn(),
+      },
     },
   },
 }))
+
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }))
 
 vi.mock('@/lib/cookies', () => ({
   getCartId: vi.fn(),
@@ -157,5 +166,37 @@ describe('reading the cart with a stale cart cookie', () => {
     const result = await getCart()
 
     expect(result).toEqual(emptyCart)
+  })
+})
+
+describe('saving the checkout address', () => {
+  it('shopper accepted analytics: the cart records the consent', async () => {
+    vi.mocked(getCartId).mockResolvedValue(CART_ID)
+    vi.mocked(sdk.store.cart.update).mockResolvedValue({ cart: CHECKOUT_CART })
+
+    const result = await setCheckoutContact({
+      ...CHECKOUT_CONTACT,
+      analyticsConsent: true,
+    })
+
+    expect(result.error).toBeNull()
+    expect(vi.mocked(sdk.store.cart.update).mock.calls[0][1]).toMatchObject({
+      metadata: { analytics_consent: true },
+    })
+  })
+
+  it('shopper did not accept analytics: the cart records no consent', async () => {
+    vi.mocked(getCartId).mockResolvedValue(CART_ID)
+    vi.mocked(sdk.store.cart.update).mockResolvedValue({ cart: CHECKOUT_CART })
+
+    const result = await setCheckoutContact({
+      ...CHECKOUT_CONTACT,
+      analyticsConsent: false,
+    })
+
+    expect(result.error).toBeNull()
+    expect(vi.mocked(sdk.store.cart.update).mock.calls[0][1]).toMatchObject({
+      metadata: { analytics_consent: false },
+    })
   })
 })

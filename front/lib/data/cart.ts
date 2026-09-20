@@ -10,6 +10,7 @@ import type { StripeAddressElementChangeEvent } from '@stripe/stripe-js'
 type CheckoutContact = {
   email: string
   address: StripeAddressElementChangeEvent['value']
+  analyticsConsent: boolean
 }
 
 type CartResult = {
@@ -187,6 +188,7 @@ export async function updateItemQuantity(
 export async function setCheckoutContact({
   email,
   address,
+  analyticsConsent,
 }: CheckoutContact): Promise<CartResult> {
   const cartId = await getCartId()
 
@@ -215,6 +217,7 @@ export async function setCheckoutContact({
       email: email.trim().toLowerCase(),
       shipping_address: medusaAddress,
       billing_address: medusaAddress,
+      metadata: { analytics_consent: analyticsConsent },
     })
 
     revalidatePath('/checkout')

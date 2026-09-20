@@ -12,10 +12,12 @@ import type {
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Info } from 'lucide-react'
 import { addItemToCart } from '@/lib/data/cart'
+import { trackAddedToCart } from '@/lib/analytics'
 import { toast } from 'sonner'
 import Stepper from '@/components/ui/stepper'
 
 interface ProductDetailsProps {
+  product: { slug: string; name: string }
   sizes: SizeOption[]
   variants: ProductVariant[]
   options: ProductOption[]
@@ -24,6 +26,7 @@ interface ProductDetailsProps {
 }
 
 export default function ProductDetails({
+  product,
   sizes,
   variants,
   options,
@@ -85,6 +88,7 @@ export default function ProductDetails({
     if (error) {
       toast.error(error)
     } else {
+      trackAddedToCart(product, selectedVariant, quantity)
       router.refresh()
     }
   }

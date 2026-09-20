@@ -14,6 +14,7 @@ import {
   STATIC_ASSET_URL,
   STRIPE_SCRIPT_ORIGINS,
 } from './support/security-headers'
+import { INGEST_URL } from './support/data'
 
 describe('security headers', () => {
   it('protects every page with the security headers', () => {
@@ -92,6 +93,22 @@ describe('security headers', () => {
 
   it('serves images, fonts and scripts without the page headers', () => {
     const url = STATIC_ASSET_URL
+
+    const matches = unstable_doesMiddlewareMatch({ config, url })
+
+    expect(matches).toBe(false)
+  })
+
+  it('lets the session recording run its worker', () => {
+    const request = new NextRequest(PAGE_URL)
+
+    const policy = proxy(request).headers.get('content-security-policy') ?? ''
+
+    expect(getDirective(policy, 'worker-src')).toEqual(["'self'", 'blob:'])
+  })
+
+  it('forwards analytics requests without the page headers', () => {
+    const url = INGEST_URL
 
     const matches = unstable_doesMiddlewareMatch({ config, url })
 
