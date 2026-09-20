@@ -11,6 +11,7 @@ rules:
   proposal:
     - Short. One bullet per change, saying what and why.
     - Ask open questions only at the end, with the AskUserQuestion tool.
+    - When the work started from a Nextcloud Deck card, the first line is `Task: <full card URL>`. Without a card, leave the line out.
   design:
     - One paragraph per decision, naming the alternative considered
   tasks:

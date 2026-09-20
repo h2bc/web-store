@@ -15,7 +15,7 @@ One commit is one logical change that could be reviewed and reverted on its own.
 
 ## Branch
 
-3. `git branch --show-current`. On `main`, create and switch to a branch named from the active OpenSpec change (`openspec list --json`, the most recently modified change) or from the argument when it reads as a branch name. `git switch -c <name>`.
+3. `git branch --show-current`. On `main`, create and switch to a branch named from the active OpenSpec change (`openspec list --json`, the most recently modified change) or from the argument when it reads as a branch name. When the change's `proposal.md` starts with a `Task:` line, prefix the card id from the end of its URL: `<cardId>-<change-name>`. `git switch -c <name>`.
 
 ## Stage
 
