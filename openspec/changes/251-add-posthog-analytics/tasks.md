@@ -48,3 +48,4 @@
 
 - 2.6: the owner chose a primary Accept and an outlined Decline after the task was ticked, and renamed the footer link to `Cookies` without uppercase.
 - 1.6: a 5.00 refund of local order 5 through the admin API answered 200 on 2026-09-20. Nobody checked that `payment_refunded` reached PostHog, so that proof moved to staging.
+- 3.2: the pull request review asked the consent journeys to assert only what the visitor sees, so the cookie checks left `tests/analytics.test.ts`. `cookieless_mode` stays covered by `front/tests/analytics.test.ts`.

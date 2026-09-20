@@ -1,5 +1,4 @@
 import type { Page } from "@playwright/test";
-import { ANALYTICS_COOKIE_PREFIX } from "./data";
 
 export class ConsentBanner {
   constructor(private readonly page: Page) {}
@@ -14,12 +13,6 @@ export class ConsentBanner {
 
   getDeclineButton() {
     return this.getBanner().getByRole("button", { name: "Decline" });
-  }
-
-  async getAnalyticsCookies() {
-    const cookies = await this.page.context().cookies();
-
-    return cookies.filter(({ name }) => name.startsWith(ANALYTICS_COOKIE_PREFIX));
   }
 
   async open(path: string) {

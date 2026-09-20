@@ -105,8 +105,6 @@ export const CHECKOUT_CONTACT = {
   },
 }
 
-export const POSTHOG_KEY = 'phc_test'
-
 export const INGEST_PATH = '/ingest'
 
 export const INGEST_URL = 'http://localhost:3000/ingest/e/'

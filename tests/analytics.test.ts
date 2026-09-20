@@ -11,10 +11,6 @@ test("first-time visitor is asked before anything is tracked", async ({ consent 
     await expect(consent.getAcceptButton()).toBeVisible();
     await expect(consent.getDeclineButton()).toBeVisible();
   });
-
-  await test.step("And no analytics cookie is set", async () => {
-    expect(await consent.getAnalyticsCookies()).toEqual([]);
-  });
 });
 
 test("visitor who accepts is not asked again", async ({ consent }) => {
@@ -27,13 +23,12 @@ test("visitor who accepts is not asked again", async ({ consent }) => {
     await consent.reload();
   });
 
-  await test.step("Then the banner does not show and the analytics cookie is set", async () => {
+  await test.step("Then the banner does not show", async () => {
     await expect(consent.getBanner()).toBeHidden();
-    expect(await consent.getAnalyticsCookies()).not.toEqual([]);
   });
 });
 
-test("visitor who declines is not asked again and gets no cookie", async ({ consent }) => {
+test("visitor who declines is not asked again", async ({ consent }) => {
   await test.step("Given a visitor who declined", async () => {
     await consent.open("/about");
     await consent.decline();
@@ -43,9 +38,8 @@ test("visitor who declines is not asked again and gets no cookie", async ({ cons
     await consent.reload();
   });
 
-  await test.step("Then the banner does not show and no analytics cookie is set", async () => {
+  await test.step("Then the banner does not show", async () => {
     await expect(consent.getBanner()).toBeHidden();
-    expect(await consent.getAnalyticsCookies()).toEqual([]);
   });
 });
 
@@ -60,8 +54,9 @@ test("visitor changes the choice from the footer", async ({ consent }) => {
     await consent.decline();
   });
 
-  await test.step("Then the banner closes and the analytics cookie is removed", async () => {
+  await test.step("Then the banner closes and stays closed when they come back", async () => {
     await expect(consent.getBanner()).toBeHidden();
-    expect(await consent.getAnalyticsCookies()).toEqual([]);
+    await consent.reload();
+    await expect(consent.getBanner()).toBeHidden();
   });
 });
