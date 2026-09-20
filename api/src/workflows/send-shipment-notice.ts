@@ -11,6 +11,11 @@ import {
   sendNotificationsStep,
   useQueryGraphStep,
 } from "@medusajs/medusa/core-flows";
+import {
+  FulfillmentItem,
+  getFulfilledItems,
+  OrderLine,
+} from "../utils/fulfilled-items";
 
 type SendShipmentNoticeInput = {
   id: string;
@@ -19,13 +24,14 @@ type SendShipmentNoticeInput = {
 
 type ShippedFulfillment = {
   id: string;
-  items: unknown[];
+  items: FulfillmentItem[];
   labels: unknown[];
   order: {
     id: string;
     display_id: number;
     email: string | null;
     shipping_address: unknown;
+    items?: OrderLine[];
   } | null;
 };
 
@@ -57,6 +63,7 @@ export const sendShipmentNoticeWorkflow = createWorkflow(
           "order.display_id",
           "order.email",
           "order.shipping_address.*",
+          "order.items.*",
         ],
         filters: { id: input.id },
         options: { throwIfKeyNotFound: true },
@@ -86,7 +93,10 @@ export const sendShipmentNoticeWorkflow = createWorkflow(
           template: "order-shipped",
           data: {
             order: fulfillment!.order,
-            items: fulfillment!.items,
+            items: getFulfilledItems(
+              fulfillment!.items,
+              fulfillment!.order?.items,
+            ),
             tracking: fulfillment!.labels,
           },
           idempotency_key: `order-shipped-${fulfillment!.id}`,
