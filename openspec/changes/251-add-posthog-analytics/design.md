@@ -61,6 +61,7 @@
 - `opt_out_capturing()` alone removes the PostHog cookie. `posthog.reset()` after it also wipes the stored choice, so it is not called.
 - PostHog drops events from headless browsers as bot traffic. Events are proven from a normal browser, never from Playwright.
 - A shopper who accepts after the address step is not identified until the next order. Their order events are anonymous.
+- Medusa emits `payment.captured` only from its capture workflow. A Stripe payment captured at checkout emits it when the webhook arrives, never locally without one.
 - The PostHog project must have Cookieless server hash mode on. Without it, events from visitors who declined are dropped.
 - A later Medusa release may move the providers out of `@medusajs/medusa`. The pinned release rule in `api-platform` catches it at upgrade.
 

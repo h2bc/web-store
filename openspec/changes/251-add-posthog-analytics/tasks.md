@@ -7,7 +7,7 @@
 - [x] 1.3 In `api/medusa-config.ts` register `@medusajs/medusa/analytics` with `@medusajs/medusa/analytics-posthog` when `POSTHOG_KEY` is set and `@medusajs/medusa/analytics-local` otherwise, per `design.md`. Keep `POSTHOG_KEY` empty and `POSTHOG_HOST` in `api/.env.example`. Verify `pnpm typecheck:api` passes and `pnpm dev:api` starts without the key.
 - [x] 1.4 Add `api/src/workflows/track-order-event.ts` with the pure `getOrderEvent` and the tracking step that catches and logs a failure. Verify the 1.1 and 1.2 tests pass.
 - [x] 1.5 Run the workflow from `order-placed.ts`, `shipment-created.ts` and `order-canceled.ts` after their email workflow, with the events `order_placed`, `shipment_created` and `order_canceled`. Verify `pnpm test:api` passes and the local provider logs `order_placed` when a test order is placed.
-- [ ] 1.6 Add `api/src/subscribers/payment-captured.ts` and `payment-refunded.ts`, which resolve the order from the payment's collection and run the workflow with `payment_captured` and `payment_refunded`. Verify the local provider logs both when a test order is captured and refunded in the admin at `http://localhost:9000/app`.
+- [x] 1.6 Add `api/src/subscribers/payment-captured.ts` and `payment-refunded.ts`, which resolve the order from the payment's collection and run the workflow with `payment_captured` and `payment_refunded`. Verify the integration test finds the order behind a refunded payment and a refund through the admin API answers 200 with the subscriber loaded. The proof that both events reach PostHog is under `## Outside this repo`, because `payment.captured` only fires when the Stripe webhook runs the capture workflow.
 
 ## 2. Storefront: consent and tracking
 
@@ -40,9 +40,11 @@
 - PostHog, project settings at `https://eu.posthog.com`: Cookieless server hash mode, autocapture, heatmaps, web vitals, dead clicks, exception autocapture and session replay with console logs and network are on, and Discard client IP data is off. Proof: an accepted session on `https://dev.h2bcweb.com` shows a recording, and a declined one shows an anonymous page view.
 - PostHog, organization settings: the DPA is signed. Proof: the signed copy is in the owner's inbox.
 - `h2bc/web-store-deploy`: `POSTHOG_KEY` is set for the storefront, and `POSTHOG_KEY` and `POSTHOG_HOST` for the API server and worker containers. Proof: an order on `https://dev.h2bcweb.com` shows `order_placed` in PostHog.
+- Staging, where the Stripe webhook reaches the API: a paid order shows `payment_captured` in PostHog, and a refund in the admin shows `payment_refunded`. Proof: both events are in the Activity feed for an order on `https://dev.h2bcweb.com`.
 - Medusa admin, Privacy page: a paragraph names PostHog, the data it collects, the stored IP addresses, the session recording and the footer link that changes the choice. Proof: `https://dev.h2bcweb.com/privacy` shows it.
 - PostHog UI: a funnel from `product_viewed` to `order_placed` and a dashboard with visits, referrers and countries. Proof: the dashboard shows data from dev.
 
 ## Review findings
 
 - 2.6: the owner chose a primary Accept and an outlined Decline after the task was ticked, and renamed the footer link to `Cookies` without uppercase.
+- 1.6: a 5.00 refund of local order 5 through the admin API answered 200 on 2026-09-20. Nobody checked that `payment_refunded` reached PostHog, so that proof moved to staging.
