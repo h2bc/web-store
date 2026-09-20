@@ -79,6 +79,10 @@
     "node": "^26.9.0"
   },
   "pnpm": {
+    "overrides": {
+      "fast-xml-parser": "5.11.1",
+      "protobufjs": "7.6.6"
+    },
     "onlyBuiltDependencies": [
       "@swc/core",
       "esbuild"
