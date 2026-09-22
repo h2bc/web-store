@@ -24,6 +24,10 @@
         "--enable-app",
         "webdav"
       ]
+    },
+    "posthog": {
+      "type": "http",
+      "url": "https://mcp.posthog.com/mcp"
     }
   }
 }
