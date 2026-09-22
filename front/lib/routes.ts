@@ -6,13 +6,13 @@ export const NAV_LINKS = [
 ]
 
 export const CONTENT_PAGES = [
-  { slug: 'privacy', path: '/privacy', label: 'Privacy Policy' },
   {
     slug: 'shipping-returns',
     path: '/shipping-returns',
     label: 'Shipping & Returns',
   },
   { slug: 'terms', path: '/terms', label: 'Terms & Conditions' },
+  { slug: 'privacy', path: '/privacy', label: 'Privacy Policy' },
   { slug: 'about', path: '/about', label: 'About' },
 ] as const
 
