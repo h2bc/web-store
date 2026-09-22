@@ -7,7 +7,7 @@ import {
 } from "@react-email/components";
 import { OrderDTO } from "@medusajs/framework/types";
 import { EmailLayout } from "./layout";
-import { getPriceFormatter } from "./price";
+import { formatPrice } from "../../../utils/price";
 import { OrderAddress, OrderItems, OrderTotals } from "./order-parts";
 
 type OrderPlacedOwnerEmailProps = {
@@ -21,11 +21,9 @@ function OrderPlacedOwnerEmailComponent({
   admin_url,
   logo_url,
 }: OrderPlacedOwnerEmailProps) {
-  const formatPrice = getPriceFormatter(order.currency_code);
-
   return (
     <EmailLayout
-      preview={`New order #${order.display_id}, ${formatPrice(order.total)}`}
+      preview={`New order #${order.display_id}, ${formatPrice(order.total, order.currency_code)}`}
       logo_url={logo_url}
       footer="Sent to the order inbox each time an order is placed."
     >

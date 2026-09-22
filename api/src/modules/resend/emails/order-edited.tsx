@@ -1,7 +1,7 @@
 import { Container, Heading, Section, Text } from "@react-email/components";
 import { BigNumberValue } from "@medusajs/framework/types";
 import { EmailLayout } from "./layout";
-import { getPriceFormatter } from "./price";
+import { formatPrice } from "../../../utils/price";
 import { EmailItem, OrderItems } from "./order-parts";
 
 type OrderEditedEmailProps = {
@@ -20,8 +20,6 @@ function OrderEditedEmailComponent({
   logo_url,
   contact_email,
 }: OrderEditedEmailProps) {
-  const formatPrice = getPriceFormatter(order.currency_code);
-
   return (
     <EmailLayout
       preview={`Your order #${order.display_id} was changed`}
@@ -46,7 +44,7 @@ function OrderEditedEmailComponent({
 
         <Section className="mt-8">
           <Text className="m-0 font-semibold text-gray-800">
-            New total: {formatPrice(order.total)}
+            New total: {formatPrice(order.total, order.currency_code)}
           </Text>
         </Section>
       </Container>

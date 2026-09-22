@@ -1,7 +1,7 @@
 import { Container, Heading, Text } from "@react-email/components";
 import { BigNumberValue } from "@medusajs/framework/types";
 import { EmailLayout } from "./layout";
-import { getPriceFormatter } from "./price";
+import { formatPrice } from "../../../utils/price";
 import { EmailItem, OrderItems } from "./order-parts";
 
 type OrderCanceledEmailProps = {
@@ -21,8 +21,6 @@ function OrderCanceledEmailComponent({
   logo_url,
   contact_email,
 }: OrderCanceledEmailProps) {
-  const formatPrice = getPriceFormatter(order.currency_code);
-
   return (
     <EmailLayout
       preview={`Your order #${order.display_id} was cancelled`}
@@ -35,8 +33,8 @@ function OrderCanceledEmailComponent({
         </Heading>
         {Number(refunded_total) > 0 && (
           <Text className="text-center text-gray-600 mt-2">
-            We refunded {formatPrice(refunded_total)} to your original payment
-            method. It can take a few days to show up.
+            We refunded {formatPrice(refunded_total, order.currency_code)} to
+            your original payment method. It can take a few days to show up.
           </Text>
         )}
       </Container>
