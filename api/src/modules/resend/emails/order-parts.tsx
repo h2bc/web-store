@@ -12,7 +12,7 @@ import {
   OrderDTO,
 } from "@medusajs/framework/types";
 import { getAddressLines } from "./address";
-import { getPriceFormatter } from "./price";
+import { formatPrice } from "../../../utils/price";
 
 export type EmailItem = {
   id: string;
@@ -31,8 +31,6 @@ type OrderItemsProps = {
 };
 
 export function OrderItems({ heading, items, currency_code }: OrderItemsProps) {
-  const formatPrice = currency_code ? getPriceFormatter(currency_code) : null;
-
   return (
     <Section>
       <Heading className="text-xl font-semibold text-gray-800 mb-4">
@@ -58,9 +56,9 @@ export function OrderItems({ heading, items, currency_code }: OrderItemsProps) {
               {item.variant_title && (
                 <Text className="m-0 text-gray-600">{item.variant_title}</Text>
               )}
-              {formatPrice && (
+              {currency_code && (
                 <Text className="m-0 mt-2 font-bold text-gray-800">
-                  {formatPrice(item.total)}
+                  {formatPrice(item.total, currency_code)}
                 </Text>
               )}
             </Column>
@@ -100,7 +98,6 @@ type OrderTotalsProps = {
 };
 
 export function OrderTotals({ heading, order }: OrderTotalsProps) {
-  const formatPrice = getPriceFormatter(order.currency_code);
   const lines = [
     { id: "subtotal", name: "Subtotal", amount: order.item_total },
     ...(order.shipping_methods ?? []).map((method) => ({
@@ -122,7 +119,9 @@ export function OrderTotals({ heading, order }: OrderTotalsProps) {
             <Text className="m-0">{line.name}</Text>
           </Column>
           <Column className="w-1/2 text-right">
-            <Text className="m-0">{formatPrice(line.amount)}</Text>
+            <Text className="m-0">
+              {formatPrice(line.amount, order.currency_code)}
+            </Text>
           </Column>
         </Row>
       ))}
@@ -131,7 +130,7 @@ export function OrderTotals({ heading, order }: OrderTotalsProps) {
           <Text>Total</Text>
         </Column>
         <Column className="w-1/2 text-right">
-          <Text>{formatPrice(order.total)}</Text>
+          <Text>{formatPrice(order.total, order.currency_code)}</Text>
         </Column>
       </Row>
     </Section>

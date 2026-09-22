@@ -15,7 +15,7 @@ import { orderShippedEmail } from "./emails/order-shipped";
 import { orderDeliveredEmail } from "./emails/order-delivered";
 import { orderEditedEmail } from "./emails/order-edited";
 import { orderCanceledEmail } from "./emails/order-canceled";
-import { getPriceFormatter } from "./emails/price";
+import { formatPrice } from "../../utils/price";
 import { userInvitedEmail } from "./emails/user-invited";
 import { passwordResetEmail } from "./emails/password-reset";
 import { contactMessageEmail } from "./emails/contact-message";
@@ -68,7 +68,7 @@ type InjectedDependencies = {
 };
 
 const getOrderSubject = (order: OrderDTO) =>
-  `New order #${order.display_id}, ${getPriceFormatter(order.currency_code)(order.total)}`;
+  `New order #${order.display_id}, ${formatPrice(order.total, order.currency_code)}`;
 
 class ResendNotificationProviderService extends AbstractNotificationProviderService {
   static identifier = "notification-resend";

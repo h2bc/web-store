@@ -26,36 +26,21 @@ export function selectDisplayVariant(
     )
 }
 
+const LOCALE = 'en-US'
+
 export function formatPrice(
   amount?: number | null,
   currencyCode?: string | null
 ): string {
-  const FRACTION_DIGITS = 2
-
-  if (amount == null || Number.isNaN(amount)) {
+  if (amount == null || Number.isNaN(amount) || !currencyCode) {
     return 'NOT AVAILABLE'
   }
 
-  if (!currencyCode) {
-    return `??${amount.toFixed(FRACTION_DIGITS)} ???`
-  }
-
   const code = currencyCode.toUpperCase()
+  const formatted = new Intl.NumberFormat(LOCALE, {
+    style: 'currency',
+    currency: code,
+  }).format(amount)
 
-  // Get currency symbol using Intl
-  const symbol =
-    new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: code,
-      currencyDisplay: 'narrowSymbol',
-    })
-      .formatToParts(0)
-      .find((part) => part.type === 'currency')?.value || '??'
-
-  const formatted = amount.toLocaleString('lt-LT', {
-    minimumFractionDigits: FRACTION_DIGITS,
-    maximumFractionDigits: FRACTION_DIGITS,
-  })
-
-  return `${symbol}${formatted} ${code}`
+  return `${formatted} ${code}`
 }
