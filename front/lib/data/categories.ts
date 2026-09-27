@@ -7,7 +7,10 @@ const CACHE_REVALIDATE_TIME = 60
 
 const fetchCategoriesFromAPI = cached(
   async () => {
-    const { product_categories } = await sdk.store.category.list()
+    const { product_categories } = await sdk.store.category.list({
+      order: 'rank',
+      fields: 'name,rank',
+    })
 
     return product_categories.map((c) => c.name)
   },
