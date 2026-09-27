@@ -3,7 +3,7 @@
 import { sdk } from '@/lib/medusa'
 import { cached } from '@/lib/cache'
 
-const CACHE_REVALIDATE_TIME = 3600
+const CACHE_REVALIDATE_TIME = 60
 
 const fetchCategoriesFromAPI = cached(
   async () => {
