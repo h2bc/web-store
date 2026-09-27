@@ -8,8 +8,8 @@ import { INSTAGRAM_URL, YOUTUBE_URL } from '@/lib/social'
 
 export const SITE_NAME = 'h2bc'
 export const SITE_DESCRIPTION =
-  'h2bc is a Lithuanian streetwear brand. Hoodies, tees, beanies and accessories shipped across Lithuania and the EU.'
-export const HOME_HEADING = 'h2bc streetwear from Lithuania'
+  'Prints and handmade jewelery. Made in Lithuania.'
+export const HOME_HEADING = 'Welcome to web of h2bc'
 const DEFAULT_OG_IMAGE = '/opengraph-image.png'
 
 export const OPEN_GRAPH_DEFAULTS = {
